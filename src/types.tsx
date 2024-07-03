@@ -21,3 +21,7 @@ export interface RegsiterNavLinkProps {
   linkText: string;
   link: string;
 }
+
+export interface FormHeadingProps {
+  text: string;
+}

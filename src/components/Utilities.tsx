@@ -1,8 +1,8 @@
-import { ReactNodes, RegsiterNavLinkProps } from "../types";
+import { ReactNodes, RegsiterNavLinkProps, FormHeadingProps } from "../types";
 
 export function AccountRegisterFormContainer({ children }: ReactNodes) {
   return (
-    <form className="flex max-w-md flex-col gap-4 rounded bg-navy-800 px-8 py-7">
+    <form className="flex min-h-[33.4rem] max-w-md flex-col gap-4 rounded bg-navy-800 px-8 py-7">
       {children}
     </form>
   );
@@ -14,11 +14,15 @@ export function RegisterNavLink({
   link,
 }: RegsiterNavLinkProps) {
   return (
-    <p className="text-white text-center -mt-2">
+    <p className="-mt-2 text-center text-white">
       {label}{" "}
       <a className="text-orange-400" href={link}>
         {linkText}
       </a>
     </p>
   );
+}
+
+export function RegisterFormHeading({ text }: FormHeadingProps) {
+  return <h2 className="mb-2 text-2xl font-medium text-white">{text}</h2>;
 }

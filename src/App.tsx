@@ -1,9 +1,19 @@
 import "./App.css";
-import { AccountRegisterForm } from "./components/Form";
+import {
+  AccountLoginForm,
+  AccountRegisterForm,
+  AccountForgotPasswordForm,
+  AccountResetPasswordForm,
+} from "./components/Form";
 
 function App() {
   return (
-    <AccountRegisterForm />
+    <div className="flex flex-col gap-4">
+      <AccountRegisterForm />
+      <AccountLoginForm />
+      <AccountForgotPasswordForm />
+      <AccountResetPasswordForm />
+    </div>
   );
 }
 
