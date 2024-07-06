@@ -40,17 +40,19 @@ export function PasswordInput({ label, placeholder }: PasswordInputProps) {
           type="button"
           onClick={(e) => {
             const buttonTarget = e.target as HTMLButtonElement;
-            const buttonTargetImage = buttonTarget
+            const showPasswordImage = buttonTarget
               .childNodes[0] as HTMLImageElement;
+            const hidePasswordImage = buttonTarget
+              .childNodes[1] as HTMLImageElement;
             const input =
               buttonTarget.previousElementSibling as HTMLInputElement;
             if (input.type === "password") {
-              buttonTargetImage.src = hidePassword;
-              buttonTargetImage.alt = "hide password";
+              showPasswordImage.classList.add("hidden");
+              hidePasswordImage.classList.remove("hidden");
               input.type = "text";
             } else {
-              buttonTargetImage.src = showPassword;
-              buttonTargetImage.alt = "show password";
+              showPasswordImage.classList.remove("hidden");
+              hidePasswordImage.classList.add("hidden");
               input.type = "password";
             }
           }}
@@ -58,6 +60,11 @@ export function PasswordInput({ label, placeholder }: PasswordInputProps) {
           <img
             className="pointer-events-none"
             src={showPassword}
+            alt="show password"
+          />
+          <img
+            className="pointer-events-none hidden"
+            src={hidePassword}
             alt="show password"
           />
         </button>

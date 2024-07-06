@@ -582,6 +582,10 @@ video {
   display: flex;
 }
 
+.hidden {
+  display: none;
+}
+
 .min-h-\[33\.4rem\] {
   min-height: 33.4rem;
 }
