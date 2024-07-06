@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { ReactNodes, RegsiterNavLinkProps, FormHeadingProps } from "../types";
 
 export function AccountRegisterFormContainer({ children }: ReactNodes) {
@@ -16,9 +17,9 @@ export function RegisterNavLink({
   return (
     <p className="-mt-2 text-center text-white">
       {label}{" "}
-      <a className="text-orange-400" href={link}>
+      <Link className="text-orange-400" to={link}>
         {linkText}
-      </a>
+      </Link>
     </p>
   );
 }

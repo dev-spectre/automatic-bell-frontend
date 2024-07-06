@@ -2,6 +2,7 @@ import { RegisterButton } from "./Buttons";
 import { TextInput, PasswordInput } from "./Input";
 import { getFormData } from "../utilities/forms";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   AccountRegisterFormContainer,
   RegisterNavLink,
@@ -60,7 +61,11 @@ export function AccountRegisterForm() {
         }}
         label="Register"
       />
-      <RegisterNavLink label="Already registered?" link="/" linkText="Log In" />
+      <RegisterNavLink
+        label="Already registered?"
+        link="/auth/login"
+        linkText="Log In"
+      />
     </AccountRegisterFormContainer>
   );
 }
@@ -72,9 +77,9 @@ export function AccountLoginForm() {
       <TextInput label="User ID" placeholder="Enter user ID" />
       <div>
         <PasswordInput label="Password" placeholder="Enter password" />
-        <a className="block text-right text-orange-400" href="#">
+        <Link className="block text-right text-orange-400" to="/auth/password">
           Forgot password?
-        </a>
+        </Link>
       </div>
       <RegisterButton
         onClick={async (e) => {
@@ -97,7 +102,7 @@ export function AccountLoginForm() {
       />
       <RegisterNavLink
         label="Haven't registered?"
-        link="/"
+        link="/auth/signup"
         linkText="Register"
       />
     </AccountRegisterFormContainer>
@@ -133,7 +138,7 @@ export function AccountResetPasswordForm() {
             }}
             label="Submit"
           />
-          <RegisterNavLink label="" link="/" linkText="Back" />
+          <RegisterNavLink label="" link="/auth/login" linkText="Back" />
         </>
       ) : (
         <>
@@ -169,7 +174,11 @@ export function AccountResetPasswordForm() {
             }}
             label="Submit"
           />
-          <RegisterNavLink label="" link="/" linkText="Go back to log In" />
+          <RegisterNavLink
+            label=""
+            link="/auth/login"
+            linkText="Go back to log In"
+          />
         </>
       )}
     </AccountRegisterFormContainer>

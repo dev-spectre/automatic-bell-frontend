@@ -1,14 +1,35 @@
 import "./App.css";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Register } from "./pages/Register";
 import {
+  AccountLoginForm,
+  AccountRegisterForm,
   AccountResetPasswordForm,
 } from "./components/Form";
 
+const router = createBrowserRouter([
+  {
+    path: "/auth",
+    element: <Register />,
+    children: [
+      {
+        path: "signup",
+        element: <AccountRegisterForm />,
+      },
+      {
+        path: "login",
+        element: <AccountLoginForm />,
+      },
+      {
+        path: "password",
+        element: <AccountResetPasswordForm />,
+      },
+    ],
+  },
+]);
+
 function App() {
-  return (
-    <div className="flex flex-col gap-4">
-      <AccountResetPasswordForm />
-    </div>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;
