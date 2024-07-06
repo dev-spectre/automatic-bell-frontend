@@ -13,6 +13,7 @@ export function TextInput({ label, placeholder }: TextInputProps) {
         className="w-full rounded border border-zinc-600 bg-navy-500 px-2 pb-2 pt-1 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-400"
         type="text"
         id={inputId}
+        name={inputId}
         placeholder={placeholder}
       />
     </div>
@@ -31,6 +32,7 @@ export function PasswordInput({ label, placeholder }: PasswordInputProps) {
           className="w-full rounded-l bg-navy-500 px-2 pb-2 pt-1 text-white focus-visible:outline-none"
           type="password"
           id={inputId}
+          name={inputId}
           placeholder={placeholder}
         />
         <button

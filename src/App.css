@@ -582,18 +582,6 @@ video {
   display: flex;
 }
 
-.min-h-\[\] {
-  min-height: ;
-}
-
-.min-h-\[28rem\] {
-  min-height: 28rem;
-}
-
-.min-h-\[33rem\] {
-  min-height: 33rem;
-}
-
 .min-h-\[33\.4rem\] {
   min-height: 33.4rem;
 }
