@@ -6,11 +6,11 @@ export function TextInput({ label, placeholder }: TextInputProps) {
   const inputId = label.toLowerCase().replace(" ", "-");
   return (
     <div className="max-w-md">
-      <label htmlFor={inputId} className="mb-1 block font-poppins text-white">
+      <label htmlFor={inputId} className="mb-1 block">
         {label}
       </label>
       <input
-        className="w-full rounded border border-zinc-600 bg-navy-500 px-2 pb-2 pt-1 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-400"
+        className="w-full rounded border border-zinc-600 bg-navy-500 px-2 pb-2 pt-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-400"
         type="text"
         id={inputId}
         name={inputId}
@@ -24,16 +24,26 @@ export function PasswordInput({ label, placeholder }: PasswordInputProps) {
   const inputId = label.toLowerCase().replace(" ", "-");
   return (
     <div className="max-w-md">
-      <label htmlFor={inputId} className="mb-1 block font-poppins text-white">
+      <label htmlFor={inputId} className="mb-1 block">
         {label}
       </label>
-      <div className="flex rounded border border-zinc-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-400">
+      <div className="flex rounded border border-zinc-600 outline-2 outline-orange-400">
         <input
-          className="w-full rounded-l bg-navy-500 px-2 pb-2 pt-1 text-white focus-visible:outline-none"
+          className="w-full rounded-l bg-navy-500 px-2 pb-2 pt-1 focus-visible:outline-none"
           type="password"
           id={inputId}
           name={inputId}
           placeholder={placeholder}
+          onFocus={(e) => {
+            const inputTarget = e.target as HTMLInputElement;
+            const parentElement = inputTarget.parentElement as HTMLElement;
+            parentElement.classList.add("outline");
+          }}
+          onBlur={(e) => {
+            const inputTarget = e.target as HTMLInputElement;
+            const parentElement = inputTarget.parentElement as HTMLElement;
+            parentElement.classList.remove("outline");
+          }}
         />
         <button
           className="rounded-r bg-navy-500 pr-2"
