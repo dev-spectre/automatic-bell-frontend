@@ -10,7 +10,7 @@ export function TextInput({ label, placeholder }: TextInputProps) {
         {label}
       </label>
       <input
-        className="w-full rounded border border-zinc-600 bg-navy-500 px-2 pb-2 pt-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-400"
+        className="w-full rounded border border-zinc-600 bg-navy-500 px-2 pb-2 pt-1 focus-visible:outline outline-2 outline-orange-400"
         type="text"
         id={inputId}
         name={inputId}
