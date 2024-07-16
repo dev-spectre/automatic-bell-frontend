@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import logo from "../assets/logo.svg";
+import logo from "@/assets/logo.svg";
 
 export function Register() {
   return (

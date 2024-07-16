@@ -1,4 +1,4 @@
-import { FormDataObject } from "../types";
+import { FormDataObject } from "@/types";
 
 export function getFormData(form: HTMLFormElement) {
   const data: FormDataObject = {};

@@ -49,3 +49,8 @@ export interface User {
 export interface UserWithDevice extends DeviceInfo {
   deviceId: number;
 }
+
+export interface AlertProps {
+  title: string;
+  description: string;
+}

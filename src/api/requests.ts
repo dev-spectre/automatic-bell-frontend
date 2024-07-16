@@ -1,4 +1,4 @@
-import { RequestHeaders, RequestBody } from "../types";
+import { RequestHeaders, RequestBody } from "@/types";
 
 function addAuthToken(headers: RequestHeaders | undefined) {
   headers = {

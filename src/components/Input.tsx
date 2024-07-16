@@ -1,6 +1,6 @@
-import { TextInputProps, PasswordInputProps } from "../types";
-import showPassword from "../assets/eye_open.png";
-import hidePassword from "../assets/eye_close.png";
+import { TextInputProps, PasswordInputProps } from "@/types";
+import showPassword from "@/assets/eye_open.png";
+import hidePassword from "@/assets/eye_close.png";
 
 export function TextInput({ label, placeholder }: TextInputProps) {
   const inputId = label.toLowerCase().replace(" ", "-");

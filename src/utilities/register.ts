@@ -1,7 +1,7 @@
-import { DeviceInfo, UserWithDevice } from "../types";
-import { DEVICE_INFO_URL, SIGNIN_URL } from "../constants/api";
+import req from "@/api/requests";
+import { DeviceInfo, UserWithDevice } from "@/types";
+import { DEVICE_INFO_URL, SIGNIN_URL } from "@/constants/api";
 import { getDeviceIdFromJwt, getDeviceIp } from "./device";
-import req from "../api/requests";
 
 export async function findDeviceInfo(deviceInfo: DeviceInfo[]) {
   const networkRequests: Promise<DeviceInfo>[] = [];

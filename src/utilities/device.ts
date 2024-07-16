@@ -1,5 +1,5 @@
-import req from "../api/requests";
-import { DEVICE_INFO_URL } from "../constants/api";
+import req from "@/api/requests";
+import { DEVICE_INFO_URL } from "@/constants/api";
 
 export function getDeviceIdFromJwt(token: string) {
   const base64Url = token.split(".")[1];

@@ -1,6 +1,6 @@
 import { RegisterButton } from "./Buttons";
 import { TextInput, PasswordInput } from "./Input";
-import { getFormData } from "../utilities/forms";
+import { getFormData } from "@/utilities/forms";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -13,7 +13,7 @@ import {
   registerUser,
   signInUser,
   resetPassword,
-} from "../utilities/register";
+} from "@/utilities/register";
 
 export function AccountRegisterForm() {
   return (

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ReactNodes, RegsiterNavLinkProps, FormHeadingProps } from "../types";
+import { ReactNodes, RegsiterNavLinkProps, FormHeadingProps } from "@/types";
 
 export function AccountRegisterFormContainer({ children }: ReactNodes) {
   return (
