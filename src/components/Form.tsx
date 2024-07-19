@@ -54,7 +54,7 @@ export function AccountRegisterForm() {
           if (!deviceInfo) {
             dispatch(
               addToast({
-                title: "Couldn't find device",
+                title: "Couldn't connect to device",
                 description:
                   "Please make sure your device is turned on and connected to same wifi as this computer.",
                 type: "error",
@@ -67,11 +67,14 @@ export function AccountRegisterForm() {
           const username = formData["user-id"];
           const user = await registerUser(username, password, key, deviceInfo);
           if (!user || !user.deviceId) {
-            dispatch(addToast({
-              title: "Couldn't register",
-              description: "Please make sure your device is turned on and connected to same wifi as this computer."
-              type: "error",
-            }))
+            dispatch(
+              addToast({
+                title: "Couldn't register",
+                description:
+                  "Please make sure your device is turned on and connected to same wifi as this computer.",
+                type: "error",
+              }),
+            );
             return;
           }
           localStorage.setItem("userId", user.id.toString());
@@ -115,10 +118,13 @@ export function AccountLoginForm() {
 
           const jwt = await signInUser(username, password);
           if (!jwt) {
-            dispatch(addToast({
-              title: "Incorrect input",
-              description: "Incorrect username or password",
-            }));
+            dispatch(
+              addToast({
+                title: "Incorrect input",
+                description: "Incorrect username or password",
+                type: "error",
+              }),
+            );
             return;
           }
 
@@ -137,6 +143,7 @@ export function AccountLoginForm() {
 
 export function AccountResetPasswordForm() {
   const [key, setKey] = useState("");
+  const dispatch = useDispatch();
 
   return (
     <AccountRegisterFormContainer>
@@ -154,7 +161,14 @@ export function AccountResetPasswordForm() {
               const key = formData["key-code"];
               const deviceInfo = await getDeviceInfo(key);
               if (!deviceInfo) {
-                // TODO: Notify user
+                dispatch(
+                  addToast({
+                    title: "Couldn't connect to device",
+                    description:
+                      "Please make sure your device is turned on and connected to same wifi as this computer.",
+                    type: "error",
+                  }),
+                );
                 return;
               }
 
@@ -186,17 +200,28 @@ export function AccountResetPasswordForm() {
               const confirmPassword = formData["confirm-password"];
 
               if (password !== confirmPassword) {
-                // TODO: Notify user
+                dispatch(
+                  addToast({
+                    title: "Invalid Input",
+                    description: "Passwords doesn't match.",
+                    type: "error",
+                  }),
+                );
                 return;
               }
 
               const res = await resetPassword(username, password, key);
               if (!res) {
-                // TODO: Notify user
+                dispatch(
+                  addToast({
+                    title: "Couldn't reset password",
+                    description:
+                      "Please make sure your device is turned on and connected to same wifi as this computer.",
+                    type: "error",
+                  }),
+                );
                 return;
               }
-
-              console.log(res);
             }}
             label="Submit"
           />
