@@ -13,7 +13,7 @@ export function AlertError({ id, title, description }: AlertProps) {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       const toast = toastRef.current as unknown as HTMLElement;
-      dispatch(removeToast({ id: toast.id }));
+      dispatch(removeToast({ id: parseInt(toast.id) }));
     }, TOAST_TIMEOUT);
 
     return () => {
@@ -39,7 +39,7 @@ export default function Toast() {
   const toasts = useSelector((store: ReduxStore) => store.toast.toast);
 
   return (
-    <div className="absolute right-1/2 top-5 flex -translate-x-1/2 flex-col gap-2 md:right-5 md:w-72 md:-translate-x-0">
+    <div className="fixed right-1/2 top-5 flex max-h-[100dvh] w-full max-w-80 translate-x-1/2 flex-col gap-2 overflow-hidden sm:right-5 sm:w-72 sm:-translate-x-0">
       {toasts.map((toast) => {
         if (toast.type === "error") {
           return (
