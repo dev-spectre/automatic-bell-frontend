@@ -1,11 +1,14 @@
 import "./App.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import store from "./store";
 import { Register } from "./pages/Register";
 import {
   AccountLoginForm,
   AccountRegisterForm,
   AccountResetPasswordForm,
 } from "./components/Form";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Provider } from "react-redux";
+import Toast from "./components/Toast";
 
 const router = createBrowserRouter([
   {
@@ -33,7 +36,12 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <Provider store={store}>
+      <Toast />
+      <RouterProvider router={router} />
+    </Provider>
+  );
 }
 
 export default App;

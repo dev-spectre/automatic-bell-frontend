@@ -1,4 +1,5 @@
 import React, { ReactNode } from "react";
+import store from "./store";
 
 export interface ReactNodes {
   children: ReactNode;
@@ -51,6 +52,27 @@ export interface UserWithDevice extends DeviceInfo {
 }
 
 export interface AlertProps {
+  id: number;
   title: string;
   description: string;
 }
+
+export interface RawToast {
+  title: string;
+  description: string;
+  type: string;
+  action?: string;
+}
+
+export interface ToastId {
+  id: number;
+}
+
+export interface Toast extends RawToast, ToastId {}
+
+export interface ToastState {
+  id: number;
+  toast: Toast[];
+}
+
+export type ReduxStore = ReturnType<typeof store.getState>;

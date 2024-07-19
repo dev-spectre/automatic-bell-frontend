@@ -14,8 +14,12 @@ import {
   signInUser,
   resetPassword,
 } from "@/utilities/register";
+import { useDispatch } from "react-redux";
+import { addToast } from "@/store/slice/toasts";
 
 export function AccountRegisterForm() {
+  const dispatch = useDispatch();
+
   return (
     <AccountRegisterFormContainer>
       <RegisterFormHeading text="Register Account" />
@@ -33,16 +37,29 @@ export function AccountRegisterForm() {
           const formData = getFormData(form);
 
           const password = formData["password"];
-          const confirmPassword = formData["password"];
+          const confirmPassword = formData["confirm-password"];
           if (password !== confirmPassword) {
-            // TODO: Notify user
+            dispatch(
+              addToast({
+                title: "Invalid Input",
+                description: "Passwords doesn't match.",
+                type: "error",
+              }),
+            );
             return;
           }
 
           const key = formData["key-code"];
           const deviceInfo = await getDeviceInfo(key);
           if (!deviceInfo) {
-            // TODO: Notify user
+            dispatch(
+              addToast({
+                title: "Couldn't find device",
+                description:
+                  "Please make sure your device is turned on and connected to same wifi as this computer.",
+                type: "error",
+              }),
+            );
             return;
           }
           localStorage.setItem("deviceIp", deviceInfo.ip);
@@ -50,7 +67,11 @@ export function AccountRegisterForm() {
           const username = formData["user-id"];
           const user = await registerUser(username, password, key, deviceInfo);
           if (!user || !user.deviceId) {
-            // TODO: Notify user
+            dispatch(addToast({
+              title: "Couldn't register",
+              description: "Please make sure your device is turned on and connected to same wifi as this computer."
+              type: "error",
+            }))
             return;
           }
           localStorage.setItem("userId", user.id.toString());
@@ -71,6 +92,8 @@ export function AccountRegisterForm() {
 }
 
 export function AccountLoginForm() {
+  const dispatch = useDispatch();
+
   return (
     <AccountRegisterFormContainer>
       <RegisterFormHeading text="Log In" />
@@ -92,7 +115,10 @@ export function AccountLoginForm() {
 
           const jwt = await signInUser(username, password);
           if (!jwt) {
-            // TODO: Notify user
+            dispatch(addToast({
+              title: "Incorrect input",
+              description: "Incorrect username or password",
+            }));
             return;
           }
 
