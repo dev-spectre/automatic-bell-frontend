@@ -1,6 +1,7 @@
 import "./App.css";
 import store from "./store";
 import { Register } from "./pages/Register";
+import { Root } from "./pages/Root";
 import {
   AccountLoginForm,
   AccountRegisterForm,
@@ -11,6 +12,16 @@ import { Provider } from "react-redux";
 import Toast from "./components/Toast";
 
 const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Root />,
+    children: [
+      {
+        path: "/",
+        element: <h1 className="col-auto flex items-center justify-center">Dummy</h1>,
+      },
+    ],
+  },
   {
     path: "/auth",
     element: <Register />,

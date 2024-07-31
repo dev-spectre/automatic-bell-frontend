@@ -76,3 +76,22 @@ export interface ToastState {
 }
 
 export type ReduxStore = ReturnType<typeof store.getState>;
+
+export interface NavItemProps {
+  label: string;
+  link: string;
+  icon: string;
+}
+
+export interface NavListProps extends ReactNodes {}
+
+export interface NavButtonProps {
+  label: string;
+  onClick: () => void;
+  icon: string;
+}
+
+export interface NavCollapsibleProps extends ReactNodes {
+  label: string;
+  icon: string;
+}
