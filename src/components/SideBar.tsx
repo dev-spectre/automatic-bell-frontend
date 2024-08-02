@@ -15,6 +15,7 @@ import schedule from "@/assets/schedule.png";
 import settings from "@/assets/settings.png";
 import expand from "@/assets/expand.svg";
 import { useState } from "react";
+import { X } from "lucide-react";
 
 export function NavList({ children }: NavListProps) {
   return <ul className="flex flex-col gap-1">{children}</ul>;
@@ -55,7 +56,7 @@ export function NavButton({ label, onClick, icon }: NavButtonProps) {
 
 export function NavCollapsible({ label, icon, children }: NavCollapsibleProps) {
   const [isCollapsed, setIsCollapsed] = useState(true);
-  
+
   return (
     <li className="text-base font-normal">
       <button
@@ -91,9 +92,22 @@ export function NavLogout() {
 
 export function SideBar() {
   return (
-    <aside className="fixed bottom-0 left-0 top-0 w-60 bg-slate-800">
+    <aside
+      id="nav"
+      className="fixed bottom-0 left-0 top-0 w-60 bg-slate-800 max-md:-translate-x-60 max-md:transition-transform md:block"
+    >
+      <button
+        onClick={(e) => {
+          const target = e.target as HTMLButtonElement;
+          const sideBar = target.parentElement as HTMLElement;
+          sideBar.classList.add("max-md:-translate-x-60");
+        }}
+        className="absolute right-4 top-4 md:hidden"
+      >
+        <X className="pointer-events-none" />
+      </button>
       <nav>
-        <h3 className="mb-9 mt-5 text-center text-lg font-medium">
+        <h3 className="mb-9 mt-7 text-center text-lg font-medium">
           Bell Scheduler
         </h3>
         <NavList>

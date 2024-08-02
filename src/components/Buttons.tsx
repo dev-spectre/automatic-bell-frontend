@@ -1,4 +1,5 @@
 import { ButtonProps } from "@/types";
+import { Menu } from "lucide-react";
 
 export function RegisterButton({ label, onClick }: ButtonProps) {
   return (
@@ -8,6 +9,19 @@ export function RegisterButton({ label, onClick }: ButtonProps) {
       onClick={onClick}
     >
       {label}
+    </button>
+  );
+}
+
+export function MenuButton() {
+  return (
+    <button
+      onClick={() => {
+        const sideBar = document.querySelector("aside#nav");
+        sideBar?.classList.remove("max-md:-translate-x-60");
+      }}
+    >
+      <Menu />
     </button>
   );
 }
