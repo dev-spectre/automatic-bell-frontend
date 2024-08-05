@@ -26,7 +26,7 @@ export function NavLink({ label, link, icon }: NavItemProps) {
     <li className="text-base font-normal">
       <Link
         to={link}
-        className="flex h-full w-full items-center gap-4 px-6 py-2 hover:bg-white/15 active:bg-orange-400"
+        className="flex h-full w-full items-center gap-4 px-6 py-2 hover:bg-white/15 active:bg-orange-450"
       >
         <div className="w-4">
           <img className="h-4" src={icon} aria-label={label} />
@@ -43,7 +43,7 @@ export function NavButton({ label, onClick, icon }: NavButtonProps) {
       <button
         type="button"
         onClick={onClick}
-        className="flex h-full w-full items-center gap-4 px-6 py-2 hover:bg-white/15 active:bg-orange-400"
+        className="flex h-full w-full items-center gap-4 px-6 py-2 hover:bg-white/15 active:bg-orange-450"
       >
         <div className="w-4">
           <img className="h-4" src={icon} aria-label={label} />
@@ -62,7 +62,7 @@ export function NavCollapsible({ label, icon, children }: NavCollapsibleProps) {
       <button
         type="button"
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="flex h-full w-full items-center gap-4 px-6 py-2 hover:bg-white/15 active:bg-orange-400"
+        className="flex h-full w-full items-center gap-4 px-6 py-2 hover:bg-white/15 active:bg-orange-450"
       >
         <div className="w-4">
           <img className="h-4" src={icon} aria-label={label} />
@@ -94,7 +94,7 @@ export function SideBar() {
   return (
     <aside
       id="nav"
-      className="fixed bottom-0 left-0 top-0 w-60 bg-slate-800 max-md:-translate-x-60 max-md:transition-transform md:block"
+      className="bg-eclipse-elixir-500 fixed bottom-0 left-0 top-0 w-60 max-md:-translate-x-60 max-md:transition-transform md:block"
     >
       <button
         onClick={(e) => {

@@ -25,3 +25,22 @@ export function MenuButton() {
     </button>
   );
 }
+
+export function Button({ label, onClick, className }: ButtonProps) {
+  return (
+    <button
+      className={`min-w-44 rounded bg-black px-4 py-2 text-lg ${className}`}
+      onClick={onClick}
+    >
+      {label}
+    </button>
+  );
+}
+
+export function ManualButton() {
+  return <Button label="Manual" className="bg-cyan-600" onClick={() => {}} />;
+}
+
+export function EmergencyButton() {
+  return <Button label="Emergency" className="bg-red-600" onClick={() => {}} />;
+}

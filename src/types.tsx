@@ -15,6 +15,7 @@ export interface PasswordInputProps extends TextInputProps {}
 export interface ButtonProps {
   label: string;
   onClick: (event: React.MouseEvent<HTMLElement>) => void;
+  className?: string;
 }
 
 export interface RegsiterNavLinkProps {

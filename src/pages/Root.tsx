@@ -6,8 +6,7 @@ export function Root() {
   return (
     <>
       <SideBar />
-      <div className="min-h-[100dvh] bg-indigo-950 md:ml-60">
-      <MenuButton />
+      <div className="min-h-[100dvh] bg-corbeau-600 px-16 py-11 md:ml-60">
         <Outlet />
       </div>
     </>

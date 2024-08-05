@@ -10,7 +10,7 @@ export function TextInput({ label, placeholder }: TextInputProps) {
         {label}
       </label>
       <input
-        className="w-full rounded border border-zinc-600 bg-navy-500 px-2 pb-2 pt-1 outline-2 outline-orange-400 focus-visible:outline"
+        className="w-full rounded border border-zinc-600 bg-eclipse-elixir-400 px-2 pb-2 pt-1 outline-2 outline-orange-450 focus-visible:outline"
         type="text"
         id={inputId}
         name={inputId}
@@ -27,9 +27,9 @@ export function PasswordInput({ label, placeholder }: PasswordInputProps) {
       <label htmlFor={inputId} className="mb-1 block">
         {label}
       </label>
-      <div className="flex rounded border border-zinc-600 outline-2 outline-orange-400">
+      <div className="flex rounded border border-zinc-600 outline-2 outline-orange-450">
         <input
-          className="w-full rounded-l bg-navy-500 px-2 pb-2 pt-1 focus-visible:outline-none"
+          className="w-full rounded-l bg-eclipse-elixir-400 px-2 pb-2 pt-1 focus-visible:outline-none"
           type="password"
           id={inputId}
           name={inputId}
@@ -46,7 +46,7 @@ export function PasswordInput({ label, placeholder }: PasswordInputProps) {
           }}
         />
         <button
-          className="rounded-r bg-navy-500 pr-2"
+          className="rounded-r bg-eclipse-elixir-400 pr-2"
           type="button"
           onClick={(e) => {
             const buttonTarget = e.target as HTMLButtonElement;

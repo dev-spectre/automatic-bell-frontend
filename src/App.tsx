@@ -10,6 +10,7 @@ import {
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Provider } from "react-redux";
 import Toast from "./components/Toast";
+import { CreateSchedule } from "./pages/createSchedule";
 
 const router = createBrowserRouter([
   {
@@ -17,8 +18,8 @@ const router = createBrowserRouter([
     element: <Root />,
     children: [
       {
-        path: "/",
-        element: <h1 className="col-auto flex items-center justify-center">Dummy</h1>,
+        path: "schedule/create",
+        element: <CreateSchedule />,
       },
     ],
   },

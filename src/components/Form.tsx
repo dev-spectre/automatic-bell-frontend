@@ -4,9 +4,11 @@ import { getFormData } from "@/utilities/forms";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
+  Form,
   AccountRegisterFormContainer,
   RegisterNavLink,
   RegisterFormHeading,
+  HorizontalLine,
 } from "./Utilities";
 import {
   getDeviceInfo,
@@ -103,7 +105,7 @@ export function AccountLoginForm() {
       <TextInput label="User ID" placeholder="Enter user ID" />
       <div>
         <PasswordInput label="Password" placeholder="Enter password" />
-        <Link className="block text-right text-orange-400" to="/auth/password">
+        <Link className="block text-right text-orange-450" to="/auth/password">
           Forgot password?
         </Link>
       </div>
@@ -234,4 +236,8 @@ export function AccountResetPasswordForm() {
       )}
     </AccountRegisterFormContainer>
   );
+}
+
+export function ScheduleCreateForm() {
+  return <Form> </Form>;
 }

@@ -20,23 +20,18 @@ module.exports = {
       fontFamily: {
         poppins: ["Poppins", "sans-serif"],
       },
-      gradientColorStops: {
-        5: "5%",
-        1: "1%",
-      },
       colors: {
-        navy: {
-          500: "#1E2137",
-          600: "#161B2F",
-          800: "#071E28",
-        },
-        dark: {
-          blue: {
-            300: "#02091D",
+        eclipse: {
+          elixir: {
+            400: "#444865",
+            500: "#1E2137",
           },
         },
         orange: {
           450: "#E68133",
+        },
+        corbeau: {
+          600: "#101427",
         },
 
         border: "hsl(var(--border))",
