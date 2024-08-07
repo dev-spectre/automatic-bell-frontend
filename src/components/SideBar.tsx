@@ -13,9 +13,8 @@ import details from "@/assets/details.png";
 import logout from "@/assets/logout.png";
 import schedule from "@/assets/schedule.png";
 import settings from "@/assets/settings.png";
-import expand from "@/assets/expand.svg";
 import { useState } from "react";
-import { X } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 
 export function NavList({ children }: NavListProps) {
   return <ul className="flex flex-col gap-1">{children}</ul>;
@@ -26,7 +25,7 @@ export function NavLink({ label, link, icon }: NavItemProps) {
     <li className="text-base font-normal">
       <Link
         to={link}
-        className="flex h-full w-full items-center gap-4 px-6 py-2 hover:bg-white/15 active:bg-orange-450"
+        className="flex h-full w-full items-center gap-4 px-6 py-2 hover:bg-white/15 active:bg-orange-450 active:text-black"
       >
         <div className="w-4">
           <img className="h-4" src={icon} aria-label={label} />
@@ -43,7 +42,7 @@ export function NavButton({ label, onClick, icon }: NavButtonProps) {
       <button
         type="button"
         onClick={onClick}
-        className="flex h-full w-full items-center gap-4 px-6 py-2 hover:bg-white/15 active:bg-orange-450"
+        className="flex h-full w-full items-center gap-4 px-6 py-2 hover:bg-white/15 active:bg-orange-450 active:text-black"
       >
         <div className="w-4">
           <img className="h-4" src={icon} aria-label={label} />
@@ -62,13 +61,15 @@ export function NavCollapsible({ label, icon, children }: NavCollapsibleProps) {
       <button
         type="button"
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="flex h-full w-full items-center gap-4 px-6 py-2 hover:bg-white/15 active:bg-orange-450"
+        className="flex h-full w-full items-center gap-4 px-6 py-2 hover:bg-white/15 active:bg-orange-450 active:text-black"
       >
         <div className="w-4">
           <img className="h-4" src={icon} aria-label={label} />
         </div>
         {label}
-        <img className="w-4" src={expand} alt="expand" />
+        <ChevronDown
+          className={`text-hoki-500 w-6 -rotate-90 transition-transform ${!isCollapsed ? "rotate-0" : ""}`}
+        />
       </button>
       {!isCollapsed && <div>{children}</div>}
     </li>
@@ -94,7 +95,7 @@ export function SideBar() {
   return (
     <aside
       id="nav"
-      className="bg-eclipse-elixir-500 fixed bottom-0 left-0 top-0 w-60 max-md:-translate-x-60 max-md:transition-transform md:block"
+      className="fixed bottom-0 left-0 top-0 w-60 bg-eclipse-elixir-500 max-md:-translate-x-60 max-md:transition-transform md:block"
     >
       <button
         onClick={(e) => {

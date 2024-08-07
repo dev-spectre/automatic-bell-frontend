@@ -8,11 +8,28 @@ export interface ReactNodes {
 export interface TextInputProps {
   label: string;
   placeholder: string;
+  className?: string;
+  name?: string;
 }
 
 export interface PasswordInputProps extends TextInputProps {}
 
+export type TimeInputProps = Omit<TextInputProps, "placeholder">;
+
+export interface NumberInputProps extends TextInputProps {
+  unit?: string;
+}
+
+export interface SelectInputProps extends TextInputProps {
+  options: { value: string; label: string }[];
+}
+
+export interface CheckboxProps {
+  label: string;
+}
+
 export interface ButtonProps {
+  type?: "submit" | "button" | "reset";
   label: string;
   onClick: (event: React.MouseEvent<HTMLElement>) => void;
   className?: string;
@@ -92,7 +109,14 @@ export interface NavButtonProps {
   icon: string;
 }
 
-export interface NavCollapsibleProps extends ReactNodes {
+export interface CollapsibleSectionProps extends ReactNodes {
   label: string;
+}
+
+export interface NavCollapsibleProps extends CollapsibleSectionProps {
   icon: string;
+}
+
+export interface ScheduleDetailProps {
+  type: "session" | "additional";
 }

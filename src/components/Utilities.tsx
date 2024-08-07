@@ -1,6 +1,13 @@
 import { Link } from "react-router-dom";
-import { ReactNodes, RegsiterNavLinkProps, FormHeadingProps } from "@/types";
+import {
+  ReactNodes,
+  RegsiterNavLinkProps,
+  FormHeadingProps,
+  CollapsibleSectionProps,
+} from "@/types";
 import { EmergencyButton, ManualButton } from "./Buttons";
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 
 export function AccountRegisterFormContainer({ children }: ReactNodes) {
   return (
@@ -12,8 +19,12 @@ export function AccountRegisterFormContainer({ children }: ReactNodes) {
 
 export function Form({ children }: ReactNodes) {
   return (
-    <form className="rounded-md bg-eclipse-elixir-500 py-16">{children}</form>
+    <form className="rounded-md bg-eclipse-elixir-500 py-12">{children}</form>
   );
+}
+
+export function FormSection({ children }: ReactNodes) {
+  return <section className="px-7">{children}</section>;
 }
 
 export function RegisterNavLink({
@@ -36,7 +47,7 @@ export function RegisterFormHeading({ text }: FormHeadingProps) {
 }
 
 export function HorizontalLine() {
-  return <hr className="border-t-slate-500" />;
+  return <hr className="border-t-hoki-600 my-7" />;
 }
 
 export function ManualControl() {
@@ -45,5 +56,29 @@ export function ManualControl() {
       <ManualButton />
       <EmergencyButton />
     </div>
+  );
+}
+
+export function CollapsibleSection({
+  label,
+  children,
+}: CollapsibleSectionProps) {
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
+  return (
+    <section>
+      <h2 className="font-semibold">
+        <button
+          type="button"
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="flex h-full w-full items-center py-2"
+        >
+          {label}
+          <ChevronDown
+            className={`ml-4 w-6 -rotate-90 transition-transform ${!isCollapsed ? "rotate-0" : ""}`}
+          />
+        </button>
+      </h2>
+      {!isCollapsed && <div>{children}</div>}
+    </section>
   );
 }

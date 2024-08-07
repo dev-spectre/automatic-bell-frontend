@@ -1,5 +1,12 @@
-import { RegisterButton } from "./Buttons";
-import { TextInput, PasswordInput } from "./Input";
+import { OutlineButton, RegisterButton, SolidButton } from "./Buttons";
+import {
+  TextInput,
+  PasswordInput,
+  FormTimeInput,
+  FormSelectInput,
+  FormCheckBox,
+  FormNumberInput,
+} from "./Input";
 import { getFormData } from "@/utilities/forms";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -9,6 +16,8 @@ import {
   RegisterNavLink,
   RegisterFormHeading,
   HorizontalLine,
+  FormSection,
+  CollapsibleSection,
 } from "./Utilities";
 import {
   getDeviceInfo,
@@ -18,6 +27,7 @@ import {
 } from "@/utilities/register";
 import { useDispatch } from "react-redux";
 import { addToast } from "@/store/slice/toasts";
+import { ScheduleDetailProps } from "@/types";
 
 export function AccountRegisterForm() {
   const dispatch = useDispatch();
@@ -239,5 +249,123 @@ export function AccountResetPasswordForm() {
 }
 
 export function ScheduleCreateForm() {
-  return <Form> </Form>;
+  return (
+    <Form>
+      <FormSection>
+        <input className="text-hoki-500 w-full text-right" type="reset" />
+      </FormSection>
+      <FormSection>
+        <TextInput
+          className="placeholder-hoki-500 placeholder:italic"
+          label="Schedule Name"
+          placeholder="Enter schedule name"
+        />
+      </FormSection>
+      <HorizontalLine />
+      <ScheduleDetailForm type="session" />
+    </Form>
+  );
+}
+
+function ScheduleDetailForm({ type }: ScheduleDetailProps) {
+  return (
+    <>
+      <FormSection>
+        {type !== "additional" ? <Session /> : <AdditionalBell />}
+        <div>
+          <CollapsibleSection label="Mode settings">
+            <div className="mb-3 flex flex-wrap items-center gap-4">
+              <FormNumberInput
+                label="Duration"
+                unit="secs"
+                placeholder="Ring duration"
+              />
+              <FormNumberInput
+                label="Gap"
+                unit="secs"
+                placeholder="Gap between rings"
+              />
+            </div>
+            <FormNumberInput
+              label="No. of rings"
+              placeholder="Total no. of rings"
+            />
+          </CollapsibleSection>
+        </div>
+      </FormSection>
+      <HorizontalLine />
+      <FormSection>
+        <div className="flex flex-wrap content-center justify-between gap-4">
+          <div className="flex flex-wrap content-center gap-4">
+            <OutlineButton label="Add session" onClick={() => {}} />
+            <OutlineButton label="Add Additional Bell" onClick={() => {}} />
+          </div>
+          <SolidButton type="submit" label="Confirm" onClick={() => {}} />
+        </div>
+      </FormSection>
+    </>
+  );
+}
+
+function AdditionalBell() {
+  return (
+    <>
+      <h3 className="mb-5 text-lg font-semibold">Additional Bell</h3>
+      <div className="max-w-90 mb-5 flex flex-wrap items-center gap-4">
+        <FormTimeInput label="Start time" />
+        <FormSelectInput
+          name="mode"
+          label="Mode"
+          options={[
+            {
+              value: "single",
+              label: "Single chime",
+            },
+            {
+              value: "repeat",
+              label: "Repeat chime",
+            },
+          ]}
+          placeholder="Select a mode"
+        />
+      </div>
+    </>
+  );
+}
+
+function Session() {
+  return (
+    <>
+      <h3 className="mb-5 text-lg font-semibold">Session</h3>
+      <div className="max-w-90 mb-5 flex flex-wrap items-center gap-4">
+        <FormTimeInput label="Start time" />
+        <FormTimeInput label="End time" className="max-w-sm" />
+        <div className="mb-3 self-end">
+          <FormCheckBox label="Include end time" />
+        </div>
+      </div>
+      <div className="mb-3 flex flex-wrap items-center gap-4">
+        <FormSelectInput
+          name="mode"
+          label="Mode"
+          options={[
+            {
+              value: "single",
+              label: "Single chime",
+            },
+            {
+              value: "repeat",
+              label: "Repeat chime",
+            },
+          ]}
+          placeholder="Select a mode"
+        />
+        <FormNumberInput
+          label="Intervals"
+          unit="min"
+          placeholder="Gap between bells"
+        />
+      </div>
+    </>
+  );
 }

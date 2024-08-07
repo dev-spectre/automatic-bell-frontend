@@ -23,7 +23,7 @@ module.exports = {
       colors: {
         eclipse: {
           elixir: {
-            400: "#444865",
+            400: "#292C43",
             500: "#1E2137",
           },
         },
@@ -32,6 +32,10 @@ module.exports = {
         },
         corbeau: {
           600: "#101427",
+        },
+        hoki: {
+          500: "#657C86",
+          600: "#444865",
         },
 
         border: "hsl(var(--border))",
