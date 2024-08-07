@@ -52,7 +52,7 @@ export function HorizontalLine() {
 
 export function ManualControl() {
   return (
-    <div className="flex gap-2">
+    <div className="flex flex-wrap gap-2">
       <ManualButton />
       <EmergencyButton />
     </div>

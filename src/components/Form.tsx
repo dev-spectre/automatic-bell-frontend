@@ -28,6 +28,7 @@ import {
 import { useDispatch } from "react-redux";
 import { addToast } from "@/store/slice/toasts";
 import { ScheduleDetailProps } from "@/types";
+import { X } from "lucide-react";
 
 export function AccountRegisterForm() {
   const dispatch = useDispatch();
@@ -311,7 +312,12 @@ function ScheduleDetailForm({ type }: ScheduleDetailProps) {
 function AdditionalBell() {
   return (
     <>
-      <h3 className="mb-5 text-lg font-semibold">Additional Bell</h3>
+      <div className="flex justify-between">
+        <h3 className="mb-5 text-lg font-semibold">Additional Bell</h3>
+        <button className="self-start" type="button" onClick={() => {}}>
+          <X />
+        </button>
+      </div>
       <div className="max-w-90 mb-5 flex flex-wrap items-center gap-4">
         <FormTimeInput label="Start time" />
         <FormSelectInput
@@ -337,7 +343,12 @@ function AdditionalBell() {
 function Session() {
   return (
     <>
-      <h3 className="mb-5 text-lg font-semibold">Session</h3>
+      <div className="flex justify-between">
+        <h3 className="mb-5 text-lg font-semibold">Session</h3>
+        <button className="self-start" type="button" onClick={() => {}}>
+          <X />
+        </button>
+      </div>
       <div className="max-w-90 mb-5 flex flex-wrap items-center gap-4">
         <FormTimeInput label="Start time" />
         <FormTimeInput label="End time" className="max-w-sm" />

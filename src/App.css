@@ -725,6 +725,14 @@ body {
   margin-top: 1.75rem;
 }
 
+.-mt-3 {
+  margin-top: -0.75rem;
+}
+
+.-mt-7 {
+  margin-top: -1.75rem;
+}
+
 .block {
   display: block;
 }
@@ -890,6 +898,10 @@ body {
   flex-wrap: wrap;
 }
 
+.flex-wrap-reverse {
+  flex-wrap: wrap-reverse;
+}
+
 .content-center {
   align-content: center;
 }
@@ -928,8 +940,20 @@ body {
   margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
 }
 
+.self-start {
+  align-self: flex-start;
+}
+
 .self-end {
   align-self: flex-end;
+}
+
+.justify-self-start {
+  justify-self: start;
+}
+
+.justify-self-end {
+  justify-self: end;
 }
 
 .overflow-hidden {
@@ -1193,6 +1217,10 @@ body {
 
 .text-right {
   text-align: right;
+}
+
+.align-top {
+  vertical-align: top;
 }
 
 .font-poppins {
