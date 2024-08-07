@@ -141,7 +141,7 @@ export function FormCheckBox({ label }: CheckboxProps) {
   const checkboxId = label.toLowerCase().replace(/\s/g, "-");
   return (
     <div className="flex items-center space-x-2">
-      <Checkbox className="border-white" id={checkboxId} />
+      <Checkbox checked={true} className="border-white" id={checkboxId} />
       <label
         htmlFor={checkboxId}
         className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
