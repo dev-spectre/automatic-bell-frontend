@@ -263,6 +263,16 @@ export function ScheduleCreateForm() {
       </FormSection>
       <HorizontalLine />
       <ScheduleDetailForm type="session" />
+      <ScheduleDetailForm type="additional" />
+      <FormSection>
+        <div className="flex flex-wrap content-center justify-between gap-4">
+          <div className="flex flex-wrap content-center gap-4">
+            <OutlineButton label="Add session" onClick={() => {}} />
+            <OutlineButton label="Add Additional Bell" onClick={() => {}} />
+          </div>
+          <SolidButton type="submit" label="Confirm" onClick={() => {}} />
+        </div>
+      </FormSection>
     </Form>
   );
 }
@@ -294,15 +304,6 @@ function ScheduleDetailForm({ type }: ScheduleDetailProps) {
         </div>
       </FormSection>
       <HorizontalLine />
-      <FormSection>
-        <div className="flex flex-wrap content-center justify-between gap-4">
-          <div className="flex flex-wrap content-center gap-4">
-            <OutlineButton label="Add session" onClick={() => {}} />
-            <OutlineButton label="Add Additional Bell" onClick={() => {}} />
-          </div>
-          <SolidButton type="submit" label="Confirm" onClick={() => {}} />
-        </div>
-      </FormSection>
     </>
   );
 }
