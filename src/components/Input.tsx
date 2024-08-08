@@ -18,40 +18,49 @@ import {
 } from "@/components/ui/select";
 
 export function TextInput({
+  id,
   label,
   placeholder,
   name,
   className,
+  value,
+  onChange,
+  ...props
 }: TextInputProps) {
-  const inputId = label.toLowerCase().replace(/\s/g, "-");
+  const inputId = id || name || label.toLowerCase().replace(/\s/g, "-");
   return (
     <div className="max-w-md">
       <label htmlFor={inputId} className="mb-1 block">
         {label}
       </label>
       <input
-        className={`border-hoki-600 w-full rounded border bg-eclipse-elixir-400 px-2 pb-2 pt-1 outline-2 outline-orange-450 focus-visible:outline ${className}`}
+        className={`w-full rounded border border-hoki-600 bg-eclipse-elixir-400 px-2 pb-2 pt-1 outline-2 outline-orange-450 focus-visible:outline ${className}`}
         type="text"
         id={inputId}
         name={name || inputId}
         placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        {...props}
       />
     </div>
   );
 }
 
 export function PasswordInput({
+  id,
   label,
   placeholder,
   name,
+  ...props
 }: PasswordInputProps) {
-  const inputId = label.toLowerCase().replace(/\s/g, "-");
+  const inputId = id || name || label.toLowerCase().replace(/\s/g, "-");
   return (
     <div className="max-w-md">
       <label htmlFor={inputId} className="mb-1 block">
         {label}
       </label>
-      <div className="border-hoki-600 flex rounded border outline-2 outline-orange-450">
+      <div className="flex rounded border border-hoki-600 outline-2 outline-orange-450">
         <input
           className="w-full rounded-l bg-eclipse-elixir-400 px-2 pb-2 pt-1 focus-visible:outline-none"
           type="password"
@@ -68,6 +77,7 @@ export function PasswordInput({
             const parentElement = inputTarget.parentElement as HTMLElement;
             parentElement.classList.remove("outline");
           }}
+          {...props}
         />
         <button
           className="rounded-r bg-eclipse-elixir-400 pr-2"
@@ -107,19 +117,33 @@ export function PasswordInput({
   );
 }
 
-export function FormTextInput({ label, placeholder, name }: TextInputProps) {
+export function FormTextInput({
+  id,
+  label,
+  placeholder,
+  name,
+  ...props
+}: TextInputProps) {
   return (
     <TextInput
+      id={id || name}
       className="max-w-60"
       name={name}
       label={label}
       placeholder={placeholder}
+      {...props}
     />
   );
 }
 
-export function FormTimeInput({ label, name, className }: TimeInputProps) {
-  const inputId = label.toLowerCase().replace(/\s/g, "-");
+export function FormTimeInput({
+  id,
+  label,
+  name,
+  className,
+  ...props
+}: TimeInputProps) {
+  const inputId = id || name || label.toLowerCase().replace(/\s/g, "-");
   return (
     <div className={`min-w-44 max-w-md flex-grow ${className}`}>
       <label htmlFor={inputId} className="mb-1 block">
@@ -127,18 +151,19 @@ export function FormTimeInput({ label, name, className }: TimeInputProps) {
       </label>
       <div className="max-w-sm">
         <input
-          className={`border-hoki-600 placeholder-hoki-500 w-full rounded border bg-eclipse-elixir-400 px-2 pb-2 pt-1 outline-2 outline-orange-450 focus-visible:outline`}
+          className={`w-full rounded border border-hoki-600 bg-eclipse-elixir-400 px-2 pb-2 pt-1 placeholder-hoki-500 outline-2 outline-orange-450 focus-visible:outline`}
           type="time"
           id={inputId}
           name={name || inputId}
+          {...props}
         />
       </div>
     </div>
   );
 }
 
-export function FormCheckBox({ label }: CheckboxProps) {
-  const checkboxId = label.toLowerCase().replace(/\s/g, "-");
+export function FormCheckBox({ id, label, name }: CheckboxProps) {
+  const checkboxId = id || name || label.toLowerCase().replace(/\s/g, "-");
   return (
     <div className="flex items-center space-x-2">
       <Checkbox checked={true} className="border-white" id={checkboxId} />
@@ -157,15 +182,23 @@ export function FormSelectInput({
   placeholder,
   name,
   options,
+  onValueChange,
+  ...props
 }: SelectInputProps) {
   const selectName = label.toLowerCase().replace(/\s/g, "-");
+  let key = 0;
+
   return (
     <div className="min-w-44 max-w-md flex-grow">
       <p className="mb-1">{label}</p>
-      <Select name={name || selectName}>
-        <SelectTrigger className="border-hoki-600 max-w-sm bg-eclipse-elixir-400 outline-2 focus:outline focus:outline-orange-450">
+      <Select
+        onValueChange={onValueChange}
+        name={name || selectName}
+        {...props}
+      >
+        <SelectTrigger className="max-w-sm border-hoki-600 bg-eclipse-elixir-400 outline-2 focus:outline focus:outline-orange-450">
           <SelectValue
-            className="text-hoki-500 placeholder-hoki-500 italic"
+            className="italic text-hoki-500 placeholder-hoki-500"
             placeholder={placeholder}
           />
         </SelectTrigger>
@@ -174,6 +207,7 @@ export function FormSelectInput({
             <SelectItem
               className="bg-eclipse-elixir-400 focus:bg-orange-450"
               value={option.value}
+              key={key++}
             >
               {option.label}
             </SelectItem>
@@ -185,21 +219,24 @@ export function FormSelectInput({
 }
 
 export function FormNumberInput({
+  id,
   label,
   placeholder,
   name,
   unit,
+  ...props
 }: NumberInputProps) {
-  const inputId = label.toLowerCase().replace(/\s/g, "-");
+  const inputId = id || label.toLowerCase().replace(/\s/g, "-");
   return (
     <div className="max-w-md flex-grow">
       <label htmlFor={inputId} className="mb-1 block">
         {label}
       </label>
-      <div className="border-hoki-600 flex max-w-sm rounded border outline-2 outline-orange-450">
+      <div className="flex max-w-sm rounded border border-hoki-600 outline-2 outline-orange-450">
         <input
+          {...props}
           size={5}
-          className="placeholder-hoki-500 w-full rounded-l bg-eclipse-elixir-400 px-2 pb-2 pt-1 placeholder:italic focus-visible:outline-none"
+          className="w-full rounded-l bg-eclipse-elixir-400 px-2 pb-2 pt-1 placeholder-hoki-500 placeholder:italic focus-visible:outline-none"
           type="text"
           pattern="\d*"
           id={inputId}
@@ -217,7 +254,7 @@ export function FormNumberInput({
           }}
         />
         {unit && (
-          <div className="text-hoki-500 outline-hoki-600 rounded-r bg-eclipse-elixir-400 px-2 pt-1 font-semibold italic outline outline-1">
+          <div className="rounded-r bg-eclipse-elixir-400 px-2 pt-1 font-semibold italic text-hoki-500 outline outline-1 outline-hoki-600">
             {unit}
           </div>
         )}

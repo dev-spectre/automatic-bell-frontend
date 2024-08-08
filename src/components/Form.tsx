@@ -8,7 +8,7 @@ import {
   FormNumberInput,
 } from "./Input";
 import { getFormData } from "@/utilities/forms";
-import { useState } from "react";
+import { createContext, useContext, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Form,
@@ -25,10 +25,13 @@ import {
   signInUser,
   resetPassword,
 } from "@/utilities/register";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addToast } from "@/store/slice/toasts";
 import { ScheduleDetailProps } from "@/types";
 import { X } from "lucide-react";
+import { Field, FieldArray, FieldArrayRenderProps, Formik } from "formik";
+import { setMode } from "@/store/slice/createScheduleForm";
+import { AppStore } from "@/store";
 
 export function AccountRegisterForm() {
   const dispatch = useDispatch();
@@ -249,79 +252,219 @@ export function AccountResetPasswordForm() {
   );
 }
 
+const ScheduleCreateFormContext = createContext<{
+  index: number;
+  arrayHelpers: FieldArrayRenderProps | undefined | null;
+}>({
+  index: 0,
+  arrayHelpers: null,
+});
+
 export function ScheduleCreateForm() {
+  const arrayHelpersRef = useRef<FieldArrayRenderProps>();
+
   return (
-    <Form>
-      <FormSection>
-        <input className="text-hoki-500 w-full text-right" type="reset" />
-      </FormSection>
-      <FormSection>
-        <TextInput
-          className="placeholder-hoki-500 placeholder:italic"
-          label="Schedule Name"
-          placeholder="Enter schedule name"
-        />
-      </FormSection>
-      <HorizontalLine />
-      <ScheduleDetailForm type="session" />
-      <ScheduleDetailForm type="additional" />
-      <FormSection>
-        <div className="flex flex-wrap content-center justify-between gap-4">
-          <div className="flex flex-wrap content-center gap-4">
-            <OutlineButton label="Add session" onClick={() => {}} />
-            <OutlineButton label="Add Additional Bell" onClick={() => {}} />
-          </div>
-          <SolidButton type="submit" label="Confirm" onClick={() => {}} />
-        </div>
-      </FormSection>
-    </Form>
+    <Formik
+      initialValues={{
+        scheduleName: "",
+        schedules: [
+          {
+            type: "session",
+            start: "",
+            end: "",
+            includeEndTime: "",
+            interval: "",
+            mode: {
+              type: "",
+              duration: "",
+              ringCount: "",
+              gap: "",
+            },
+          },
+        ],
+      }}
+      onSubmit={(values) => {
+        console.log(values);
+      }}
+      component={(props) => (
+        <Form {...props}>
+          <FormSection>
+            <input className="w-full text-right text-hoki-500" type="reset" />
+          </FormSection>
+          <FormSection>
+            <Field
+              component={TextInput}
+              className="placeholder-hoki-500 placeholder:italic"
+              label="Schedule Name"
+              placeholder="Enter schedule name"
+              name="scheduleName"
+            />
+          </FormSection>
+          <HorizontalLine />
+          <FieldArray
+            name="schedules"
+            render={(arrayHelpers) => {
+              arrayHelpersRef.current = arrayHelpers;
+              const schedules = props.values.schedules;
+
+              return (
+                <>
+                  {schedules.map((schedule, index) => (
+                    <ScheduleCreateFormContext.Provider
+                      value={{
+                        arrayHelpers,
+                        index,
+                      }}
+                      key={index}
+                    >
+                      <ScheduleDetail
+                        type={(() => {
+                          return schedule.type === "session" ||
+                            schedule.type === "additional"
+                            ? schedule.type
+                            : "session";
+                        })()}
+                        index={index}
+                      />
+                    </ScheduleCreateFormContext.Provider>
+                  ))}
+                </>
+              );
+            }}
+          />
+          <FormSection>
+            <div className="flex flex-wrap content-center justify-between gap-4">
+              <div className="flex flex-wrap content-center gap-4">
+                <OutlineButton
+                  label="Add session"
+                  onClick={() => {
+                    console.log(arrayHelpersRef.current);
+                    arrayHelpersRef.current?.push({
+                      type: "session",
+                      start: "",
+                      end: "",
+                      includeEndTime: "",
+                      interval: "",
+                      mode: {
+                        type: "",
+                        duration: "",
+                        ringCount: "",
+                        gap: "",
+                      },
+                    });
+                  }}
+                />
+                <OutlineButton
+                  label="Add Additional Bell"
+                  onClick={() => {
+                    arrayHelpersRef.current?.push({
+                      type: "additional",
+                      start: "",
+                      end: "",
+                      includeEndTime: "",
+                      interval: "",
+                      mode: {
+                        type: "",
+                        duration: "",
+                        ringCount: "",
+                        gap: "",
+                      },
+                    });
+                  }}
+                />
+              </div>
+              <SolidButton type="submit" label="Confirm" />
+            </div>
+          </FormSection>
+        </Form>
+      )}
+    />
   );
 }
 
-function ScheduleDetailForm({ type }: ScheduleDetailProps) {
+function ScheduleDetail({ type }: ScheduleDetailProps) {
   return (
     <>
       <FormSection>
         {type !== "additional" ? <Session /> : <AdditionalBell />}
-        <div>
-          <CollapsibleSection label="Mode settings">
-            <div className="mb-3 flex flex-wrap items-center gap-4">
-              <FormNumberInput
-                label="Duration"
-                unit="secs"
-                placeholder="Ring duration"
-              />
-              <FormNumberInput
-                label="Gap"
-                unit="secs"
-                placeholder="Gap between rings"
-              />
-            </div>
-            <FormNumberInput
-              label="No. of rings"
-              placeholder="Total no. of rings"
-            />
-          </CollapsibleSection>
-        </div>
+        <ModeDetails />
       </FormSection>
       <HorizontalLine />
     </>
   );
 }
 
+function ModeDetails() {
+  const { index } = useContext(ScheduleCreateFormContext);
+  const mode = useSelector((state: AppStore) => state.createScheduleForm.mode);
+  return (
+    mode && (
+      <div>
+        <CollapsibleSection label="Mode settings">
+          <div className="mb-3 flex flex-wrap items-center gap-4">
+            <Field
+              component={FormNumberInput}
+              label="Duration"
+              unit="secs"
+              placeholder="Ring duration"
+              name={`schedules.${index}.mode.duration`}
+              id={`schedules.${index}.mode.duration`}
+            />
+            {mode === "repeat" && (
+              <Field
+                component={FormNumberInput}
+                label="Gap"
+                unit="secs"
+                placeholder="Gap between rings"
+                name={`schedules.${index}.mode.gap`}
+                id={`schedules.${index}.mode.gap`}
+              />
+            )}
+          </div>
+          {mode === "repeat" && (
+            <Field
+              component={FormNumberInput}
+              label="No. of rings"
+              placeholder="Total no. of rings"
+              name={`schedules.${index}.mode.ringCount`}
+              id={`schedules.${index}.mode.ringCount`}
+            />
+          )}
+        </CollapsibleSection>
+      </div>
+    )
+  );
+}
+
 function AdditionalBell() {
+  const { index, arrayHelpers } = useContext(ScheduleCreateFormContext);
+  const dispatch = useDispatch();
+
   return (
     <>
       <div className="flex justify-between">
         <h3 className="mb-5 text-lg font-semibold">Additional Bell</h3>
-        <button className="self-start" type="button" onClick={() => {}}>
-          <X />
+        <button
+          className="self-start"
+          type="button"
+          onClick={() => {
+            arrayHelpers?.remove(index);
+          }}
+        >
+          <X className="text-hoki-500" />
         </button>
       </div>
       <div className="max-w-90 mb-5 flex flex-wrap items-center gap-4">
-        <FormTimeInput label="Start time" />
-        <FormSelectInput
-          name="mode"
+        <Field
+          name={`schedules.${index}.start`}
+          id={`schedules.${index}.start`}
+          component={FormTimeInput}
+          label="Start time"
+        />
+        <Field
+          component={FormSelectInput}
+          name={`schedules.${index}.mode.type`}
+          id={`schedules.${index}.mode.type`}
           label="Mode"
           options={[
             {
@@ -334,6 +477,13 @@ function AdditionalBell() {
             },
           ]}
           placeholder="Select a mode"
+          onValueChange={(value: string) => {
+            if (value === "single" || value === "repeat") {
+              dispatch(setMode({ mode: value }));
+            } else {
+              dispatch(setMode({ mode: null }));
+            }
+          }}
         />
       </div>
     </>
@@ -341,24 +491,51 @@ function AdditionalBell() {
 }
 
 function Session() {
+  const { index, arrayHelpers } = useContext(ScheduleCreateFormContext);
+  const dispatch = useDispatch();
+
   return (
     <>
       <div className="flex justify-between">
         <h3 className="mb-5 text-lg font-semibold">Session</h3>
-        <button className="self-start" type="button" onClick={() => {}}>
-          <X />
+        <button
+          className="self-start"
+          type="button"
+          onClick={() => {
+            arrayHelpers?.remove(index);
+          }}
+        >
+          <X className="text-hoki-500" />
         </button>
       </div>
       <div className="max-w-90 mb-5 flex flex-wrap items-center gap-4">
-        <FormTimeInput label="Start time" />
-        <FormTimeInput label="End time" className="max-w-sm" />
+        <Field
+          name={`schedules.${index}.start`}
+          id={`schedules.${index}.start`}
+          component={FormTimeInput}
+          label="Start time"
+        />
+        <Field
+          name={`schedules.${index}.end`}
+          id={`schedules.${index}.end`}
+          component={FormTimeInput}
+          label="End time"
+          className="max-w-sm"
+        />
         <div className="mb-3 self-end">
-          <FormCheckBox label="Include end time" />
+          <Field
+            name={`schedules.${index}.includeEndTime`}
+            id={`schedules.${index}.includeEndTime`}
+            component={FormCheckBox}
+            label="Include end time"
+          />
         </div>
       </div>
       <div className="mb-3 flex flex-wrap items-center gap-4">
-        <FormSelectInput
-          name="mode"
+        <Field
+          name={`schedules.${index}.mode.type`}
+          id={`schedules.${index}.mode.type`}
+          component={FormSelectInput}
           label="Mode"
           options={[
             {
@@ -371,8 +548,18 @@ function Session() {
             },
           ]}
           placeholder="Select a mode"
+          onValueChange={(value: string) => {
+            if (value === "single" || value === "repeat") {
+              dispatch(setMode({ mode: value }));
+            } else {
+              dispatch(setMode({ mode: null }));
+            }
+          }}
         />
-        <FormNumberInput
+        <Field
+          name={`schedules.${index}.interval`}
+          id={`schedules.${index}.interval`}
+          component={FormNumberInput}
           label="Intervals"
           unit="min"
           placeholder="Gap between bells"

@@ -4,6 +4,7 @@ import {
   RegsiterNavLinkProps,
   FormHeadingProps,
   CollapsibleSectionProps,
+  FormProps,
 } from "@/types";
 import { EmergencyButton, ManualButton } from "./Buttons";
 import { useState } from "react";
@@ -17,9 +18,17 @@ export function AccountRegisterFormContainer({ children }: ReactNodes) {
   );
 }
 
-export function Form({ children }: ReactNodes) {
+export function Form({
+  children,
+  handleSubmit,
+}: FormProps) {
   return (
-    <form className="rounded-md bg-eclipse-elixir-500 py-12">{children}</form>
+    <form
+      onSubmit={handleSubmit}
+      className="rounded-md bg-eclipse-elixir-500 py-12"
+    >
+      {children}
+    </form>
   );
 }
 
@@ -47,7 +56,7 @@ export function RegisterFormHeading({ text }: FormHeadingProps) {
 }
 
 export function HorizontalLine() {
-  return <hr className="border-t-hoki-600 my-7" />;
+  return <hr className="my-7 border-t-hoki-600" />;
 }
 
 export function ManualControl() {

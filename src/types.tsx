@@ -10,6 +10,10 @@ export interface TextInputProps {
   placeholder: string;
   className?: string;
   name?: string;
+  id?: string;
+  value?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onChange?: (e: React.ChangeEvent<any>) => void;
 }
 
 export interface PasswordInputProps extends TextInputProps {}
@@ -20,18 +24,21 @@ export interface NumberInputProps extends TextInputProps {
   unit?: string;
 }
 
-export interface SelectInputProps extends TextInputProps {
+export interface SelectInputProps extends Omit<TextInputProps, "onChange"> {
   options: { value: string; label: string }[];
+  onValueChange?: (value: string) => void;
 }
 
 export interface CheckboxProps {
+  id?: string;
+  name?: string;
   label: string;
 }
 
 export interface ButtonProps {
   type?: "submit" | "button" | "reset";
   label: string;
-  onClick: (event: React.MouseEvent<HTMLElement>) => void;
+  onClick?: (event: React.MouseEvent<HTMLElement>) => void;
   className?: string;
 }
 
@@ -119,4 +126,13 @@ export interface NavCollapsibleProps extends CollapsibleSectionProps {
 
 export interface ScheduleDetailProps {
   type: "session" | "additional";
+  index: number;
+}
+
+export interface CreateScheduleFormState {
+  mode: null | "single" | "repeat";
+}
+
+export interface FormProps extends ReactNodes {
+  handleSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
 }
