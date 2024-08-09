@@ -1,5 +1,6 @@
 import React, { ReactNode } from "react";
 import store from "./store";
+import { CheckedState } from "@radix-ui/react-checkbox";
 
 export interface ReactNodes {
   children: ReactNode;
@@ -33,6 +34,8 @@ export interface CheckboxProps {
   id?: string;
   name?: string;
   label: string;
+  onCheckedChange?: (value: CheckedState) => void;
+  defaultChecked: CheckedState;
 }
 
 export interface ButtonProps {

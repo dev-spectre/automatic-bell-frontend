@@ -32,6 +32,8 @@ import { X } from "lucide-react";
 import { Field, FieldArray, FieldArrayRenderProps, Formik } from "formik";
 import { setMode } from "@/store/slice/createScheduleForm";
 import { AppStore } from "@/store";
+import { CheckedState } from "@radix-ui/react-checkbox";
+import createScheduleSchema from "@/schema/createSchedule";
 
 export function AccountRegisterForm() {
   const dispatch = useDispatch();
@@ -254,10 +256,12 @@ export function AccountResetPasswordForm() {
 
 const ScheduleCreateFormContext = createContext<{
   index: number;
-  arrayHelpers: FieldArrayRenderProps | undefined | null;
+  arrayHelpers: FieldArrayRenderProps | null;
+  props: any;
 }>({
   index: 0,
   arrayHelpers: null,
+  props: null,
 });
 
 export function ScheduleCreateForm() {
@@ -272,17 +276,16 @@ export function ScheduleCreateForm() {
             type: "session",
             start: "",
             end: "",
-            includeEndTime: "",
+            includeEndTime: true,
             interval: "",
             mode: {
               type: "",
               duration: "",
-              ringCount: "",
-              gap: "",
             },
           },
         ],
       }}
+      validationSchema={createScheduleSchema}
       onSubmit={(values) => {
         console.log(values);
       }}
@@ -293,7 +296,7 @@ export function ScheduleCreateForm() {
           </FormSection>
           <FormSection>
             <Field
-              component={TextInput}
+              as={TextInput}
               className="placeholder-hoki-500 placeholder:italic"
               label="Schedule Name"
               placeholder="Enter schedule name"
@@ -314,6 +317,7 @@ export function ScheduleCreateForm() {
                       value={{
                         arrayHelpers,
                         index,
+                        props,
                       }}
                       key={index}
                     >
@@ -338,18 +342,15 @@ export function ScheduleCreateForm() {
                 <OutlineButton
                   label="Add session"
                   onClick={() => {
-                    console.log(arrayHelpersRef.current);
                     arrayHelpersRef.current?.push({
                       type: "session",
                       start: "",
                       end: "",
-                      includeEndTime: "",
+                      includeEndTime: true,
                       interval: "",
                       mode: {
                         type: "",
                         duration: "",
-                        ringCount: "",
-                        gap: "",
                       },
                     });
                   }}
@@ -360,14 +361,9 @@ export function ScheduleCreateForm() {
                     arrayHelpersRef.current?.push({
                       type: "additional",
                       start: "",
-                      end: "",
-                      includeEndTime: "",
-                      interval: "",
                       mode: {
                         type: "",
                         duration: "",
-                        ringCount: "",
-                        gap: "",
                       },
                     });
                   }}
@@ -405,7 +401,7 @@ function ModeDetails() {
         <CollapsibleSection label="Mode settings">
           <div className="mb-3 flex flex-wrap items-center gap-4">
             <Field
-              component={FormNumberInput}
+              as={FormNumberInput}
               label="Duration"
               unit="secs"
               placeholder="Ring duration"
@@ -414,7 +410,7 @@ function ModeDetails() {
             />
             {isRepeat && (
               <Field
-                component={FormNumberInput}
+                as={FormNumberInput}
                 label="Gap"
                 unit="secs"
                 placeholder="Gap between rings"
@@ -425,7 +421,7 @@ function ModeDetails() {
           </div>
           {isRepeat && (
             <Field
-              component={FormNumberInput}
+              as={FormNumberInput}
               label="No. of rings"
               placeholder="Total no. of rings"
               name={`schedules.${index}.mode.ringCount`}
@@ -439,7 +435,8 @@ function ModeDetails() {
 }
 
 function AdditionalBell() {
-  const { index, arrayHelpers } = useContext(ScheduleCreateFormContext);
+  const { index, arrayHelpers, props } = useContext(ScheduleCreateFormContext);
+  const { setFieldValue } = props;
   const dispatch = useDispatch();
 
   return (
@@ -460,11 +457,11 @@ function AdditionalBell() {
         <Field
           name={`schedules.${index}.start`}
           id={`schedules.${index}.start`}
-          component={FormTimeInput}
+          as={FormTimeInput}
           label="Start time"
         />
         <Field
-          component={FormSelectInput}
+          as={FormSelectInput}
           name={`schedules.${index}.mode.type`}
           id={`schedules.${index}.mode.type`}
           label="Mode"
@@ -480,6 +477,7 @@ function AdditionalBell() {
           ]}
           placeholder="Select a mode"
           onValueChange={(value: string) => {
+            setFieldValue(`schedules.${index}.mode.type`, value);
             if (value === "single" || value === "repeat") {
               dispatch(setMode({ type: value, value: index }));
             }
@@ -491,7 +489,8 @@ function AdditionalBell() {
 }
 
 function Session() {
-  const { index, arrayHelpers } = useContext(ScheduleCreateFormContext);
+  const { index, arrayHelpers, props } = useContext(ScheduleCreateFormContext);
+  const { setFieldValue, values } = props;
   const dispatch = useDispatch();
 
   return (
@@ -512,13 +511,13 @@ function Session() {
         <Field
           name={`schedules.${index}.start`}
           id={`schedules.${index}.start`}
-          component={FormTimeInput}
+          as={FormTimeInput}
           label="Start time"
         />
         <Field
           name={`schedules.${index}.end`}
           id={`schedules.${index}.end`}
-          component={FormTimeInput}
+          as={FormTimeInput}
           label="End time"
           className="max-w-sm"
         />
@@ -528,13 +527,21 @@ function Session() {
             id={`schedules.${index}.includeEndTime`}
             component={FormCheckBox}
             label="Include end time"
+            onCheckedChange={(state: CheckedState) => {
+              if (typeof state === "boolean") {
+                setFieldValue(`schedules.${index}.includeEndTime`, state);
+              } else {
+                setFieldValue(`schedules.${index}.includeEndTime`, true);
+              }
+            }}
+            defaultChecked={values.schedules[index].includeEndTime}
           />
         </div>
       </div>
       <div className="mb-3 flex flex-wrap items-center gap-4">
         <Field
-          name={`schedules.${index}.mode.type`}
-          id={`schedules.${index}.mode.type`}
+          name={`schedules.${index}.modeType`}
+          id={`schedules.${index}.modeType`}
           component={FormSelectInput}
           label="Mode"
           options={[
@@ -549,6 +556,7 @@ function Session() {
           ]}
           placeholder="Select a mode"
           onValueChange={(value: string) => {
+            setFieldValue(`schedules.${index}.mode.type`, value);
             if (value === "single" || value === "repeat") {
               dispatch(setMode({ type: value, value: index }));
             }
@@ -557,7 +565,7 @@ function Session() {
         <Field
           name={`schedules.${index}.interval`}
           id={`schedules.${index}.interval`}
-          component={FormNumberInput}
+          as={FormNumberInput}
           label="Intervals"
           unit="min"
           placeholder="Gap between bells"

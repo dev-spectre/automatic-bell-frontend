@@ -16,6 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useState } from "react";
+import { CheckedState } from "@radix-ui/react-checkbox";
 
 export function TextInput({
   id,
@@ -162,11 +164,30 @@ export function FormTimeInput({
   );
 }
 
-export function FormCheckBox({ id, label, name }: CheckboxProps) {
+export function FormCheckBox({
+  id,
+  label,
+  name,
+  onCheckedChange,
+  defaultChecked,
+  ...props
+}: CheckboxProps) {
+  const [isChecked, setIsChecked] = useState<CheckedState>(
+    defaultChecked ?? false,
+  );
   const checkboxId = id || name || label.toLowerCase().replace(/\s/g, "-");
   return (
     <div className="flex items-center space-x-2">
-      <Checkbox checked={true} className="border-white" id={checkboxId} />
+      <Checkbox
+        onCheckedChange={(value) => {
+          setIsChecked(value);
+          if (onCheckedChange) onCheckedChange(value);
+        }}
+        checked={isChecked}
+        id={checkboxId}
+        {...props}
+        className="border-white"
+      />
       <label
         htmlFor={checkboxId}
         className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
