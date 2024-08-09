@@ -397,8 +397,10 @@ function ScheduleDetail({ type }: ScheduleDetailProps) {
 function ModeDetails() {
   const { index } = useContext(ScheduleCreateFormContext);
   const mode = useSelector((state: AppStore) => state.createScheduleForm.mode);
+  const isSingle = mode.single.includes(index);
+  const isRepeat = mode.repeat.includes(index);
   return (
-    mode && (
+    (isRepeat || isSingle) && (
       <div>
         <CollapsibleSection label="Mode settings">
           <div className="mb-3 flex flex-wrap items-center gap-4">
@@ -410,7 +412,7 @@ function ModeDetails() {
               name={`schedules.${index}.mode.duration`}
               id={`schedules.${index}.mode.duration`}
             />
-            {mode === "repeat" && (
+            {isRepeat && (
               <Field
                 component={FormNumberInput}
                 label="Gap"
@@ -421,7 +423,7 @@ function ModeDetails() {
               />
             )}
           </div>
-          {mode === "repeat" && (
+          {isRepeat && (
             <Field
               component={FormNumberInput}
               label="No. of rings"
@@ -479,9 +481,7 @@ function AdditionalBell() {
           placeholder="Select a mode"
           onValueChange={(value: string) => {
             if (value === "single" || value === "repeat") {
-              dispatch(setMode({ mode: value }));
-            } else {
-              dispatch(setMode({ mode: null }));
+              dispatch(setMode({ type: value, value: index }));
             }
           }}
         />
@@ -550,9 +550,7 @@ function Session() {
           placeholder="Select a mode"
           onValueChange={(value: string) => {
             if (value === "single" || value === "repeat") {
-              dispatch(setMode({ mode: value }));
-            } else {
-              dispatch(setMode({ mode: null }));
+              dispatch(setMode({ type: value, value: index }));
             }
           }}
         />

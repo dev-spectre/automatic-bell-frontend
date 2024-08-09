@@ -130,7 +130,15 @@ export interface ScheduleDetailProps {
 }
 
 export interface CreateScheduleFormState {
-  mode: null | "single" | "repeat";
+  mode: {
+    single: number[];
+    repeat: number[];
+  };
+}
+
+export interface CreateScheduleFormStatePayload {
+  type: "single" | "repeat";
+  value: number;
 }
 
 export interface FormProps extends ReactNodes {
