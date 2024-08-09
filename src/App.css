@@ -932,6 +932,10 @@ body {
   overflow: hidden;
 }
 
+.overflow-x-hidden {
+  overflow-x: hidden;
+}
+
 .overflow-y-hidden {
   overflow-y: hidden;
 }
@@ -1046,6 +1050,10 @@ body {
 .bg-sky-600 {
   --tw-bg-opacity: 1;
   background-color: rgb(2 132 199 / var(--tw-bg-opacity));
+}
+
+.\!bg-inherit {
+  background-color: inherit !important;
 }
 
 .bg-gradient-to-b {
@@ -1268,6 +1276,10 @@ body {
 
 .opacity-50 {
   opacity: 0.5;
+}
+
+.opacity-0 {
+  opacity: 0;
 }
 
 .shadow-md {

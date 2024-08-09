@@ -84,9 +84,7 @@ export function CollapsibleSection({
           />
         </button>
       </h2>
-      <div className={`overflow-y-hidden ${isCollapsed && "h-0"}`}>
-        {children}
-      </div>
+      <div className={`${isCollapsed && "h-0 opacity-0"}`}>{children}</div>
     </section>
   );
 }

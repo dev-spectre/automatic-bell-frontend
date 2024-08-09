@@ -54,7 +54,7 @@ export function OutlineButton({
 }: ButtonProps) {
   return (
     <Button
-      className={`border border-white bg-inherit text-sm ${className}`}
+      className={`!bg-inherit border border-white text-sm ${className}`}
       label={label}
       type={type || "button"}
       onClick={onClick}
