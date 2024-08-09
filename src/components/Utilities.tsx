@@ -18,10 +18,7 @@ export function AccountRegisterFormContainer({ children }: ReactNodes) {
   );
 }
 
-export function Form({
-  children,
-  handleSubmit,
-}: FormProps) {
+export function Form({ children, handleSubmit }: FormProps) {
   return (
     <form
       onSubmit={handleSubmit}
@@ -87,7 +84,9 @@ export function CollapsibleSection({
           />
         </button>
       </h2>
-      {!isCollapsed && <div>{children}</div>}
+      <div className={`overflow-y-hidden ${isCollapsed && "h-0"}`}>
+        {children}
+      </div>
     </section>
   );
 }
