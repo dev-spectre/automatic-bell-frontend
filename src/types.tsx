@@ -1,6 +1,7 @@
 import React, { ReactNode } from "react";
 import store from "./store";
 import { CheckedState } from "@radix-ui/react-checkbox";
+import { FieldArrayRenderProps } from "formik";
 
 export interface ReactNodes {
   children: ReactNode;
@@ -134,16 +135,29 @@ export interface ScheduleDetailProps {
 
 export interface CreateScheduleFormState {
   mode: {
-    single: number[];
-    repeat: number[];
+    max: number;
+    values: {
+      [key: number]: "single" | "repeat" | "unselected";
+    }
   };
 }
 
-export interface CreateScheduleFormStatePayload {
+export interface CreateScheduleFormStateRemovePayload {
+  value: number;
+}
+
+export interface CreateScheduleFormStatePushPayload {
   type: "single" | "repeat";
   value: number;
 }
 
 export interface FormProps extends ReactNodes {
   handleSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
+}
+
+export interface ScheduleCreateContext {
+  index: number;
+  arrayHelpers?: FieldArrayRenderProps | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  props?: any;
 }

@@ -1,32 +1,34 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
   CreateScheduleFormState,
-  CreateScheduleFormStatePayload,
+  CreateScheduleFormStatePushPayload,
+  CreateScheduleFormStateRemovePayload,
 } from "@/types";
 
 const createScheduleFormSlice = createSlice({
   name: "createScheduleForm",
   initialState: {
     mode: {
-      single: [],
-      repeat: [],
+      max: -Infinity,
+      values: {},
     },
   } satisfies CreateScheduleFormState as CreateScheduleFormState,
   reducers: {
-    setMode: (state, action: PayloadAction<CreateScheduleFormStatePayload>) => {
+    setMode: (state, action: PayloadAction<CreateScheduleFormStatePushPayload>) => {
       const { type, value } = action.payload;
-      if (type === "single") {
-        const index = state.mode.repeat.indexOf(value);
-        if (index !== -1) state.mode.repeat.splice(index, 1);
+      state.mode.values[value] = type;
+      if (value > state.mode.max) state.mode.max = value;
+    },
+    remove: (state, action: PayloadAction<CreateScheduleFormStateRemovePayload>) => {
+      const { value } = action.payload;
+      for (let i = state.mode.max; i > value; i--) {
+        state.mode.values[i - 1] = state.mode.values[i];
       }
-      if (type === "repeat") {
-        const index = state.mode.single.indexOf(value);
-        if (index !== -1) state.mode.single.splice(index, 1);
-      }
-      state.mode[type].push(value);
+      delete state.mode.values[state.mode.max];
+      state.mode.max--;
     },
   },
 });
 
-export const { setMode } = createScheduleFormSlice.actions;
+export const { setMode, remove } = createScheduleFormSlice.actions;
 export default createScheduleFormSlice.reducer;

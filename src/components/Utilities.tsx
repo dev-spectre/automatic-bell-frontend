@@ -22,7 +22,7 @@ export function Form({ children, handleSubmit }: FormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-md bg-eclipse-elixir-500 py-12"
+      className="rounded-md bg-eclipse-elixir-500 pt-4 pb-12"
     >
       {children}
     </form>
@@ -53,7 +53,7 @@ export function RegisterFormHeading({ text }: FormHeadingProps) {
 }
 
 export function HorizontalLine() {
-  return <hr className="my-7 border-t-hoki-600" />;
+  return <hr className="mt-2 mb-7 border-t-hoki-600" />;
 }
 
 export function ManualControl() {

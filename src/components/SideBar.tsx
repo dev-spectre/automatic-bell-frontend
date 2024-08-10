@@ -68,7 +68,7 @@ export function NavCollapsible({ label, icon, children }: NavCollapsibleProps) {
         </div>
         {label}
         <ChevronDown
-          className={`text-hoki-500 w-6 -rotate-90 transition-transform ${!isCollapsed ? "rotate-0" : ""}`}
+          className={`w-6 -rotate-90 text-hoki-500 transition-transform ${!isCollapsed ? "rotate-0" : ""}`}
         />
       </button>
       {!isCollapsed && <div>{children}</div>}
@@ -108,7 +108,7 @@ export function SideBar() {
         <X className="pointer-events-none" />
       </button>
       <nav>
-        <h3 className="mb-9 mt-7 text-center text-lg font-medium">
+        <h3 className="mb-9 mt-7 text-center text-xl font-semibold">
           Bell Scheduler
         </h3>
         <NavList>

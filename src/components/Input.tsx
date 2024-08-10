@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import { useState } from "react";
 import { CheckedState } from "@radix-ui/react-checkbox";
+import { ErrorMessage } from "formik";
 
 export function TextInput({
   id,
@@ -45,6 +46,13 @@ export function TextInput({
         onChange={onChange}
         {...props}
       />
+      <div className="min-h-6">
+        <ErrorMessage
+          component={"div"}
+          className="text-red-500"
+          name={name ?? inputId}
+        />
+      </div>
     </div>
   );
 }
@@ -160,6 +168,13 @@ export function FormTimeInput({
           {...props}
         />
       </div>
+      <div className="min-h-6">
+        <ErrorMessage
+          component={"div"}
+          className="text-red-500"
+          name={name ?? inputId}
+        />
+      </div>
     </div>
   );
 }
@@ -177,28 +192,38 @@ export function FormCheckBox({
   );
   const checkboxId = id || name || label.toLowerCase().replace(/\s/g, "-");
   return (
-    <div className="flex items-center space-x-2">
-      <Checkbox
-        onCheckedChange={(value) => {
-          setIsChecked(value);
-          if (onCheckedChange) onCheckedChange(value);
-        }}
-        checked={isChecked}
-        id={checkboxId}
-        {...props}
-        className="border-white"
-      />
-      <label
-        htmlFor={checkboxId}
-        className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-      >
-        {label}
-      </label>
-    </div>
+    <>
+      <div className="flex items-center space-x-2">
+        <Checkbox
+          onCheckedChange={(value) => {
+            setIsChecked(value);
+            if (onCheckedChange) onCheckedChange(value);
+          }}
+          checked={isChecked}
+          id={checkboxId}
+          {...props}
+          className="border-white"
+        />
+        <label
+          htmlFor={checkboxId}
+          className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+        >
+          {label}
+        </label>
+      </div>
+      <div className="min-h-6">
+        <ErrorMessage
+          component={"div"}
+          className="text-red-500"
+          name={name ?? checkboxId}
+        />
+      </div>
+    </>
   );
 }
 
 export function FormSelectInput({
+  id,
   label,
   placeholder,
   name,
@@ -206,7 +231,7 @@ export function FormSelectInput({
   onValueChange,
   ...props
 }: SelectInputProps) {
-  const selectName = label.toLowerCase().replace(/\s/g, "-");
+  const selectName = id || label.toLowerCase().replace(/\s/g, "-");
   let key = 0;
 
   return (
@@ -235,6 +260,13 @@ export function FormSelectInput({
           ))}
         </SelectContent>
       </Select>
+      <div className="min-h-6">
+        <ErrorMessage
+          component={"div"}
+          className="text-red-500"
+          name={name ?? selectName}
+        />
+      </div>
     </div>
   );
 }
@@ -248,6 +280,7 @@ export function FormNumberInput({
   ...props
 }: NumberInputProps) {
   const inputId = id || label.toLowerCase().replace(/\s/g, "-");
+  const value = isNaN(parseFloat(props.value ?? "")) ? "" : props.value;
   return (
     <div className="max-w-md flex-grow">
       <label htmlFor={inputId} className="mb-1 block">
@@ -256,10 +289,10 @@ export function FormNumberInput({
       <div className="flex max-w-sm rounded border border-hoki-600 outline-2 outline-orange-450">
         <input
           {...props}
+          value={value}
           size={5}
           className="w-full rounded-l bg-eclipse-elixir-400 px-2 pb-2 pt-1 placeholder-hoki-500 placeholder:italic focus-visible:outline-none"
           type="text"
-          pattern="\d*"
           id={inputId}
           name={name || inputId}
           placeholder={placeholder}
@@ -273,12 +306,30 @@ export function FormNumberInput({
             const parentElement = inputTarget.parentElement as HTMLElement;
             parentElement.classList.remove("outline");
           }}
+          onChange={(e) => {
+            const parsedString: string =
+              e.target.value.match(/(\d+\.\d+)|(\d+\.$)|(\d+)/)?.at(0) ?? "";
+            const parsed = parseFloat(parsedString);
+            if (isNaN(parsed) && !parsedString) {
+              e.target.value = "";
+            } else {
+              e.target.value = parsedString;
+            }
+            if (props.onChange) props.onChange(e);
+          }}
         />
         {unit && (
           <div className="rounded-r bg-eclipse-elixir-400 px-2 pt-1 font-semibold italic text-hoki-500 outline outline-1 outline-hoki-600">
             {unit}
           </div>
         )}
+      </div>
+      <div className="min-h-6">
+        <ErrorMessage
+          component={"div"}
+          className="text-red-500"
+          name={name ?? inputId}
+        />
       </div>
     </div>
   );
