@@ -29,7 +29,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToast } from "@/store/slice/toasts";
 import { ScheduleDetailProps, ScheduleCreateContext, ModeType } from "@/types";
 import { X } from "lucide-react";
-import { Field, FieldArray, FieldArrayRenderProps, Formik } from "formik";
+import {
+  ErrorMessage,
+  Field,
+  FieldArray,
+  FieldArrayRenderProps,
+  Formik,
+} from "formik";
 import { remove, setMode } from "@/store/slice/createScheduleForm";
 import { AppStore } from "@/store";
 import { CheckedState } from "@radix-ui/react-checkbox";
@@ -343,6 +349,11 @@ export function ScheduleCreateForm() {
             }}
           />
           <FormSection>
+            <ErrorMessage
+              component={"div"}
+              className="-mt-6 mb-1 text-red-500"
+              name={"schedules"}
+            />
             <div className="flex flex-wrap content-center justify-between gap-4">
               <div className="flex flex-wrap content-center gap-4">
                 <OutlineButton
