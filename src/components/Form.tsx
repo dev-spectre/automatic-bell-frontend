@@ -29,12 +29,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToast } from "@/store/slice/toasts";
 import { ScheduleDetailProps, ScheduleCreateContext, ModeType } from "@/types";
 import { X } from "lucide-react";
-import {
-  Field,
-  FieldArray,
-  FieldArrayRenderProps,
-  Formik,
-} from "formik";
+import { Field, FieldArray, FieldArrayRenderProps, Formik } from "formik";
 import { remove, setMode } from "@/store/slice/createScheduleForm";
 import { AppStore } from "@/store";
 import { CheckedState } from "@radix-ui/react-checkbox";
@@ -291,6 +286,7 @@ export function ScheduleCreateForm() {
       initialValues={initialValues}
       validationSchema={createScheduleSchema}
       onSubmit={(values, actions) => {
+        values = createScheduleSchema.cast(values);
         console.log(values);
         actions.setSubmitting(false);
       }}

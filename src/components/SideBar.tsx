@@ -57,7 +57,7 @@ export function NavCollapsible({ label, icon, children }: NavCollapsibleProps) {
   const [isCollapsed, setIsCollapsed] = useState(true);
 
   return (
-    <li className="text-base font-normal">
+    <div className="text-base font-normal">
       <button
         type="button"
         onClick={() => setIsCollapsed(!isCollapsed)}
@@ -72,7 +72,7 @@ export function NavCollapsible({ label, icon, children }: NavCollapsibleProps) {
         />
       </button>
       {!isCollapsed && <div>{children}</div>}
-    </li>
+    </div>
   );
 }
 

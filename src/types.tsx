@@ -2,6 +2,7 @@ import React, { ReactNode } from "react";
 import store from "./store";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { FieldArrayRenderProps } from "formik";
+import { CreateSchedule } from "./schema/createSchedule";
 
 export interface ReactNodes {
   children: ReactNode;
@@ -157,3 +158,8 @@ export interface ScheduleCreateContext {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   props?: any;
 }
+
+export type CreateScheduleMode = Pick<
+  CreateSchedule["schedules"][number]["mode"],
+  "gap" | "duration" | "ringCount" | "type"
+>;
