@@ -27,7 +27,7 @@ import {
 } from "@/utilities/register";
 import { useDispatch, useSelector } from "react-redux";
 import { addToast } from "@/store/slice/toasts";
-import { ScheduleDetailProps, ScheduleCreateContext } from "@/types";
+import { ScheduleDetailProps, ScheduleCreateContext, ModeType } from "@/types";
 import { X } from "lucide-react";
 import { Field, FieldArray, FieldArrayRenderProps, Formik } from "formik";
 import { remove, setMode } from "@/store/slice/createScheduleForm";
@@ -412,8 +412,8 @@ function ScheduleDetail({ type }: ScheduleDetailProps) {
 function ModeDetails() {
   const { index } = useContext(ScheduleCreateFormContext);
   const mode = useSelector((state: AppStore) => state.createScheduleForm.mode);
-  const isSingle = mode.values[index] === "single";
-  const isRepeat = mode.values[index] === "repeat";
+  const isSingle = mode.single.includes(index);
+  const isRepeat = mode.repeat.includes(index);
 
   return (
     (isRepeat || isSingle) && (
@@ -460,25 +460,31 @@ function AdditionalBell() {
   const { index, arrayHelpers, props } = useContext(ScheduleCreateFormContext);
   const { setFieldValue } = props;
   const dispatch = useDispatch();
+  const modeRef = useRef<ModeType | undefined>();
 
   return (
     <>
       <div className="flex justify-between">
         <h3 className="mb-5 text-lg font-semibold">Additional Bell</h3>
-        <button
-          className="self-start"
-          type="button"
-          onClick={() => {
-            arrayHelpers?.remove(index);
-            dispatch(
-              remove({
-                value: index,
-              }),
-            );
-          }}
-        >
-          <X className="text-hoki-500" />
-        </button>
+        {props.values.schedules.length - 1 == index && (
+          <button
+            className="self-start"
+            type="button"
+            onClick={() => {
+              arrayHelpers?.remove(index);
+              if (modeRef.current) {
+                dispatch(
+                  remove({
+                    type: modeRef.current,
+                    value: index,
+                  }),
+                );
+              }
+            }}
+          >
+            <X className="text-hoki-500" />
+          </button>
+        )}
       </div>
       <div className="max-w-90 mb-5 flex flex-wrap items-center gap-4">
         <Field
@@ -506,6 +512,7 @@ function AdditionalBell() {
           onValueChange={(value: string) => {
             setFieldValue(`schedules.${index}.mode.type`, value);
             if (value === "single" || value === "repeat") {
+              modeRef.current = value;
               dispatch(setMode({ type: value, value: index }));
             }
           }}
@@ -519,20 +526,31 @@ function Session() {
   const { index, arrayHelpers, props } = useContext(ScheduleCreateFormContext);
   const { setFieldValue, values } = props;
   const dispatch = useDispatch();
+  const modeRef = useRef<ModeType | undefined>();
 
   return (
     <>
       <div className="flex justify-between">
         <h3 className="mb-5 text-lg font-semibold">Session</h3>
-        <button
-          className="self-start"
-          type="button"
-          onClick={() => {
-            arrayHelpers?.remove(index);
-          }}
-        >
-          <X className="text-hoki-500" />
-        </button>
+        {props.values.schedules.length - 1 == index && (
+          <button
+            className="self-start"
+            type="button"
+            onClick={() => {
+              arrayHelpers?.remove(index);
+              if (modeRef.current) {
+                dispatch(
+                  remove({
+                    type: modeRef.current,
+                    value: index,
+                  }),
+                );
+              }
+            }}
+          >
+            <X className="text-hoki-500" />
+          </button>
+        )}
       </div>
       <div className="max-w-90 flex flex-wrap items-center gap-4">
         <Field
@@ -586,6 +604,7 @@ function Session() {
             onValueChange={(value: string) => {
               setFieldValue(`schedules.${index}.mode.type`, value);
               if (value === "single" || value === "repeat") {
+                modeRef.current = value;
                 dispatch(setMode({ type: value, value: index }));
               }
             }}
