@@ -30,7 +30,6 @@ import { addToast } from "@/store/slice/toasts";
 import { ScheduleDetailProps, ScheduleCreateContext, ModeType } from "@/types";
 import { X } from "lucide-react";
 import {
-  ErrorMessage,
   Field,
   FieldArray,
   FieldArrayRenderProps,
@@ -349,11 +348,13 @@ export function ScheduleCreateForm() {
             }}
           />
           <FormSection>
-            <ErrorMessage
-              component={"div"}
-              className="-mt-6 mb-1 text-red-500"
-              name={"schedules"}
-            />
+            {props.errors.schedules &&
+            props.touched.schedules &&
+            typeof props.errors.schedules === "string" ? (
+              <div className="-mt-6 mb-1 text-red-500">
+                {props.errors.schedules}
+              </div>
+            ) : null}
             <div className="flex flex-wrap content-center justify-between gap-4">
               <div className="flex flex-wrap content-center gap-4">
                 <OutlineButton
@@ -392,7 +393,6 @@ export function ScheduleCreateForm() {
               </div>
               <SolidButton
                 onClick={(e) => {
-                  console.log(props);
                   const event =
                     e as unknown as React.FormEvent<HTMLFormElement>;
                   props.handleSubmit(event);
