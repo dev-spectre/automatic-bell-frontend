@@ -1,8 +1,11 @@
 import { MenuButton } from "@/components/Buttons";
 import { SideBar } from "@/components/SideBar";
+import { useAuthorizeSession } from "@/hooks/auth";
 import { Outlet } from "react-router-dom";
 
 export function Root() {
+  useAuthorizeSession();
+
   return (
     <>
       <SideBar />

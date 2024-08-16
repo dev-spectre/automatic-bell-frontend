@@ -11,6 +11,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Provider } from "react-redux";
 import Toast from "./components/Toast";
 import { CreateSchedule } from "./pages/createSchedule";
+import { EditSchedule } from "./pages/EditSchedule";
+import { AssignSchedule } from "./pages/AssignSchedule";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +22,14 @@ const router = createBrowserRouter([
       {
         path: "schedule/create",
         element: <CreateSchedule />,
+      },
+      {
+        path: "schedule/assign",
+        element: <AssignSchedule />,
+      },
+      {
+        path: "schedule/edit",
+        element: <EditSchedule />,
       },
     ],
   },
@@ -32,12 +42,16 @@ const router = createBrowserRouter([
         element: <AccountLoginForm />,
       },
       {
-        path: "signup",
-        element: <AccountRegisterForm />,
-      },
-      {
         path: "login",
         element: <AccountLoginForm />,
+      },
+      {
+        path: "signin",
+        element: <AccountLoginForm />,
+      },
+      {
+        path: "signup",
+        element: <AccountRegisterForm />,
       },
       {
         path: "password",

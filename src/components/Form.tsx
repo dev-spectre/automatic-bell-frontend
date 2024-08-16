@@ -10,7 +10,7 @@ import {
 } from "./Input";
 import { getFormData, submitSchedule } from "@/utilities/forms";
 import { createContext, useContext, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Form,
   AccountRegisterFormContainer,
@@ -115,6 +115,7 @@ export function AccountRegisterForm() {
 
 export function AccountLoginForm() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   return (
     <AccountRegisterFormContainer>
@@ -147,7 +148,7 @@ export function AccountLoginForm() {
             return;
           }
 
-          //TODO: Redirect
+          navigate("/");
         }}
         label="Log In"
       />

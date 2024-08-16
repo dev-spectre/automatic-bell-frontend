@@ -84,7 +84,8 @@ export function NavLogout() {
       label={"Logout"}
       onClick={() => {
         localStorage.clear();
-        navigate("auth/signin");
+        sessionStorage.clear();
+        navigate("auth/login");
       }}
       icon={logout}
     />
