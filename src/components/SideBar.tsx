@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   NavItemProps,
   NavListProps,
@@ -15,28 +15,22 @@ import schedule from "@/assets/schedule.png";
 import settings from "@/assets/settings.png";
 import { useState } from "react";
 import { ChevronDown, X } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
-import { setActive } from "@/store/slice/sidebar";
-import { AppStore } from "@/store";
 
 export function NavList({ children }: NavListProps) {
   return <ul className="flex flex-col gap-1">{children}</ul>;
 }
 
 export function NavLink({ label, link, icon }: NavItemProps) {
-  const dispatch = useDispatch();
-  const active = useSelector((state: AppStore) => state.sidebar.active);
+  const location = useLocation();
+  const path = location.pathname;
 
   return (
     <li
-      className={`group text-base font-normal ${active == label && "is-active"}`}
+      className={`group text-base font-normal ${link == path && "is-active"}`}
     >
       <Link
         to={link}
         className="flex h-full w-full items-center gap-4 px-6 py-2 hover:bg-white/15 group-[.is-active]:bg-orange-450 group-[.is-active]:text-black"
-        onClick={() => {
-          dispatch(setActive(label));
-        }}
       >
         <div className="w-4">
           <img
@@ -104,7 +98,7 @@ export function NavLogout() {
       onClick={() => {
         localStorage.clear();
         sessionStorage.clear();
-        navigate("auth/login");
+        navigate("/auth/login");
       }}
       icon={logout}
     />
@@ -136,25 +130,25 @@ export function SideBar() {
           <NavCollapsible label="Schedule" icon={schedule}>
             <NavLink
               label="Create Schedule"
-              link={"schedule/create"}
+              link={"/schedule/create"}
               icon={""}
             />
             <NavLink
               label="Assign Schedule"
-              link={"schedule/assign"}
+              link={"/schedule/assign"}
               icon={""}
             />
-            <NavLink label="Edit Schedule" link={"schedule/edit"} icon={""} />
+            <NavLink label="Edit Schedule" link={"/schedule/edit"} icon={""} />
           </NavCollapsible>
-          <NavLink label={"Details"} link={"details"} icon={details} />
-          <NavLink label={"Manual"} link={"manual"} icon={manual} />
-          <NavLink label={"Emergency"} link={"emergency"} icon={emergency} />
+          <NavLink label={"Details"} link={"/details"} icon={details} />
+          <NavLink label={"Manual"} link={"/manual"} icon={manual} />
+          <NavLink label={"Emergency"} link={"/emergency"} icon={emergency} />
           <NavLink
             label={"Instructions"}
-            link={"instructions"}
+            link={"/instructions"}
             icon={instructions}
           />
-          <NavLink label={"Settings"} link={"settings"} icon={settings} />
+          <NavLink label={"Settings"} link={"/settings"} icon={settings} />
           <NavLogout />
         </NavList>
       </nav>
