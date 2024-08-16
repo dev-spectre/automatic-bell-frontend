@@ -18,16 +18,32 @@ export function getDeviceIdFromJwt(token: string) {
 }
 
 export async function getDeviceIp(id: number): Promise<string> {
+  const deviceIpFromSessionStorage =
+    sessionStorage.getItem("deviceIp") ?? "0.0.0.0";
+  const requestCheckForSession: Promise<string> = new Promise(
+    (resolve, reject) => {
+      req
+        .get(`http://${deviceIpFromSessionStorage}/res`)
+        .then((res) => {
+          if (res.success) resolve(deviceIpFromSessionStorage);
+        })
+        .catch((err) => reject(err));
+    },
+  );
+
   const deviceIpFromLocalStorage =
     localStorage.getItem("deviceIp") ?? "0.0.0.0";
-  const requestCheck: Promise<string> = new Promise((resolve, reject) => {
-    req
-      .get(`http://${deviceIpFromLocalStorage}/res`)
-      .then((res) => {
-        if (res.success) resolve(deviceIpFromLocalStorage);
-      })
-      .catch((err) => reject(err));
-  });
+  const requestCheckForLocal: Promise<string> = new Promise(
+    (resolve, reject) => {
+      req
+        .get(`http://${deviceIpFromLocalStorage}/res`)
+        .then((res) => {
+          if (res.success) resolve(deviceIpFromLocalStorage);
+        })
+        .catch((err) => reject(err));
+    },
+  );
+
   const serverResponse: Promise<string> = new Promise((resolve, reject) => {
     req
       .get(`${DEVICE_INFO_URL}?id=${id}`)
@@ -36,10 +52,15 @@ export async function getDeviceIp(id: number): Promise<string> {
       })
       .catch((err) => reject(err));
   });
-  
+
   try {
-    const ip = await Promise.any([requestCheck, serverResponse]);
+    const ip = await Promise.any([
+      requestCheckForSession,
+      requestCheckForLocal,
+      serverResponse,
+    ]);
     localStorage.setItem("deviceIp", ip);
+    sessionStorage.setItem("deviceIp", ip);
     return ip;
   } catch (err) {
     throw new Error((err as string).toString());

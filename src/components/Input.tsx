@@ -46,13 +46,6 @@ export function TextInput({
         onChange={onChange}
         {...props}
       />
-      <div className="min-h-6">
-        <ErrorMessage
-          component={"div"}
-          className="text-red-500"
-          name={name ?? inputId}
-        />
-      </div>
     </div>
   );
 }
@@ -132,17 +125,35 @@ export function FormTextInput({
   label,
   placeholder,
   name,
+  className,
+  value,
+  onChange,
   ...props
 }: TextInputProps) {
+  const inputId = id || name || label.toLowerCase().replace(/\s/g, "-");
   return (
-    <TextInput
-      id={id || name}
-      className="max-w-60"
-      name={name}
-      label={label}
-      placeholder={placeholder}
-      {...props}
-    />
+    <div className="max-w-md">
+      <label htmlFor={inputId} className="mb-1 block">
+        {label}
+      </label>
+      <input
+        className={`w-full rounded border border-hoki-600 bg-eclipse-elixir-400 px-2 pb-2 pt-1 outline-2 outline-orange-450 focus-visible:outline ${className}`}
+        type="text"
+        id={inputId}
+        name={name || inputId}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        {...props}
+      />
+      <div className="min-h-6">
+        <ErrorMessage
+          component={"div"}
+          className="text-red-500"
+          name={name ?? inputId}
+        />
+      </div>
+    </div>
   );
 }
 

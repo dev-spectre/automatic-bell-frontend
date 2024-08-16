@@ -1,4 +1,4 @@
-export const BACKEND_URL = "http://localhost:8787/api/v1";
+export const BACKEND_URL = "http://192.168.1.39:8787/api/v1";
 
 export const SIGNIN_URL = `${BACKEND_URL}/user/signin`;
 

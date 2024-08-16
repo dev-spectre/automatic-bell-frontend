@@ -163,3 +163,7 @@ export type CreateScheduleMode = Pick<
   CreateSchedule["schedules"][number]["mode"],
   "gap" | "duration" | "ringCount" | "type"
 >;
+
+export interface ExpandedSchedule {
+  [Key: number]: string;
+}

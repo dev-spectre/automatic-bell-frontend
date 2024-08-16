@@ -6,8 +6,9 @@ import {
   FormSelectInput,
   FormCheckBox,
   FormNumberInput,
+  FormTextInput,
 } from "./Input";
-import { getFormData } from "@/utilities/forms";
+import { getFormData, submitSchedule } from "@/utilities/forms";
 import { createContext, useContext, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -285,9 +286,10 @@ export function ScheduleCreateForm() {
     <Formik
       initialValues={initialValues}
       validationSchema={createScheduleSchema}
-      onSubmit={(values, actions) => {
+      onSubmit={async (values, actions) => {
         values = createScheduleSchema.cast(values);
-        console.log(values);
+        const data = await submitSchedule(values);
+        console.log(data);
         actions.setSubmitting(false);
       }}
       component={(props) => (
@@ -303,7 +305,7 @@ export function ScheduleCreateForm() {
           </FormSection>
           <FormSection>
             <Field
-              as={TextInput}
+              as={FormTextInput}
               className="placeholder-hoki-500 placeholder:italic"
               label="Schedule Name"
               placeholder="Enter schedule name"

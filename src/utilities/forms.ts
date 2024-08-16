@@ -1,5 +1,7 @@
 import { CreateSchedule } from "@/schema/createSchedule";
-import { CreateScheduleMode, FormDataObject } from "@/types";
+import { CreateScheduleMode, ExpandedSchedule, FormDataObject } from "@/types";
+import { getDeviceIp } from "./device";
+import req from "@/api/requests";
 
 export function getFormData(form: HTMLFormElement) {
   const data: FormDataObject = {};
@@ -24,7 +26,8 @@ export function convertUnixTimeToString(unixTime: number) {
   const date = new Date(unixTime * 1000);
   const hour = date.getUTCHours().toString().padStart(2, "0");
   const minute = date.getUTCMinutes().toString().padStart(2, "0");
-  return `${hour}:${minute}`;
+  const seconds = date.getUTCSeconds().toString().padStart(2, "0");
+  return `${hour}:${minute}:${seconds}`;
 }
 
 function getModeString(mode: CreateScheduleMode) {
@@ -39,7 +42,7 @@ function getModeString(mode: CreateScheduleMode) {
 }
 
 export function expandSchedule(schedule: CreateSchedule) {
-  const expandedSchedule: { [key: string]: string } = {};
+  const expandedSchedule: ExpandedSchedule = {};
   schedule.schedules.forEach((schedule) => {
     const startTime = convertToUnixTime(schedule.start);
     if (schedule.type === "session") {
@@ -59,4 +62,22 @@ export function expandSchedule(schedule: CreateSchedule) {
     }
   });
   return expandedSchedule;
+}
+
+export async function submitSchedule(schedule: CreateSchedule) {
+  try {
+    const scheduleName = schedule.scheduleName;
+    const expandedSchedule = expandSchedule(schedule);
+    const id = parseInt(localStorage.getItem("deviceId") ?? "");
+    const deviceIp = await getDeviceIp(id);
+    const res = await req.post(`http://${deviceIp}/schedule`, {
+      schedules: { [scheduleName]: Object.entries(expandedSchedule) },
+      force: true,
+    });
+    if (res.success) {
+      return res.data;
+    }
+  } catch (err) {
+    // TODO: Notify user
+  }
 }
