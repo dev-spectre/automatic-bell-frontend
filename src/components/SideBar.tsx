@@ -15,20 +15,35 @@ import schedule from "@/assets/schedule.png";
 import settings from "@/assets/settings.png";
 import { useState } from "react";
 import { ChevronDown, X } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { setActive } from "@/store/slice/sidebar";
+import { AppStore } from "@/store";
 
 export function NavList({ children }: NavListProps) {
   return <ul className="flex flex-col gap-1">{children}</ul>;
 }
 
 export function NavLink({ label, link, icon }: NavItemProps) {
+  const dispatch = useDispatch();
+  const active = useSelector((state: AppStore) => state.sidebar.active);
+
   return (
-    <li className="text-base font-normal">
+    <li
+      className={`group text-base font-normal ${active == label && "is-active"}`}
+    >
       <Link
         to={link}
-        className="flex h-full w-full items-center gap-4 px-6 py-2 hover:bg-white/15 active:bg-orange-450 active:text-black"
+        className="flex h-full w-full items-center gap-4 px-6 py-2 hover:bg-white/15 group-[.is-active]:bg-orange-450 group-[.is-active]:text-black"
+        onClick={() => {
+          dispatch(setActive(label));
+        }}
       >
         <div className="w-4">
-          <img className="h-4" src={icon} aria-label={label} />
+          <img
+            className="h-4 group-[.is-active]:invert"
+            src={icon}
+            aria-label={label}
+          />
         </div>
         {label}
       </Link>
@@ -42,10 +57,14 @@ export function NavButton({ label, onClick, icon }: NavButtonProps) {
       <button
         type="button"
         onClick={onClick}
-        className="flex h-full w-full items-center gap-4 px-6 py-2 hover:bg-white/15 active:bg-orange-450 active:text-black"
+        className="group flex h-full w-full items-center gap-4 px-6 py-2 hover:bg-white/15 active:bg-orange-450 active:text-black"
       >
         <div className="w-4">
-          <img className="h-4" src={icon} aria-label={label} />
+          <img
+            className="h-4 group-active:invert"
+            src={icon}
+            aria-label={label}
+          />
         </div>
         {label}
       </button>
@@ -61,10 +80,10 @@ export function NavCollapsible({ label, icon, children }: NavCollapsibleProps) {
       <button
         type="button"
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="flex h-full w-full items-center gap-4 px-6 py-2 hover:bg-white/15 active:bg-orange-450 active:text-black"
+        className="group flex h-full w-full items-center gap-4 px-6 py-2 hover:bg-white/15 active:bg-orange-450 active:text-black"
       >
         <div className="w-4">
-          <img className="h-4" src={icon} aria-label={label} />
+          <img className="h-4 group-active:invert" src={icon} aria-label={label} />
         </div>
         {label}
         <ChevronDown

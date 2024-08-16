@@ -108,7 +108,7 @@ export interface ToastState {
 export type ReduxStore = ReturnType<typeof store.getState>;
 
 export interface NavItemProps {
-  label: string;
+  label: SideBarActiveState;
   link: string;
   icon: string;
 }
@@ -166,4 +166,19 @@ export type CreateScheduleMode = Pick<
 
 export interface ExpandedSchedule {
   [Key: number]: string;
+}
+
+export type SideBarActiveState =
+  | "Dashboard"
+  | "Create Schedule"
+  | "Assign Schedule"
+  | "Edit Schedule"
+  | "Details"
+  | "Manual"
+  | "Emergency"
+  | "Instructions"
+  | "Settings";
+
+export interface SideBarState {
+  active: SideBarActiveState;
 }
