@@ -1,4 +1,5 @@
 import { ButtonProps } from "@/types";
+import { closeSideBar } from "@/utilities/sideBar";
 import { Menu } from "lucide-react";
 
 export function RegisterButton({ label, onClick }: ButtonProps) {
@@ -15,12 +16,7 @@ export function RegisterButton({ label, onClick }: ButtonProps) {
 
 export function MenuButton() {
   return (
-    <button
-      onClick={() => {
-        const sideBar = document.querySelector("aside#nav");
-        sideBar?.classList.remove("max-md:-translate-x-60");
-      }}
-    >
+    <button className="md:hidden" onClick={closeSideBar}>
       <Menu />
     </button>
   );
@@ -39,11 +35,23 @@ export function Button({ label, onClick, className, type }: ButtonProps) {
 }
 
 export function ManualButton() {
-  return <Button label="Manual" className="bg-sky-600" onClick={() => {}} />;
+  return (
+    <Button
+      label="Manual"
+      className="max-lg:hover:bg-hoki-800 outline-1 outline-hoki-600 max-lg:min-w-min max-lg:rounded-none max-lg:bg-eclipse-elixir-400 max-lg:outline max-lg:active:bg-orange-450 max-lg:active:text-black lg:bg-sky-600"
+      onClick={() => {}}
+    />
+  );
 }
 
 export function EmergencyButton() {
-  return <Button label="Emergency" className="bg-red-600" onClick={() => {}} />;
+  return (
+    <Button
+      label="Emergency"
+      className="max-lg:hover:bg-hoki-800 outline-1 outline-hoki-600 max-lg:min-w-min max-lg:rounded-none max-lg:bg-eclipse-elixir-400 max-lg:outline max-lg:active:bg-orange-450 max-lg:active:text-black lg:bg-red-600"
+      onClick={() => {}}
+    />
+  );
 }
 
 export function OutlineButton({
@@ -54,7 +62,7 @@ export function OutlineButton({
 }: ButtonProps) {
   return (
     <Button
-      className={`!bg-inherit border border-white text-sm ${className}`}
+      className={`border border-white !bg-inherit text-sm ${className}`}
       label={label}
       type={type || "button"}
       onClick={onClick}

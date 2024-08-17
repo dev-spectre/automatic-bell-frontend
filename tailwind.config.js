@@ -36,6 +36,7 @@ module.exports = {
         hoki: {
           500: "#657C86",
           600: "#444865",
+          800: "#404255",
         },
 
         border: "hsl(var(--border))",

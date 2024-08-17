@@ -1,3 +1,9 @@
+import { PageHeader } from "@/components/Utilities";
+
 export function EditSchedule() {
-  return <></>
+  return (
+    <>
+      <PageHeader label="Edit Schedule" />
+    </>
+  );
 }

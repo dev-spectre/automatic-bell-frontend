@@ -1,3 +1,9 @@
+import { PageHeader } from "@/components/Utilities";
+
 export function AssignSchedule() {
-  return <></>
+  return (
+    <>
+      <PageHeader label="Assign Schedule" />
+    </>
+  );
 }

@@ -167,3 +167,7 @@ export type CreateScheduleMode = Pick<
 export interface ExpandedSchedule {
   [Key: number]: string;
 }
+
+export interface PageHeaderProps {
+  label: string;
+}

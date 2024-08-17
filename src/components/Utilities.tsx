@@ -5,10 +5,11 @@ import {
   FormHeadingProps,
   CollapsibleSectionProps,
   FormProps,
+  PageHeaderProps,
 } from "@/types";
-import { EmergencyButton, ManualButton } from "./Buttons";
+import { EmergencyButton, ManualButton, MenuButton } from "./Buttons";
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { Bell, ChevronDown } from "lucide-react";
 
 export function AccountRegisterFormContainer({ children }: ReactNodes) {
   return (
@@ -22,7 +23,7 @@ export function Form({ children, handleSubmit }: FormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-md bg-eclipse-elixir-500 pt-4 pb-12"
+      className="rounded-md bg-eclipse-elixir-500 pb-12 pt-4"
     >
       {children}
     </form>
@@ -53,14 +54,26 @@ export function RegisterFormHeading({ text }: FormHeadingProps) {
 }
 
 export function HorizontalLine() {
-  return <hr className="mt-2 mb-7 border-t-hoki-600" />;
+  return <hr className="mb-7 mt-2 border-t-hoki-600" />;
 }
 
 export function ManualControl() {
+  const [isCollapsed, setIsCollapsed] = useState(true);
+
   return (
-    <div className="flex flex-wrap gap-2">
-      <ManualButton />
-      <EmergencyButton />
+    <div className="max-lg:relative">
+      <button
+        onClick={() => setIsCollapsed((value) => !value)}
+        className="rounded-full border border-hoki-600 bg-eclipse-elixir-400 p-2 lg:hidden"
+      >
+        <Bell />
+      </button>
+      <div
+        className={`right-0 top-12 flex flex-wrap max-lg:absolute max-lg:flex-col lg:gap-2 ${isCollapsed && "max-lg:hidden"}`}
+      >
+        <ManualButton />
+        <EmergencyButton />
+      </div>
     </div>
   );
 }
@@ -86,5 +99,17 @@ export function CollapsibleSection({
       </h2>
       <div className={`${isCollapsed && "h-0 opacity-0"}`}>{children}</div>
     </section>
+  );
+}
+
+export function PageHeader({ label }: PageHeaderProps) {
+  return (
+    <header className="mb-7 flex items-center justify-between gap-2">
+      <div className="flex gap-2">
+        <MenuButton />
+        <h2 className="text-lg sm:text-xl md:text-2xl">{label}</h2>
+      </div>
+      <ManualControl />
+    </header>
   );
 }
