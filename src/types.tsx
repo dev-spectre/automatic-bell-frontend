@@ -90,7 +90,7 @@ export interface AlertProps {
 export interface RawToast {
   title: string;
   description: string;
-  type: string;
+  type: "error" | "info";
   action?: string;
 }
 
@@ -171,3 +171,8 @@ export interface ExpandedSchedule {
 export interface PageHeaderProps {
   label: string;
 }
+
+export type ErrorString = "INVALID_CRED" | "DEVICE_ERR" | "UNKNOWN_ERR";
+
+// * String with autocompletion of ErrorString values
+export type SignInResponse = ErrorString | (string & Record<never, never>);

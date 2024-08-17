@@ -1,5 +1,5 @@
 import req from "@/api/requests";
-import { DeviceInfo, UserWithDevice } from "@/types";
+import { DeviceInfo, SignInResponse, UserWithDevice } from "@/types";
 import { DEVICE_INFO_URL, SIGNIN_URL } from "@/constants/api";
 import { getDeviceIdFromJwt, getDeviceIp } from "./device";
 
@@ -58,14 +58,14 @@ export async function registerUser(
 export async function signInUser(
   username: string,
   password: string,
-): Promise<string | undefined> {
+): Promise<SignInResponse> {
   const serverResponse = await req.post(SIGNIN_URL, {
     username,
     password,
   });
 
   if (!serverResponse.success) {
-    return;
+    return serverResponse.status === 401 ? "INVALID_CRED" : "UNKNOWN_ERR";
   }
 
   const { jwt, userKeyId } = serverResponse.data;
@@ -79,11 +79,10 @@ export async function signInUser(
     });
 
     if (!deviceResponse.success) {
-      return;
+      return "DEVICE_ERR";
     }
   } catch (err) {
-    // TODO: Notify user
-    return;
+    return "UNKNOWN_ERR";
   }
 
   return jwt;

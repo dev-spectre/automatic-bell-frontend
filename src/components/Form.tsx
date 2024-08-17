@@ -27,7 +27,7 @@ import {
   resetPassword,
 } from "@/utilities/register";
 import { useDispatch, useSelector } from "react-redux";
-import { addToast } from "@/store/slice/toasts";
+import { useAlert } from "@/hooks/alert";
 import { ScheduleDetailProps, ScheduleCreateContext, ModeType } from "@/types";
 import { X } from "lucide-react";
 import { Field, FieldArray, FieldArrayRenderProps, Formik } from "formik";
@@ -35,9 +35,17 @@ import { remove, setMode } from "@/store/slice/createScheduleForm";
 import { AppStore } from "@/store";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import createScheduleSchema, { CreateSchedule } from "@/schema/createSchedule";
+import {
+  COULDNT_CONNNECT_TO_DEVICE,
+  INVALID_CRED,
+  PASSWORD_DOESNT_MATCH,
+  SCHEDULE_CREATED,
+  UNKNOWN_ERR,
+  USER_CREATED,
+} from "@/constants/alert";
 
 export function AccountRegisterForm() {
-  const dispatch = useDispatch();
+  const alert = useAlert();
 
   return (
     <AccountRegisterFormContainer>
@@ -58,27 +66,14 @@ export function AccountRegisterForm() {
           const password = formData["password"];
           const confirmPassword = formData["confirm-password"];
           if (password !== confirmPassword) {
-            dispatch(
-              addToast({
-                title: "Invalid Input",
-                description: "Passwords doesn't match.",
-                type: "error",
-              }),
-            );
+            alert(PASSWORD_DOESNT_MATCH);
             return;
           }
 
           const key = formData["key-code"];
           const deviceInfo = await getDeviceInfo(key);
           if (!deviceInfo) {
-            dispatch(
-              addToast({
-                title: "Couldn't connect to device",
-                description:
-                  "Please make sure your device is turned on and connected to same wifi as this computer.",
-                type: "error",
-              }),
-            );
+            alert(COULDNT_CONNNECT_TO_DEVICE);
             return;
           }
           localStorage.setItem("deviceIp", deviceInfo.ip);
@@ -86,21 +81,17 @@ export function AccountRegisterForm() {
           const username = formData["user-id"];
           const user = await registerUser(username, password, key, deviceInfo);
           if (!user || !user.deviceId) {
-            dispatch(
-              addToast({
-                title: "Couldn't register",
-                description:
-                  "Please make sure your device is turned on and connected to same wifi as this computer.",
-                type: "error",
-              }),
-            );
+            alert({
+              ...COULDNT_CONNNECT_TO_DEVICE,
+              title: "Couldn't register",
+            });
             return;
           }
           localStorage.setItem("userId", user.id.toString());
           localStorage.setItem("deviceId", user.deviceId.toString());
           localStorage.setItem("username", username);
 
-          // TODO: Notify user
+          alert(USER_CREATED);
         }}
         label="Register"
       />
@@ -114,7 +105,7 @@ export function AccountRegisterForm() {
 }
 
 export function AccountLoginForm() {
-  const dispatch = useDispatch();
+  const alert = useAlert();
   const navigate = useNavigate();
 
   return (
@@ -136,15 +127,15 @@ export function AccountLoginForm() {
           const username = formData["user-id"];
           const password = formData["password"];
 
-          const jwt = await signInUser(username, password);
-          if (!jwt) {
-            dispatch(
-              addToast({
-                title: "Incorrect input",
-                description: "Incorrect username or password",
-                type: "error",
-              }),
-            );
+          const res = await signInUser(username, password);
+          if (res === "INVALID_CRED") {
+            alert(INVALID_CRED);
+            return;
+          } else if (res === "DEVICE_ERR") {
+            alert(COULDNT_CONNNECT_TO_DEVICE);
+            return;
+          } else if (res === "UNKNOWN_ERR") {
+            alert(UNKNOWN_ERR);
             return;
           }
 
@@ -163,7 +154,7 @@ export function AccountLoginForm() {
 
 export function AccountResetPasswordForm() {
   const [key, setKey] = useState("");
-  const dispatch = useDispatch();
+  const alert = useAlert();
 
   return (
     <AccountRegisterFormContainer>
@@ -181,14 +172,7 @@ export function AccountResetPasswordForm() {
               const key = formData["key-code"];
               const deviceInfo = await getDeviceInfo(key);
               if (!deviceInfo) {
-                dispatch(
-                  addToast({
-                    title: "Couldn't connect to device",
-                    description:
-                      "Please make sure your device is turned on and connected to same wifi as this computer.",
-                    type: "error",
-                  }),
-                );
+                alert(COULDNT_CONNNECT_TO_DEVICE);
                 return;
               }
 
@@ -220,26 +204,16 @@ export function AccountResetPasswordForm() {
               const confirmPassword = formData["confirm-password"];
 
               if (password !== confirmPassword) {
-                dispatch(
-                  addToast({
-                    title: "Invalid Input",
-                    description: "Passwords doesn't match.",
-                    type: "error",
-                  }),
-                );
+                alert(PASSWORD_DOESNT_MATCH);
                 return;
               }
 
               const res = await resetPassword(username, password, key);
               if (!res) {
-                dispatch(
-                  addToast({
-                    title: "Couldn't reset password",
-                    description:
-                      "Please make sure your device is turned on and connected to same wifi as this computer.",
-                    type: "error",
-                  }),
-                );
+                alert({
+                  ...COULDNT_CONNNECT_TO_DEVICE,
+                  title: "Couldn't reset password",
+                });
                 return;
               }
             }}
@@ -263,6 +237,7 @@ const ScheduleCreateFormContext = createContext<ScheduleCreateContext>({
 });
 
 export function ScheduleCreateForm() {
+  const alert = useAlert();
   const arrayHelpersRef = useRef<FieldArrayRenderProps>();
   const initialValues: CreateSchedule = {
     scheduleName: "",
@@ -290,7 +265,19 @@ export function ScheduleCreateForm() {
       onSubmit={async (values, actions) => {
         values = createScheduleSchema.cast(values);
         const data = await submitSchedule(values);
-        console.log(data);
+        if (data === "DEVICE_ERR") {
+          alert({
+            ...COULDNT_CONNNECT_TO_DEVICE,
+            title: "Couldn't create schedule.",
+          });
+        } else if (typeof data === "object") {
+          alert(SCHEDULE_CREATED);
+        } else if (typeof data === "string") {
+          alert({
+            ...UNKNOWN_ERR,
+            title: "Couldn't create schedule.",
+          });
+        }
         actions.setSubmitting(false);
       }}
       component={(props) => (

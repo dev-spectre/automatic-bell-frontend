@@ -2,12 +2,12 @@ import { useEffect } from "react";
 import req from "@/api/requests";
 import { VERIFY_SESSION_URL } from "@/constants/api";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { addToast } from "@/store/slice/toasts";
+import { useAlert } from "./alert";
 
 export function useAuthorizeSession() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const alert = useAlert();
+
   useEffect(() => {
     req
       .get(VERIFY_SESSION_URL)
@@ -18,14 +18,12 @@ export function useAuthorizeSession() {
       })
       .catch((err) => {
         console.log(err);
-        dispatch(
-          addToast({
-            title: "Session expired",
-            description: "Session expired, login to continue",
-            type: "error",
-          }),
-        );
+        alert({
+          title: "Session expired",
+          description: "Session expired, login to continue",
+          type: "error",
+        });
         navigate("/auth/login");
       });
-  }, [navigate, dispatch]);
+  }, [navigate, alert]);
 }

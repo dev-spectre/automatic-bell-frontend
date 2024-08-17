@@ -1,5 +1,10 @@
 import { CreateSchedule } from "@/schema/createSchedule";
-import { CreateScheduleMode, ExpandedSchedule, FormDataObject } from "@/types";
+import {
+  CreateScheduleMode,
+  ErrorString,
+  ExpandedSchedule,
+  FormDataObject,
+} from "@/types";
 import { getDeviceIp } from "./device";
 import req from "@/api/requests";
 
@@ -64,7 +69,9 @@ export function expandSchedule(schedule: CreateSchedule) {
   return expandedSchedule;
 }
 
-export async function submitSchedule(schedule: CreateSchedule) {
+export async function submitSchedule(
+  schedule: CreateSchedule,
+): Promise<unknown | ErrorString> {
   try {
     const scheduleName = schedule.scheduleName;
     const expandedSchedule = expandSchedule(schedule);
@@ -78,6 +85,6 @@ export async function submitSchedule(schedule: CreateSchedule) {
       return res.data;
     }
   } catch (err) {
-    // TODO: Notify user
+    return "DEVICE_ERR";
   }
 }
