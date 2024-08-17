@@ -1,5 +1,5 @@
 export const BACKEND_URL =
-  "https://backend.abhishekdallas-alpy.workers.dev/api/v1";
+  "http://localhost:8787/api/v1";
 
 export const SIGNIN_URL = `${BACKEND_URL}/user/signin`;
 

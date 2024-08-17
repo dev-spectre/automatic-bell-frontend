@@ -1,5 +1,5 @@
 import req from "@/api/requests";
-import { DeviceInfo, SignInResponse, UserWithDevice } from "@/types";
+import { DeviceInfo, ErrorString, Result, UserWithDevice } from "@/types";
 import { DEVICE_INFO_URL, SIGNIN_URL } from "@/constants/api";
 import { getDeviceIdFromJwt, getDeviceIp } from "./device";
 
@@ -42,7 +42,7 @@ export async function registerUser(
   password: string,
   key: string,
   deviceInfo: DeviceInfo,
-): Promise<UserWithDevice | undefined> {
+): Promise<Result<UserWithDevice, ErrorString>> {
   const res = await req.post(`http://${deviceInfo.ip}/signup`, {
     id: deviceInfo.id,
     key,
@@ -50,22 +50,50 @@ export async function registerUser(
     password,
   });
   if (!res.success) {
-    return;
+    let error: ErrorString = "UNKNOWN_ERR";
+    if (res.status === 400) {
+      error = "INVALID_FORMAT";
+    } else if (res.status === 404) {
+      error = "RESOURCE_NOT_FOUND";
+    } else if (res.status === 409) {
+      error = "RESOURCE_CONFLICT";
+    }
+
+    return {
+      ok: false,
+      error,
+    };
   }
-  return res.data;
+  return {
+    ok: true,
+    data: res.data,
+  };
 }
 
 export async function signInUser(
   username: string,
   password: string,
-): Promise<SignInResponse> {
+): Promise<Result<string, ErrorString>> {
   const serverResponse = await req.post(SIGNIN_URL, {
     username,
     password,
   });
 
   if (!serverResponse.success) {
-    return serverResponse.status === 401 ? "INVALID_CRED" : "UNKNOWN_ERR";
+    let error: ErrorString = "UNKNOWN_ERR";
+
+    if (serverResponse.status === 401) {
+      error = "INVALID_CRED";
+    } else if (serverResponse.status === 400) {
+      error = "INVALID_FORMAT";
+    } else if (serverResponse.status === 404) {
+      error = "RESOURCE_NOT_FOUND";
+    }
+
+    return {
+      ok: false,
+      error,
+    };
   }
 
   const { jwt, userKeyId } = serverResponse.data;
@@ -79,13 +107,22 @@ export async function signInUser(
     });
 
     if (!deviceResponse.success) {
-      return "DEVICE_ERR";
+      return {
+        ok: false,
+        error: "DEVICE_ERR",
+      };
     }
   } catch (err) {
-    return "UNKNOWN_ERR";
+    return {
+      ok: false,
+      error: "UNKNOWN_ERR",
+    };
   }
 
-  return jwt;
+  return {
+    ok: true,
+    data: jwt,
+  };
 }
 
 export async function resetPassword(

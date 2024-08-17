@@ -172,7 +172,30 @@ export interface PageHeaderProps {
   label: string;
 }
 
-export type ErrorString = "INVALID_CRED" | "DEVICE_ERR" | "UNKNOWN_ERR";
+export type ErrorString =
+  | "INVALID_CRED"
+  | "DEVICE_ERR"
+  | "UNKNOWN_ERR"
+  | "INVALID_FORMAT"
+  | "RESOURCE_NOT_FOUND"
+  | "FORBIDDEN"
+  | "RESOURCE_CONFLICT";
 
-// * String with autocompletion of ErrorString values
-export type SignInResponse = ErrorString | (string & Record<never, never>);
+export type ApiResponse = {
+  success: boolean;
+  msg?: string;
+  err?: string | object;
+  data?: object;
+};
+
+export type Success<T> = {
+  ok: true;
+  data: T;
+};
+
+export type Error<E> = {
+  ok: false;
+  error: E;
+};
+
+export type Result<T, E> = Success<T> | Error<E>;

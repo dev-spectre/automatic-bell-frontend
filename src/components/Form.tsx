@@ -38,10 +38,13 @@ import createScheduleSchema, { CreateSchedule } from "@/schema/createSchedule";
 import {
   COULDNT_CONNNECT_TO_DEVICE,
   INVALID_CRED,
+  INVALID_FORMAT,
   PASSWORD_DOESNT_MATCH,
   SCHEDULE_CREATED,
   UNKNOWN_ERR,
   USER_CREATED,
+  USER_DOESNT_EXISTS,
+  USER_EXISTS,
 } from "@/constants/alert";
 
 export function AccountRegisterForm() {
@@ -79,19 +82,27 @@ export function AccountRegisterForm() {
           localStorage.setItem("deviceIp", deviceInfo.ip);
 
           const username = formData["user-id"];
-          const user = await registerUser(username, password, key, deviceInfo);
-          if (!user || !user.deviceId) {
+          const res = await registerUser(username, password, key, deviceInfo);
+          if (res.ok && res.data.deviceId) {
+            const user = res.data;
+
+            localStorage.setItem("userId", user.id.toString());
+            localStorage.setItem("deviceId", user.deviceId.toString());
+            localStorage.setItem("username", username);
+
+            alert(USER_CREATED);
+          } else if (res.ok && !res.data.deviceId) {
             alert({
               ...COULDNT_CONNNECT_TO_DEVICE,
               title: "Couldn't register",
             });
-            return;
+          } else if (!res.ok) {
+            if (res.error === "RESOURCE_CONFLICT") {
+              alert(USER_EXISTS);
+            } else if (res.error === "INVALID_FORMAT") {
+              alert(INVALID_FORMAT);
+            }
           }
-          localStorage.setItem("userId", user.id.toString());
-          localStorage.setItem("deviceId", user.deviceId.toString());
-          localStorage.setItem("username", username);
-
-          alert(USER_CREATED);
         }}
         label="Register"
       />
@@ -128,18 +139,19 @@ export function AccountLoginForm() {
           const password = formData["password"];
 
           const res = await signInUser(username, password);
-          if (res === "INVALID_CRED") {
-            alert(INVALID_CRED);
-            return;
-          } else if (res === "DEVICE_ERR") {
-            alert(COULDNT_CONNNECT_TO_DEVICE);
-            return;
-          } else if (res === "UNKNOWN_ERR") {
-            alert(UNKNOWN_ERR);
-            return;
+          if (!res.ok) {
+            if (res.error === "INVALID_CRED") {
+              alert(INVALID_CRED);
+            } else if (res.error === "DEVICE_ERR") {
+              alert(COULDNT_CONNNECT_TO_DEVICE);
+            } else if (res.error === "RESOURCE_NOT_FOUND") {
+              alert(USER_DOESNT_EXISTS);
+            } else {
+              alert(UNKNOWN_ERR);
+            }
+          } else {
+            navigate("/");
           }
-
-          navigate("/");
         }}
         label="Log In"
       />
@@ -265,18 +277,20 @@ export function ScheduleCreateForm() {
       onSubmit={async (values, actions) => {
         values = createScheduleSchema.cast(values);
         const data = await submitSchedule(values);
-        if (data === "DEVICE_ERR") {
-          alert({
-            ...COULDNT_CONNNECT_TO_DEVICE,
-            title: "Couldn't create schedule.",
-          });
-        } else if (typeof data === "object") {
+        if (data.ok) {
           alert(SCHEDULE_CREATED);
-        } else if (typeof data === "string") {
-          alert({
-            ...UNKNOWN_ERR,
-            title: "Couldn't create schedule.",
-          });
+        } else {
+          if (data.error === "DEVICE_ERR") {
+            alert({
+              ...COULDNT_CONNNECT_TO_DEVICE,
+              title: "Couldn't create schedule.",
+            });
+          } else if (data.error === "UNKNOWN_ERR") {
+            alert({
+              ...UNKNOWN_ERR,
+              title: "Couldn't create schedule.",
+            });
+          }
         }
         actions.setSubmitting(false);
       }}

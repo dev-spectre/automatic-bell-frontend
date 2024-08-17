@@ -1,9 +1,11 @@
 import { CreateSchedule } from "@/schema/createSchedule";
 import {
+  ApiResponse,
   CreateScheduleMode,
   ErrorString,
   ExpandedSchedule,
   FormDataObject,
+  Result,
 } from "@/types";
 import { getDeviceIp } from "./device";
 import req from "@/api/requests";
@@ -71,20 +73,34 @@ export function expandSchedule(schedule: CreateSchedule) {
 
 export async function submitSchedule(
   schedule: CreateSchedule,
-): Promise<unknown | ErrorString> {
+): Promise<Result<ApiResponse, ErrorString>> {
   try {
     const scheduleName = schedule.scheduleName;
     const expandedSchedule = expandSchedule(schedule);
     const id = parseInt(localStorage.getItem("deviceId") ?? "");
     const deviceIp = await getDeviceIp(id);
-    const res = await req.post(`http://${deviceIp}/schedule`, {
+    const res: ApiResponse = await req.post(`http://${deviceIp}/schedule`, {
       schedules: { [scheduleName]: Object.entries(expandedSchedule) },
       force: true,
     });
     if (res.success) {
-      return res.data;
+      return {
+        ok: true,
+        data: {
+          success: true,
+          ...res.data,
+        },
+      };
+    } else {
+      return {
+        ok: false,
+        error: "UNKNOWN_ERR",
+      };
     }
   } catch (err) {
-    return "DEVICE_ERR";
+    return {
+      ok: false,
+      error: "DEVICE_ERR",
+    };
   }
 }

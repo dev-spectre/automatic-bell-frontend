@@ -43,3 +43,21 @@ export const SCHEDULE_CREATED: RawToast = {
   description: "Schedule has been created on device, and it can be assigned.",
   type: "info",
 };
+
+export const USER_EXISTS: RawToast = {
+  title: "User already exists.",
+  description: "User already exists, try to signin.",
+  type: "error",
+};
+
+export const USER_DOESNT_EXISTS: RawToast = {
+  title: "User doesn't exist.",
+  description: "User doesn't exist, try to signup.",
+  type: "error",
+};
+
+export const INVALID_FORMAT: RawToast = {
+  title: "Invalid input format",
+  description: "Please give input according to give format.",
+  type: "error",
+};
