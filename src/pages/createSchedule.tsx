@@ -1,4 +1,4 @@
-import { ScheduleCreateForm } from "@/components/Form";
+import { ScheduleCreateForm } from "@/components/forms/Schedule";
 import { PageHeader } from "@/components/Utilities";
 
 export function CreateSchedule() {

@@ -6,7 +6,7 @@ import {
   AccountLoginForm,
   AccountRegisterForm,
   AccountResetPasswordForm,
-} from "./components/Form";
+} from "./components/forms/Auth";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Provider } from "react-redux";
 import Toast from "./components/Toast";
