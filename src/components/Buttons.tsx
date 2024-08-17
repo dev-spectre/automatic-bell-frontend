@@ -1,5 +1,5 @@
 import { ButtonProps } from "@/types";
-import { closeSideBar } from "@/utilities/sideBar";
+import { openSideBar } from "@/utilities/sideBar";
 import { Menu } from "lucide-react";
 
 export function RegisterButton({ label, onClick }: ButtonProps) {
@@ -16,7 +16,10 @@ export function RegisterButton({ label, onClick }: ButtonProps) {
 
 export function MenuButton() {
   return (
-    <button className="md:hidden" onClick={closeSideBar}>
+    <button
+      className="md:hidden"
+      onClick={openSideBar}
+    >
       <Menu />
     </button>
   );
