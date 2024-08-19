@@ -165,7 +165,7 @@ export type CreateScheduleMode = Pick<
 >;
 
 export interface ExpandedSchedule {
-  [Key: number]: string;
+  [Key: string]: string;
 }
 
 export interface PageHeaderProps {
@@ -179,7 +179,8 @@ export type ErrorString =
   | "INVALID_FORMAT"
   | "RESOURCE_NOT_FOUND"
   | "FORBIDDEN"
-  | "RESOURCE_CONFLICT";
+  | "RESOURCE_CONFLICT"
+  | "DEVICE_ID_NOT_FOUND";
 
 export type ApiResponse = {
   success: boolean;

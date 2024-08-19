@@ -17,11 +17,27 @@ export function getDeviceIdFromJwt(token: string) {
   return JSON.parse(jsonPayload).deviceId[0].id;
 }
 
+export function getDeviceId() {
+  const id = localStorage.getItem("deviceId");
+  const jwt = localStorage.getItem("jwt");
+  if (id) {
+    return parseInt(id);
+  } else if (!id && jwt) {
+    const deviceId = getDeviceIdFromJwt(jwt);
+    localStorage.setItem("deviceId", deviceId);
+    return parseInt(deviceId);
+  }
+  return null;
+}
+
 export async function getDeviceIp(id: number): Promise<string> {
-  const deviceIpFromSessionStorage =
-    sessionStorage.getItem("deviceIp") ?? "0.0.0.0";
+  const deviceIpFromSessionStorage = sessionStorage.getItem("deviceIp") ?? "";
   const requestCheckForSession: Promise<string> = new Promise(
     (resolve, reject) => {
+      if (!deviceIpFromSessionStorage) {
+        reject("Value is null");
+        return;
+      }
       req
         .get(`http://${deviceIpFromSessionStorage}/res`)
         .then((res) => {
@@ -35,6 +51,10 @@ export async function getDeviceIp(id: number): Promise<string> {
     localStorage.getItem("deviceIp") ?? "0.0.0.0";
   const requestCheckForLocal: Promise<string> = new Promise(
     (resolve, reject) => {
+      if (!deviceIpFromLocalStorage) {
+        reject("Value is null");
+        return;
+      }
       req
         .get(`http://${deviceIpFromLocalStorage}/res`)
         .then((res) => {

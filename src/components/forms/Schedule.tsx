@@ -25,6 +25,7 @@ import { CheckedState } from "@radix-ui/react-checkbox";
 import createScheduleSchema, { CreateSchedule } from "@/schema/createSchedule";
 import {
   COULDNT_CONNNECT_TO_DEVICE,
+  DEVICE_ID_NOT_FOUND,
   SCHEDULE_CREATED,
   UNKNOWN_ERR,
 } from "@/constants/alert";
@@ -77,6 +78,8 @@ export function ScheduleCreateForm() {
               ...UNKNOWN_ERR,
               title: "Couldn't create schedule.",
             });
+          } else if (data.error === "DEVICE_ID_NOT_FOUND") {
+            alert(DEVICE_ID_NOT_FOUND);
           }
         }
         actions.setSubmitting(false);
@@ -259,6 +262,7 @@ function AdditionalBell() {
   const { setFieldValue } = props;
   const dispatch = useDispatch();
   const modeRef = useRef<ModeType | undefined>();
+  const mode = props.values.schedules[index].mode.type;
 
   return (
     <>
@@ -306,6 +310,7 @@ function AdditionalBell() {
               label: "Repeat chime",
             },
           ]}
+          value={mode}
           placeholder="Select a mode"
           onValueChange={(value: string) => {
             setFieldValue(`schedules.${index}.mode.type`, value);
@@ -325,6 +330,7 @@ function Session() {
   const { setFieldValue, values } = props;
   const dispatch = useDispatch();
   const modeRef = useRef<ModeType | undefined>();
+  const mode = props.values.schedules[index].mode.type;
 
   return (
     <>
@@ -398,6 +404,7 @@ function Session() {
                 label: "Repeat chime",
               },
             ]}
+            value={mode}
             placeholder="Select a mode"
             onValueChange={(value: string) => {
               setFieldValue(`schedules.${index}.mode.type`, value);

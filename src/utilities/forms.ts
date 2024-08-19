@@ -7,7 +7,7 @@ import {
   FormDataObject,
   Result,
 } from "@/types";
-import { getDeviceIp } from "./device";
+import { getDeviceId, getDeviceIp } from "./device";
 import req from "@/api/requests";
 
 export function getFormData(form: HTMLFormElement) {
@@ -58,14 +58,14 @@ export function expandSchedule(schedule: CreateSchedule) {
       const intervalInSeconds = (schedule.interval ?? 0) * 60;
       const mode = getModeString(schedule.mode);
       for (let i = startTime; i < endTime; i += intervalInSeconds) {
-        expandedSchedule[i] = mode;
+        expandedSchedule[convertUnixTimeToString(i)] = mode;
       }
       if (includeEndTime) {
-        expandedSchedule[endTime] = mode;
+        expandedSchedule[convertUnixTimeToString(endTime)] = mode;
       }
     } else {
       const mode = getModeString(schedule.mode);
-      expandedSchedule[startTime] = mode;
+      expandedSchedule[convertUnixTimeToString(startTime)] = mode;
     }
   });
   return expandedSchedule;
@@ -75,12 +75,18 @@ export async function submitSchedule(
   schedule: CreateSchedule,
 ): Promise<Result<ApiResponse, ErrorString>> {
   try {
-    const scheduleName = schedule.scheduleName;
-    const expandedSchedule = expandSchedule(schedule);
-    const id = parseInt(localStorage.getItem("deviceId") ?? "");
+    const id = getDeviceId();
+    if (!id)
+      return {
+        ok: false,
+        error: "DEVICE_ID_NOT_FOUND",
+      };
+    console.log(expandSchedule(schedule));
     const deviceIp = await getDeviceIp(id);
     const res: ApiResponse = await req.post(`http://${deviceIp}/schedule`, {
-      schedules: { [scheduleName]: Object.entries(expandedSchedule) },
+      schedules: {
+        [schedule.scheduleName]: schedule.schedules,
+      },
       force: true,
     });
     if (res.success) {

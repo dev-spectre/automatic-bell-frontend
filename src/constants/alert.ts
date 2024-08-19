@@ -61,3 +61,9 @@ export const INVALID_FORMAT: RawToast = {
   description: "Please give input according to give format.",
   type: "error",
 };
+
+export const DEVICE_ID_NOT_FOUND: RawToast = {
+  title: "Couldn't identify device.",
+  description: "Please login and try again.",
+  type: "error",
+};

@@ -240,6 +240,7 @@ export function FormSelectInput({
   name,
   options,
   onValueChange,
+  value,
   ...props
 }: SelectInputProps) {
   const selectName = id || label.toLowerCase().replace(/\s/g, "-");
@@ -251,6 +252,7 @@ export function FormSelectInput({
       <Select
         onValueChange={onValueChange}
         name={name || selectName}
+        value={value}
         {...props}
       >
         <SelectTrigger className="max-w-sm border-hoki-600 bg-eclipse-elixir-400 outline-2 focus:outline focus:outline-orange-450">
