@@ -22,7 +22,7 @@ async function get(url: string, headers?: RequestHeaders) {
 
 async function post(
   url: string,
-  body: RequestBody,
+  body: RequestBody = {},
   headers?: RequestHeaders,
 ) {
   headers = addAuthToken(headers);
@@ -37,7 +37,7 @@ async function post(
 
 async function put(
   url: string,
-  body: RequestBody,
+  body: RequestBody = {},
   headers?: RequestHeaders,
 ) {
   headers = addAuthToken(headers);
@@ -50,10 +50,15 @@ async function put(
   return data;
 }
 
-async function _delete(url: string, headers?: RequestHeaders) {
+async function _delete(
+  url: string,
+  body: RequestBody = {},
+  headers?: RequestHeaders,
+) {
   headers = addAuthToken(headers);
   const res = await fetch(url, {
     method: "DELETE",
+    body: JSON.stringify(body),
     headers: headers as HeadersInit,
   });
   const data = await res.json();
