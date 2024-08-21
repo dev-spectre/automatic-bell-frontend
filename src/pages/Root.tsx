@@ -1,9 +1,11 @@
 import { SideBar } from "@/components/SideBar";
 import { useAuthorizeSession } from "@/hooks/auth";
+import { useStoreScheduleToState } from "@/hooks/state";
 import { Outlet } from "react-router-dom";
 
 export function Root() {
   useAuthorizeSession();
+  useStoreScheduleToState();
 
   return (
     <>

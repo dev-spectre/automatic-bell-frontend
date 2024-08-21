@@ -200,3 +200,11 @@ export type Error<E> = {
 };
 
 export type Result<T, E> = Success<T> | Error<E>;
+
+export type ScheduleStateAddPayload = {
+  schedules: Schedule[];
+};
+
+export type Schedules = {
+  [key: string]: Schedule["schedules"];
+};
