@@ -1,6 +1,6 @@
 import * as Yup from "yup";
 
-const createScheduleSchema = Yup.object({
+const scheduleSchema = Yup.object({
   scheduleName: Yup.string()
     .trim()
     .max(50, "Schedule name must not contain more than 50 characters")
@@ -86,5 +86,5 @@ const createScheduleSchema = Yup.object({
     .required("Schedule details are required"),
 });
 
-export type CreateSchedule = Yup.InferType<typeof createScheduleSchema>;
-export default createScheduleSchema;
+export type Schedule = Yup.InferType<typeof scheduleSchema>;
+export default scheduleSchema;

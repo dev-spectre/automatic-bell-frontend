@@ -22,7 +22,7 @@ import { Field, FieldArray, FieldArrayRenderProps, Formik } from "formik";
 import { remove, setMode } from "@/store/slice/createScheduleForm";
 import { AppStore } from "@/store";
 import { CheckedState } from "@radix-ui/react-checkbox";
-import createScheduleSchema, { CreateSchedule } from "@/schema/createSchedule";
+import createScheduleSchema, { Schedule } from "@/schema/createSchedule";
 import {
   COULDNT_CONNNECT_TO_DEVICE,
   DEVICE_ID_NOT_FOUND,
@@ -39,7 +39,7 @@ const ScheduleCreateFormContext = createContext<ScheduleCreateContext>({
 export function ScheduleCreateForm() {
   const alert = useAlert();
   const arrayHelpersRef = useRef<FieldArrayRenderProps>();
-  const initialValues: CreateSchedule = {
+  const initialValues: Schedule = {
     scheduleName: "",
     schedules: [
       {

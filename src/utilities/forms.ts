@@ -1,7 +1,7 @@
-import { CreateSchedule } from "@/schema/createSchedule";
+import { Schedule } from "@/schema/createSchedule";
 import {
   ApiResponse,
-  CreateScheduleMode,
+  ScheduleMode,
   ErrorString,
   ExpandedSchedule,
   FormDataObject,
@@ -37,7 +37,7 @@ export function convertUnixTimeToString(unixTime: number) {
   return `${hour}:${minute}:${seconds}`;
 }
 
-function getModeString(mode: CreateScheduleMode) {
+function getModeString(mode: ScheduleMode) {
   const duration = mode.duration;
   if (mode.type === "single") {
     return `timer/${duration}`;
@@ -48,7 +48,7 @@ function getModeString(mode: CreateScheduleMode) {
   }
 }
 
-export function expandSchedule(schedule: CreateSchedule) {
+export function expandSchedule(schedule: Schedule) {
   const expandedSchedule: ExpandedSchedule = {};
   schedule.schedules.forEach((schedule) => {
     const startTime = convertToUnixTime(schedule.start);
@@ -72,7 +72,7 @@ export function expandSchedule(schedule: CreateSchedule) {
 }
 
 export async function submitSchedule(
-  schedule: CreateSchedule,
+  schedule: Schedule,
 ): Promise<Result<ApiResponse, ErrorString>> {
   try {
     const id = getDeviceId();
