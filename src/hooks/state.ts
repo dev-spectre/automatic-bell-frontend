@@ -35,5 +35,6 @@ export function useStoreScheduleToState() {
     storeScheduleToState()
       .then((schedules) => dispatch(addSchedules({ schedules })))
       .catch((err) => +console.log(err) || alert(COULDNT_CONNNECT_TO_DEVICE));
-  }, [dispatch, alert]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 }

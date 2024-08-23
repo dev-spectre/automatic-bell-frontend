@@ -16,7 +16,13 @@ import {
 } from "../Utilities";
 import { useDispatch, useSelector } from "react-redux";
 import { useAlert } from "@/hooks/alert";
-import { ScheduleDetailProps, ScheduleCreateContext, ModeType } from "@/types";
+import {
+  ScheduleDetailProps,
+  ScheduleCreateContext,
+  ModeType,
+  Schedules,
+  SelectOptionValue,
+} from "@/types";
 import { X } from "lucide-react";
 import { Field, FieldArray, FieldArrayRenderProps, Formik } from "formik";
 import { remove, setMode } from "@/store/slice/createScheduleForm";
@@ -29,6 +35,7 @@ import {
   SCHEDULE_CREATED,
   UNKNOWN_ERR,
 } from "@/constants/alert";
+import { addSchedules } from "@/store/slice/schedules";
 
 const ScheduleCreateFormContext = createContext<ScheduleCreateContext>({
   index: 0,
@@ -38,6 +45,7 @@ const ScheduleCreateFormContext = createContext<ScheduleCreateContext>({
 
 export function ScheduleCreateForm() {
   const alert = useAlert();
+  const dispatch = useDispatch();
   const arrayHelpersRef = useRef<FieldArrayRenderProps>();
   const initialValues: Schedule = {
     scheduleName: "",
@@ -64,21 +72,26 @@ export function ScheduleCreateForm() {
       validationSchema={createScheduleSchema}
       onSubmit={async (values, actions) => {
         values = createScheduleSchema.cast(values);
-        const data = await submitSchedule(values);
-        if (data.ok) {
+        const res = await submitSchedule(values);
+        if (res.ok) {
           alert(SCHEDULE_CREATED);
+          dispatch(
+            addSchedules({
+              schedules: [values],
+            }),
+          );
         } else {
-          if (data.error === "DEVICE_ERR") {
+          if (res.error === "DEVICE_ERR") {
             alert({
               ...COULDNT_CONNNECT_TO_DEVICE,
               title: "Couldn't create schedule.",
             });
-          } else if (data.error === "UNKNOWN_ERR") {
+          } else if (res.error === "UNKNOWN_ERR") {
             alert({
               ...UNKNOWN_ERR,
               title: "Couldn't create schedule.",
             });
-          } else if (data.error === "DEVICE_ID_NOT_FOUND") {
+          } else if (res.error === "DEVICE_ID_NOT_FOUND") {
             alert(DEVICE_ID_NOT_FOUND);
           }
         }
@@ -425,5 +438,94 @@ function Session() {
         </div>
       </div>
     </>
+  );
+}
+
+export function AssignScheduleForm() {
+  // const alert = useAlert();
+  const scheduels = useSelector((store: AppStore) => store.schedules.schedules);
+  const scheduleListOptionValues: SelectOptionValue[] = [];
+  console.log(scheduels)
+  Object.keys(scheduels).forEach((scheduel) => {
+    scheduleListOptionValues.push({
+      value: scheduel,
+      label: scheduel,
+    });
+  });
+  console.log(scheduleListOptionValues);
+  const initialValues = {
+    schedule: "",
+    once: [],
+    weekly: [],
+    monthly: [],
+  };
+
+  return (
+    <Formik
+      initialValues={initialValues}
+      onSubmit={async (values, actions) => {
+        console.log(values);
+        // const data = await assignSchedule(values);
+        // if (data.ok) {
+        //   alert(SCHEDULE_CREATED);
+        // } else {
+        //   if (data.error === "DEVICE_ERR") {
+        //     alert({
+        //       ...COULDNT_CONNNECT_TO_DEVICE,
+        //       title: "Couldn't create schedule.",
+        //     });
+        //   } else if (data.error === "UNKNOWN_ERR") {
+        //     alert({
+        //       ...UNKNOWN_ERR,
+        //       title: "Couldn't create schedule.",
+        //     });
+        //   } else if (data.error === "DEVICE_ID_NOT_FOUND") {
+        //     alert(DEVICE_ID_NOT_FOUND);
+        //   }
+        // }
+        actions.setSubmitting(false);
+      }}
+      component={(props) => (
+        <Form {...props}>
+          <FormSection>
+            <button
+              className="w-full text-right text-hoki-500"
+              onClick={props.handleReset}
+              type="button"
+            >
+              Reset
+            </button>
+          </FormSection>
+          <FormSection>
+            <Field
+              as={FormSelectInput}
+              name={`schedule`}
+              id={`schedule`}
+              label="Schedule"
+              options={scheduleListOptionValues}
+              value={props.values.schedule}
+              placeholder="Select a mode"
+              onValueChange={(value: string) => {
+                props.setFieldValue("schedule", value);
+              }}
+            />
+          </FormSection>
+          <HorizontalLine />
+          <FormSection>
+            <div className="flex flex-wrap content-center justify-between gap-4">
+              <SolidButton
+                onClick={(e) => {
+                  const event =
+                    e as unknown as React.FormEvent<HTMLFormElement>;
+                  props.handleSubmit(event);
+                }}
+                type="submit"
+                label="Confirm"
+              />
+            </div>
+          </FormSection>
+        </Form>
+      )}
+    />
   );
 }

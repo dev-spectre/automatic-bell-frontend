@@ -208,3 +208,8 @@ export type ScheduleStateAddPayload = {
 export type Schedules = {
   [key: string]: Schedule["schedules"];
 };
+
+export type SelectOptionValue = {
+  value: string;
+  label: string;
+};
