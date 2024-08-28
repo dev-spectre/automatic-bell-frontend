@@ -19,6 +19,15 @@ export interface TextInputProps {
   onChange?: (e: React.ChangeEvent<any>) => void;
 }
 
+export type DateInputProps = {
+  id?: string;
+  className?: string;
+  name?: string;
+  label: string;
+  value?: Date[];
+  onChange?: (values: Date[], triggerDate?: Date) => void;
+};
+
 export interface PasswordInputProps extends TextInputProps {}
 
 export type TimeInputProps = Omit<TextInputProps, "placeholder">;

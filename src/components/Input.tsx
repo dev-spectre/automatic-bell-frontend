@@ -5,6 +5,7 @@ import {
   SelectInputProps,
   CheckboxProps,
   NumberInputProps,
+  DateInputProps,
 } from "@/types";
 import showPassword from "@/assets/eye_open.png";
 import hidePassword from "@/assets/eye_close.png";
@@ -19,6 +20,7 @@ import {
 import { useState } from "react";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { ErrorMessage } from "formik";
+import { Calendar } from "./ui/calendar";
 
 export function TextInput({
   id,
@@ -345,5 +347,35 @@ export function FormNumberInput({
         />
       </div>
     </div>
+  );
+}
+
+export function FormDatePicker({ label, id, value, onChange }: DateInputProps) {
+  const datePickerId = id || label.toLowerCase().replace(/\s/g, "-");
+  const [date, setDate] = useState<Date[]>(value || []);
+
+  return (
+    <>
+      <label className="mb-1 block" htmlFor={datePickerId}>
+        {label}
+      </label>
+      <Calendar
+        id={datePickerId}
+        mode="multiple"
+        selected={date}
+        onSelect={(selected) => {
+          if (!selected) return;
+          if (onChange) onChange(selected);
+          setDate(selected);
+        }}
+        className="inline-block rounded-md border border-hoki-600"
+        classNames={{
+          day_selected: "bg-orange-450 text-black",
+          day_today:
+            "bg-eclipse-elixir-600 outline outline-1 outline-orange-450 outline-offset-1",
+          cell: "h-10 w-10 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-eclipse-elixir-500/50 [&:has([aria-selected])]:bg-eclipse-elixir-500 first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+        }}
+      />
+    </>
   );
 }

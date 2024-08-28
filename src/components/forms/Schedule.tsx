@@ -5,6 +5,7 @@ import {
   FormCheckBox,
   FormNumberInput,
   FormTextInput,
+  FormDatePicker,
 } from "../Input";
 import { submitSchedule } from "@/utilities/forms";
 import { createContext, useContext, useRef } from "react";
@@ -20,7 +21,6 @@ import {
   ScheduleDetailProps,
   ScheduleCreateContext,
   ModeType,
-  Schedules,
   SelectOptionValue,
 } from "@/types";
 import { X } from "lucide-react";
@@ -445,7 +445,7 @@ export function AssignScheduleForm() {
   // const alert = useAlert();
   const scheduels = useSelector((store: AppStore) => store.schedules.schedules);
   const scheduleListOptionValues: SelectOptionValue[] = [];
-  console.log(scheduels)
+  console.log(scheduels);
   Object.keys(scheduels).forEach((scheduel) => {
     scheduleListOptionValues.push({
       value: scheduel,
@@ -509,6 +509,22 @@ export function AssignScheduleForm() {
                 props.setFieldValue("schedule", value);
               }}
             />
+          </FormSection>
+          <HorizontalLine />
+          <FormSection>
+            <h3 className="mb-3">Type</h3>
+            <div className="flex flex-wrap gap-2">
+              <FormCheckBox label="Once" defaultChecked={false} />
+              <FormCheckBox label="Weekly" defaultChecked={false} />
+              <FormCheckBox label="Monthly" defaultChecked={false} />
+            </div>
+          </FormSection>
+          <HorizontalLine />
+          <FormSection>
+            <h3 className="mb-3">Details</h3>
+            <div>
+              <FormDatePicker label="" />
+            </div>
           </FormSection>
           <HorizontalLine />
           <FormSection>
