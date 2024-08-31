@@ -24,8 +24,8 @@ export type DateInputProps = {
   className?: string;
   name?: string;
   label: string;
-  value?: Date[];
-  onChange?: (values: Date[], triggerDate?: Date) => void;
+  value?: string[];
+  onChange?: (values: string[], triggerDate?: Date) => void;
 };
 
 export interface PasswordInputProps extends TextInputProps {}
@@ -55,6 +55,23 @@ export interface ButtonProps {
   onClick?: (event: React.MouseEvent<HTMLElement>) => void;
   className?: string;
 }
+
+export type WeekdayProps = {
+  name: string;
+  id: string;
+  label: string;
+  selected: string[];
+  setSelected: React.Dispatch<React.SetStateAction<string[]>>;
+};
+
+export type WeekdaysProps = {
+  value: string[];
+  name: string;
+  touched: boolean;
+  onChange?: (values: string[]) => void;
+};
+
+export type MonthdaysProps = WeekdaysProps;
 
 export interface RegsiterNavLinkProps {
   label: string;

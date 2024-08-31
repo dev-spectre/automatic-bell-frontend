@@ -6,11 +6,11 @@ const assignSchedule = Yup.object({
     Yup.string()
       .ensure()
       .matches(
-        /once | weekly | monthly/,
+        /once|weekly|monthly/,
         "Selected values should be once, weekly or monthly",
       ),
   )
-    .min(1, "Please assign schedule")
+    .min(1, "Please select assignment type")
     .required("Please assign schedule"),
   once: Yup.array(
     Yup.string()
@@ -35,34 +35,43 @@ const assignSchedule = Yup.object({
         const [mday, month, year] = value.split("/").map((x) => parseInt(x));
         return `${mday}/${month}/${year}`;
       }),
-  ).when("selected", {
-    is: (selected: string[]) => selected.includes("once"),
-    then: (once) => once.required("This field is required"),
-  }),
+  )
+    .required()
+    .when("selected", {
+      is: (selected: string[]) => selected.includes("once"),
+      then: (once) => once.min(1, "Please assign schedule to at least one day"),
+    }),
   weekly: Yup.array(
     Yup.string()
       .ensure()
       .lowercase()
       .matches(
-        /sun | mon | tue | wed | thu | fri| sat/i,
+        /sun|mon|tue|wed|thu|fri|sat/,
         "Value should be one of the following: sun, mon, tue, wed, thu, fri, sat",
       ),
   )
     .max(7)
+    .required()
     .when("selected", {
       is: (selected: string[]) => selected.includes("weekly"),
-      then: (weekly) => weekly.required("This field is required"),
+      then: (weekly) =>
+        weekly.min(1, "Please assign schedule to at least one day"),
     }),
   monthly: Yup.array(
-    Yup.number()
+    Yup.string()
+      .ensure()
+      .transform((value) => Number(value))
       .min(1, "Value should be greater than or equal to 1")
       .max(31, "Value should be less than or equal to 31")
+      .transform((value) => value.toString())
       .required("Value should be a number"),
   )
     .max(31)
+    .required()
     .when("selected", {
       is: (selected: string[]) => selected.includes("monthly"),
-      then: (monthly) => monthly.required("This field is required"),
+      then: (monthly) =>
+        monthly.min(1, "Please assign schedule to at least one day"),
     }),
 });
 

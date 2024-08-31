@@ -6,6 +6,8 @@ import {
   FormNumberInput,
   FormTextInput,
   FormDatePicker,
+  FormWeekdays,
+  FormMonthdays,
 } from "../Input";
 import { submitSchedule } from "@/utilities/forms";
 import { createContext, useContext, useRef } from "react";
@@ -24,7 +26,14 @@ import {
   SelectOptionValue,
 } from "@/types";
 import { X } from "lucide-react";
-import { Field, FieldArray, FieldArrayRenderProps, Formik } from "formik";
+import {
+  ErrorMessage,
+  Field,
+  FieldArray,
+  FieldArrayRenderProps,
+  Formik,
+  FormikProps,
+} from "formik";
 import { remove, setMode } from "@/store/slice/createScheduleForm";
 import { AppStore } from "@/store";
 import { CheckedState } from "@radix-ui/react-checkbox";
@@ -36,6 +45,7 @@ import {
   UNKNOWN_ERR,
 } from "@/constants/alert";
 import { addSchedules } from "@/store/slice/schedules";
+import assignSchedule, { AssignSchedule } from "@/schema/assignSchedule";
 
 const ScheduleCreateFormContext = createContext<ScheduleCreateContext>({
   index: 0,
@@ -150,16 +160,16 @@ export function ScheduleCreateForm() {
               );
             }}
           />
-          <FormSection>
+          <div className="@container">
             {props.errors.schedules &&
             props.touched.schedules &&
             typeof props.errors.schedules === "string" ? (
-              <div className="-mt-6 mb-1 text-red-500">
+              <div className="-mt-6 mb-1 px-7 text-red-500">
                 {props.errors.schedules}
               </div>
             ) : null}
-            <div className="flex flex-wrap content-center justify-between gap-4">
-              <div className="flex flex-wrap content-center gap-4">
+            <div className="@[672px]:justify-between flex flex-wrap justify-center gap-4">
+              <div className="flex flex-wrap justify-center gap-4 px-7">
                 <OutlineButton
                   label="Add session"
                   onClick={() => {
@@ -194,17 +204,20 @@ export function ScheduleCreateForm() {
                   }}
                 />
               </div>
-              <SolidButton
-                onClick={(e) => {
-                  const event =
-                    e as unknown as React.FormEvent<HTMLFormElement>;
-                  props.handleSubmit(event);
-                }}
-                type="submit"
-                label="Confirm"
-              />
+              <div className="@[672px]:hidden mb-3 mt-3 w-full border-t border-t-hoki-600"></div>
+              <div className="px-7">
+                <SolidButton
+                  onClick={(e) => {
+                    const event =
+                      e as unknown as React.FormEvent<HTMLFormElement>;
+                    props.handleSubmit(event);
+                  }}
+                  type="submit"
+                  label="Confirm"
+                />
+              </div>
             </div>
-          </FormSection>
+          </div>
         </Form>
       )}
     />
@@ -445,16 +458,15 @@ export function AssignScheduleForm() {
   // const alert = useAlert();
   const scheduels = useSelector((store: AppStore) => store.schedules.schedules);
   const scheduleListOptionValues: SelectOptionValue[] = [];
-  console.log(scheduels);
   Object.keys(scheduels).forEach((scheduel) => {
     scheduleListOptionValues.push({
       value: scheduel,
       label: scheduel,
     });
   });
-  console.log(scheduleListOptionValues);
-  const initialValues = {
+  const initialValues: AssignSchedule = {
     schedule: "",
+    selected: ["weekly"],
     once: [],
     weekly: [],
     monthly: [],
@@ -463,6 +475,7 @@ export function AssignScheduleForm() {
   return (
     <Formik
       initialValues={initialValues}
+      validationSchema={assignSchedule}
       onSubmit={async (values, actions) => {
         console.log(values);
         // const data = await assignSchedule(values);
@@ -485,7 +498,12 @@ export function AssignScheduleForm() {
         // }
         actions.setSubmitting(false);
       }}
-      component={(props) => (
+      component={({
+        setFieldValue,
+        setFieldTouched,
+        values,
+        ...props
+      }: FormikProps<typeof initialValues>) => (
         <Form {...props}>
           <FormSection>
             <button
@@ -503,10 +521,10 @@ export function AssignScheduleForm() {
               id={`schedule`}
               label="Schedule"
               options={scheduleListOptionValues}
-              value={props.values.schedule}
+              value={values.schedule}
               placeholder="Select a mode"
               onValueChange={(value: string) => {
-                props.setFieldValue("schedule", value);
+                setFieldValue("schedule", value);
               }}
             />
           </FormSection>
@@ -514,21 +532,139 @@ export function AssignScheduleForm() {
           <FormSection>
             <h3 className="mb-3">Type</h3>
             <div className="flex flex-wrap gap-2">
-              <FormCheckBox label="Once" defaultChecked={false} />
-              <FormCheckBox label="Weekly" defaultChecked={false} />
-              <FormCheckBox label="Monthly" defaultChecked={false} />
+              <FormCheckBox
+                id="select-weekly"
+                label="Weekly"
+                defaultChecked={values.selected.includes("weekly")}
+                onCheckedChange={(state: CheckedState) => {
+                  if (state === "indeterminate") return;
+                  if (state) {
+                    setFieldValue("selected", ["weekly", ...values.selected]);
+                  } else {
+                    const selected = values.selected.filter(
+                      (value) => value != "weekly",
+                    );
+                    setFieldValue("selected", selected);
+                  }
+                }}
+              />
+              <FormCheckBox
+                id="select-once"
+                label="Once"
+                defaultChecked={values.selected.includes("once")}
+                onCheckedChange={(state: CheckedState) => {
+                  if (state === "indeterminate") return;
+                  if (state) {
+                    setFieldValue("selected", ["once", ...values.selected]);
+                  } else {
+                    const selected = values.selected.filter(
+                      (value) => value != "once",
+                    );
+                    setFieldValue("selected", selected);
+                  }
+                }}
+              />
+              <FormCheckBox
+                id="select-monthly"
+                label="Monthly"
+                defaultChecked={values.selected.includes("monthly")}
+                onCheckedChange={(state: CheckedState) => {
+                  if (state === "indeterminate") return;
+                  if (state) {
+                    setFieldValue("selected", ["monthly", ...values.selected]);
+                  } else {
+                    const selected = values.selected.filter(
+                      (value) => value != "monthly",
+                    );
+                    setFieldValue("selected", selected);
+                  }
+                }}
+              />
+            </div>
+            <div className="min-h-6">
+              <ErrorMessage
+                component={"div"}
+                className="text-red-500"
+                name={"selected"}
+              />
             </div>
           </FormSection>
           <HorizontalLine />
-          <FormSection>
-            <h3 className="mb-3">Details</h3>
-            <div>
-              <FormDatePicker label="" />
-            </div>
-          </FormSection>
-          <HorizontalLine />
-          <FormSection>
-            <div className="flex flex-wrap content-center justify-between gap-4">
+          {values.selected.includes("weekly") && (
+            <>
+              <FormSection>
+                <h3 className="mb-3">Weekly</h3>
+                <FormWeekdays
+                  name="weekly"
+                  value={values.weekly}
+                  touched={props.touched.weekly ?? false}
+                  onChange={(values) => {
+                    console.log(props)
+                    setFieldTouched("weekly", true);
+                    setFieldValue("weekly", values);
+                  }}
+                />
+                <div className="min-h-6">
+                  <ErrorMessage
+                    component={"div"}
+                    className="text-red-500"
+                    name={"weekly"}
+                  />
+                </div>
+              </FormSection>
+              <HorizontalLine />
+            </>
+          )}
+          {values.selected.includes("once") && (
+            <>
+              <FormSection>
+                <h3 className="mb-3">Once</h3>
+                <FormDatePicker
+                  onChange={(values) => {
+                    setFieldTouched("once", true);
+                    setFieldValue("once", values);
+                  }}
+                  value={values.once}
+                  id="once"
+                  label=""
+                />
+                <div className="min-h-6">
+                  <ErrorMessage
+                    component={"div"}
+                    className="text-red-500"
+                    name={"once"}
+                  />
+                </div>
+              </FormSection>
+              <HorizontalLine />
+            </>
+          )}
+          {values.selected.includes("monthly") && (
+            <>
+              <FormSection>
+                <h3 className="mb-3">Monthly</h3>
+                <FormMonthdays
+                  touched={props.touched.monthly ?? false}
+                  value={values.monthly}
+                  name="monthly"
+                  onChange={(values) => {
+                    setFieldTouched("monthly", true);
+                    setFieldValue("monthly", values);
+                  }}
+                />
+                <div className="min-h-6">
+                  <ErrorMessage
+                    component={"div"}
+                    className="text-red-500"
+                    name={"monthly"}
+                  />
+                </div>
+              </FormSection>
+              <HorizontalLine />
+            </>
+          )}
+          <div className="px-7">
+            <div className="flex justify-center md:justify-end">
               <SolidButton
                 onClick={(e) => {
                   const event =
@@ -539,7 +675,7 @@ export function AssignScheduleForm() {
                 label="Confirm"
               />
             </div>
-          </FormSection>
+          </div>
         </Form>
       )}
     />

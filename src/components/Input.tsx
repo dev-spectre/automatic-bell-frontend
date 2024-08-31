@@ -6,6 +6,9 @@ import {
   CheckboxProps,
   NumberInputProps,
   DateInputProps,
+  WeekdayProps,
+  WeekdaysProps,
+  MonthdaysProps,
 } from "@/types";
 import showPassword from "@/assets/eye_open.png";
 import hidePassword from "@/assets/eye_close.png";
@@ -17,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { ErrorMessage } from "formik";
 import { Calendar } from "./ui/calendar";
@@ -208,6 +211,7 @@ export function FormCheckBox({
     <>
       <div className="flex items-center space-x-2">
         <Checkbox
+          name={name || checkboxId}
           onCheckedChange={(value) => {
             setIsChecked(value);
             if (onCheckedChange) onCheckedChange(value);
@@ -352,7 +356,14 @@ export function FormNumberInput({
 
 export function FormDatePicker({ label, id, value, onChange }: DateInputProps) {
   const datePickerId = id || label.toLowerCase().replace(/\s/g, "-");
-  const [date, setDate] = useState<Date[]>(value || []);
+  const initialValues =
+    value?.map((value) => {
+      const [date, month, year] = value
+        .split("/")
+        .map((value) => Number(value));
+      return new Date(date, month - 1, year);
+    }) || [];
+  const [date, setDate] = useState<Date[]>(initialValues);
 
   return (
     <>
@@ -365,17 +376,159 @@ export function FormDatePicker({ label, id, value, onChange }: DateInputProps) {
         selected={date}
         onSelect={(selected) => {
           if (!selected) return;
-          if (onChange) onChange(selected);
+          if (onChange) {
+            const values = selected.map((value) => {
+              const year = value.getFullYear();
+              const month = value.getMonth() + 1;
+              const date = value.getDate();
+              return `${date}/${month}/${year}`;
+            });
+            onChange(values);
+          }
           setDate(selected);
         }}
         className="inline-block rounded-md border border-hoki-600"
         classNames={{
           day_selected: "bg-orange-450 text-black",
           day_today:
-            "bg-eclipse-elixir-600 outline outline-1 outline-orange-450 outline-offset-1",
-          cell: "h-10 w-10 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-eclipse-elixir-500/50 [&:has([aria-selected])]:bg-eclipse-elixir-500 first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+            "bg-eclipse-elixir-600 outline outline-1 outline-orange-450",
+          cell: "h-8 w-8 md:h-10 md:w-10 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-eclipse-elixir-500/50 [&:has([aria-selected])]:bg-eclipse-elixir-500 first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
         }}
       />
     </>
   );
+}
+
+function RoundCheckBox({
+  id,
+  label,
+  name,
+  selected,
+  setSelected,
+}: WeekdayProps) {
+  const checked = selected.includes(id);
+
+  return (
+    <>
+      <label
+        onClick={() => {
+          setSelected((selected: string[]) => {
+            if (selected.includes(id)) {
+              return selected.filter((value) => value != id);
+            } else {
+              return [id, ...selected];
+            }
+          });
+        }}
+        className={`flex h-10 w-10 items-center justify-center rounded-full border border-hoki-600 hover:cursor-pointer ${checked && "bg-orange-450 text-black"}`}
+        htmlFor={id}
+      >
+        {label}
+      </label>
+      <input className="hidden" type="checkbox" id={id} name={name} />
+    </>
+  );
+}
+
+export function FormWeekdays({
+  name,
+  value,
+  onChange,
+  touched,
+}: WeekdaysProps) {
+  const [selected, setSelected] = useState<string[]>(value || []);
+  useEffect(() => {
+    if (onChange && (touched || selected.length)) onChange(selected);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selected]);
+
+  return (
+    <div id={name}>
+      <div className="flex flex-wrap gap-3">
+        <RoundCheckBox
+          id="sun"
+          label="S"
+          name={name}
+          selected={selected}
+          setSelected={setSelected}
+        />
+        <RoundCheckBox
+          id="mon"
+          label="M"
+          name={name}
+          selected={selected}
+          setSelected={setSelected}
+        />
+        <RoundCheckBox
+          id="tue"
+          label="T"
+          name={name}
+          selected={selected}
+          setSelected={setSelected}
+        />
+        <RoundCheckBox
+          id="wed"
+          label="W"
+          name={name}
+          selected={selected}
+          setSelected={setSelected}
+        />
+        <RoundCheckBox
+          id="thu"
+          label="T"
+          name={name}
+          selected={selected}
+          setSelected={setSelected}
+        />
+        <RoundCheckBox
+          id="fri"
+          label="F"
+          name={name}
+          selected={selected}
+          setSelected={setSelected}
+        />
+        <RoundCheckBox
+          id="sat"
+          label="S"
+          name={name}
+          selected={selected}
+          setSelected={setSelected}
+        />
+      </div>
+    </div>
+  );
+}
+
+export function FormMonthdays({
+  name,
+  value,
+  onChange,
+  touched,
+}: MonthdaysProps) {
+  const [selected, setSelected] = useState<string[]>(value || []);
+
+  useEffect(() => {
+    if (onChange && (touched || selected.length)) onChange(selected);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selected]);
+
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
+  const currentMonthDaysCount = new Date(year, month, 0).getDate();
+
+  const monthdays = [];
+  for (let i = 1; i <= currentMonthDaysCount; i++) {
+    monthdays.push(
+      <RoundCheckBox
+        key={i}
+        label={i.toString()}
+        id={i.toString()}
+        name={name}
+        selected={selected}
+        setSelected={setSelected}
+      />,
+    );
+  }
+  return <div className="flex max-w-80 flex-wrap gap-3">{monthdays}</div>;
 }

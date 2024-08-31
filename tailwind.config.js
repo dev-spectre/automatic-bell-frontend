@@ -94,5 +94,8 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require('@tailwindcss/container-queries'),
+    require("tailwindcss-animate")
+  ],
 };
