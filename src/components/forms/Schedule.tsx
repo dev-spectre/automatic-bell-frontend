@@ -9,7 +9,7 @@ import {
   FormWeekdays,
   FormMonthdays,
 } from "../Input";
-import { submitSchedule } from "@/utilities/forms";
+import { assignSchedule, submitSchedule } from "@/utilities/forms";
 import { createContext, useContext, useRef } from "react";
 import {
   Form,
@@ -41,11 +41,12 @@ import createScheduleSchema, { Schedule } from "@/schema/createSchedule";
 import {
   COULDNT_CONNNECT_TO_DEVICE,
   DEVICE_ID_NOT_FOUND,
+  SCHEDULE_ASSIGNED,
   SCHEDULE_CREATED,
   UNKNOWN_ERR,
 } from "@/constants/alert";
 import { addSchedules } from "@/store/slice/schedules";
-import assignSchedule, { AssignSchedule } from "@/schema/assignSchedule";
+import assignScheduleSchema, { AssignSchedule } from "@/schema/assignSchedule";
 
 const ScheduleCreateFormContext = createContext<ScheduleCreateContext>({
   index: 0,
@@ -168,7 +169,7 @@ export function ScheduleCreateForm() {
                 {props.errors.schedules}
               </div>
             ) : null}
-            <div className="@[672px]:justify-between flex flex-wrap justify-center gap-4">
+            <div className="flex flex-wrap justify-center gap-4 @[672px]:justify-between">
               <div className="flex flex-wrap justify-center gap-4 px-7">
                 <OutlineButton
                   label="Add session"
@@ -204,7 +205,7 @@ export function ScheduleCreateForm() {
                   }}
                 />
               </div>
-              <div className="@[672px]:hidden mb-3 mt-3 w-full border-t border-t-hoki-600"></div>
+              <div className="mb-3 mt-3 w-full border-t border-t-hoki-600 @[672px]:hidden"></div>
               <div className="px-7">
                 <SolidButton
                   onClick={(e) => {
@@ -455,7 +456,7 @@ function Session() {
 }
 
 export function AssignScheduleForm() {
-  // const alert = useAlert();
+  const alert = useAlert();
   const scheduels = useSelector((store: AppStore) => store.schedules.schedules);
   const scheduleListOptionValues: SelectOptionValue[] = [];
   Object.keys(scheduels).forEach((scheduel) => {
@@ -475,27 +476,27 @@ export function AssignScheduleForm() {
   return (
     <Formik
       initialValues={initialValues}
-      validationSchema={assignSchedule}
+      validationSchema={assignScheduleSchema}
       onSubmit={async (values, actions) => {
         console.log(values);
-        // const data = await assignSchedule(values);
-        // if (data.ok) {
-        //   alert(SCHEDULE_CREATED);
-        // } else {
-        //   if (data.error === "DEVICE_ERR") {
-        //     alert({
-        //       ...COULDNT_CONNNECT_TO_DEVICE,
-        //       title: "Couldn't create schedule.",
-        //     });
-        //   } else if (data.error === "UNKNOWN_ERR") {
-        //     alert({
-        //       ...UNKNOWN_ERR,
-        //       title: "Couldn't create schedule.",
-        //     });
-        //   } else if (data.error === "DEVICE_ID_NOT_FOUND") {
-        //     alert(DEVICE_ID_NOT_FOUND);
-        //   }
-        // }
+        const data = await assignSchedule(values);
+        if (data.ok) {
+          alert(SCHEDULE_ASSIGNED);
+        } else {
+          if (data.error === "DEVICE_ERR") {
+            alert({
+              ...COULDNT_CONNNECT_TO_DEVICE,
+              title: "Couldn't assign schedule.",
+            });
+          } else if (data.error === "UNKNOWN_ERR") {
+            alert({
+              ...UNKNOWN_ERR,
+              title: "Couldn't assign schedule.",
+            });
+          } else if (data.error === "DEVICE_ID_NOT_FOUND") {
+            alert(DEVICE_ID_NOT_FOUND);
+          }
+        }
         actions.setSubmitting(false);
       }}
       component={({
@@ -524,6 +525,7 @@ export function AssignScheduleForm() {
               value={values.schedule}
               placeholder="Select a mode"
               onValueChange={(value: string) => {
+                setFieldTouched("schedule", true);
                 setFieldValue("schedule", value);
               }}
             />
@@ -538,6 +540,7 @@ export function AssignScheduleForm() {
                 defaultChecked={values.selected.includes("weekly")}
                 onCheckedChange={(state: CheckedState) => {
                   if (state === "indeterminate") return;
+                  setFieldTouched("selected", true);
                   if (state) {
                     setFieldValue("selected", ["weekly", ...values.selected]);
                   } else {
@@ -554,6 +557,7 @@ export function AssignScheduleForm() {
                 defaultChecked={values.selected.includes("once")}
                 onCheckedChange={(state: CheckedState) => {
                   if (state === "indeterminate") return;
+                  setFieldTouched("selected", true);
                   if (state) {
                     setFieldValue("selected", ["once", ...values.selected]);
                   } else {
@@ -570,6 +574,7 @@ export function AssignScheduleForm() {
                 defaultChecked={values.selected.includes("monthly")}
                 onCheckedChange={(state: CheckedState) => {
                   if (state === "indeterminate") return;
+                  setFieldTouched("selected", true);
                   if (state) {
                     setFieldValue("selected", ["monthly", ...values.selected]);
                   } else {
@@ -599,7 +604,7 @@ export function AssignScheduleForm() {
                   value={values.weekly}
                   touched={props.touched.weekly ?? false}
                   onChange={(values) => {
-                    console.log(props)
+                    console.log(props);
                     setFieldTouched("weekly", true);
                     setFieldValue("weekly", values);
                   }}

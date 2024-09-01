@@ -19,7 +19,7 @@ const assignSchedule = Yup.object({
         /\d{1,2}\/\d{1,2}\/\d{2,4}/,
         "Date should match the format dd/mm/yyyy",
       )
-      .test("once", "Please enter today's date or of the future", (value) => {
+      .test("once", "Please don't select dates of the past", (value) => {
         // * date shouldn't be from past
         const dateArray = value.split("/").map((x) => parseInt(x));
         const date = new Date();

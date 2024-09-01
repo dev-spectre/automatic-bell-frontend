@@ -361,7 +361,7 @@ export function FormDatePicker({ label, id, value, onChange }: DateInputProps) {
       const [date, month, year] = value
         .split("/")
         .map((value) => Number(value));
-      return new Date(date, month - 1, year);
+      return new Date(year, month - 1, date);
     }) || [];
   const [date, setDate] = useState<Date[]>(initialValues);
 
@@ -514,7 +514,7 @@ export function FormMonthdays({
 
   const today = new Date();
   const year = today.getFullYear();
-  const month = today.getMonth();
+  const month = today.getMonth() + 1;
   const currentMonthDaysCount = new Date(year, month, 0).getDate();
 
   const monthdays = [];

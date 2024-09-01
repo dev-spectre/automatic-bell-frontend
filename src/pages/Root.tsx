@@ -1,4 +1,3 @@
-
 import { SideBar } from "@/components/SideBar";
 import { useAuthorizeSession } from "@/hooks/auth";
 import { useStoreScheduleToState } from "@/hooks/state";

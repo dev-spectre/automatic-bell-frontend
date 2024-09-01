@@ -67,3 +67,9 @@ export const DEVICE_ID_NOT_FOUND: RawToast = {
   description: "Please login and try again.",
   type: "error",
 };
+
+export const SCHEDULE_ASSIGNED: RawToast = {
+  title: "Schedule assigned.",
+  description: "Schedule has been assigned and the schedule is active.",
+  type: "info",
+};
