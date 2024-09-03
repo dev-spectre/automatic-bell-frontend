@@ -36,8 +36,13 @@ const createScheduleFormSlice = createSlice({
       }
       state.mode[type].push(value);
     },
+
+    clear: (state) => {
+      state.mode.repeat = [];
+      state.mode.single = [];
+    }
   },
 });
 
-export const { setMode, remove } = createScheduleFormSlice.actions;
+export const { setMode, remove, clear } = createScheduleFormSlice.actions;
 export default createScheduleFormSlice.reducer;

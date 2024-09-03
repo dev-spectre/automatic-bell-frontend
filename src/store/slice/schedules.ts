@@ -1,4 +1,8 @@
-import { ScheduleStateAddPayload, Schedules } from "@/types";
+import {
+  ScheduleStateAddPayload,
+  ScheduleStateDeletePayload,
+  Schedules,
+} from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const scheduleSlice = createSlice({
@@ -13,8 +17,17 @@ const scheduleSlice = createSlice({
           (state.schedules[schedule.scheduleName] = schedule.schedules),
       );
     },
+
+    removeSchedules: (
+      state,
+      action: PayloadAction<ScheduleStateDeletePayload>,
+    ) => {
+      action.payload.schedules.forEach((schedule) => {
+        delete state.schedules[schedule];
+      });
+    },
   },
 });
 
-export const { addSchedules } = scheduleSlice.actions;
+export const { addSchedules, removeSchedules } = scheduleSlice.actions;
 export default scheduleSlice.reducer;

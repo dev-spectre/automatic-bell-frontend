@@ -32,11 +32,14 @@ export function getDeviceId() {
 
 export async function getDeviceIp(id: number): Promise<string> {
   const deviceIpFromSessionStorage = sessionStorage.getItem("deviceIp") ?? "";
+  const checkedSession = sessionStorage.getItem("checkedSessionIp");
   const requestCheckForSession: Promise<string> = new Promise(
     (resolve, reject) => {
       if (!deviceIpFromSessionStorage) {
         reject("Value is null");
         return;
+      } else if (deviceIpFromSessionStorage && checkedSession) {
+        return resolve(deviceIpFromSessionStorage);
       }
       req
         .get(`http://${deviceIpFromSessionStorage}/res`)
@@ -81,6 +84,7 @@ export async function getDeviceIp(id: number): Promise<string> {
     ]);
     localStorage.setItem("deviceIp", ip);
     sessionStorage.setItem("deviceIp", ip);
+    sessionStorage.setItem("checkedSessionIp", ip);
     return ip;
   } catch (err) {
     throw new Error((err as string).toString());

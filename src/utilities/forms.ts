@@ -10,6 +10,11 @@ import {
 import { getDeviceId, getDeviceIp } from "./device";
 import req from "@/api/requests";
 import { AssignSchedule } from "@/schema/assignSchedule";
+import {
+  COULDNT_CONNNECT_TO_DEVICE,
+  UNKNOWN_ERR,
+  DEVICE_ID_NOT_FOUND,
+} from "@/constants/alert";
 
 export function getFormData(form: HTMLFormElement) {
   const data: FormDataObject = {};
@@ -38,15 +43,16 @@ export function convertUnixTimeToString(unixTime: number) {
   return `${hour}:${minute}:${seconds}`;
 }
 
-function getModeString(mode: ScheduleMode) {
-  const duration = mode.duration;
-  if (mode.type === "single") {
-    return `timer/${duration}`;
-  } else {
-    const ringCount = mode.ringCount ?? 0;
-    const gap = mode.gap ?? 0;
-    return `repeat/${ringCount}/${duration}/${gap}`;
-  }
+function getModeObject(mode: ScheduleMode) {
+  const duration = `${mode.duration}s`;
+  const ringCount = mode.ringCount ?? 1;
+  const gap = `${mode.gap ?? 0}s`;
+  return {
+    ...mode,
+    duration,
+    ringCount,
+    gap,
+  };
 }
 
 export function expandSchedule(schedule: Schedule) {
@@ -57,7 +63,7 @@ export function expandSchedule(schedule: Schedule) {
       const endTime = convertToUnixTime(schedule.end ?? "");
       const includeEndTime = schedule.includeEndTime ?? true;
       const intervalInSeconds = (schedule.interval ?? 0) * 60;
-      const mode = getModeString(schedule.mode);
+      const mode = getModeObject(schedule.mode);
       for (let i = startTime; i < endTime; i += intervalInSeconds) {
         expandedSchedule[convertUnixTimeToString(i)] = mode;
       }
@@ -65,7 +71,7 @@ export function expandSchedule(schedule: Schedule) {
         expandedSchedule[convertUnixTimeToString(endTime)] = mode;
       }
     } else {
-      const mode = getModeString(schedule.mode);
+      const mode = getModeObject(schedule.mode);
       expandedSchedule[convertUnixTimeToString(startTime)] = mode;
     }
   });
@@ -74,6 +80,7 @@ export function expandSchedule(schedule: Schedule) {
 
 export async function submitSchedule(
   schedule: Schedule,
+  edit: boolean,
 ): Promise<Result<ApiResponse, ErrorString>> {
   try {
     const id = getDeviceId();
@@ -83,7 +90,8 @@ export async function submitSchedule(
         error: "DEVICE_ID_NOT_FOUND",
       };
     const deviceIp = await getDeviceIp(id);
-    const res: ApiResponse = await req.post(`http://${deviceIp}/schedule`, {
+    const method = edit ? "put" : "post";
+    const res: ApiResponse = await req[method](`http://${deviceIp}/schedule`, {
       schedules: {
         [schedule.scheduleName]: schedule.schedules,
       },
@@ -186,5 +194,21 @@ export async function assignSchedule(
       ok: false,
       error: "DEVICE_ERR",
     };
+  }
+}
+
+export function handleErrorResponse(err: ErrorString, edit: boolean) {
+  if (err === "DEVICE_ERR") {
+    alert({
+      ...COULDNT_CONNNECT_TO_DEVICE,
+      title: `Couldn't ${edit ? "edit" : "create"} schedule.`,
+    });
+  } else if (err === "UNKNOWN_ERR") {
+    alert({
+      ...UNKNOWN_ERR,
+      title: `Couldn't ${edit ? "edit" : "create"} schedule.`,
+    });
+  } else if (err === "DEVICE_ID_NOT_FOUND") {
+    alert(DEVICE_ID_NOT_FOUND);
   }
 }

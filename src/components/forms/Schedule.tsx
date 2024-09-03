@@ -9,7 +9,11 @@ import {
   FormWeekdays,
   FormMonthdays,
 } from "../Input";
-import { assignSchedule, submitSchedule } from "@/utilities/forms";
+import {
+  assignSchedule,
+  handleErrorResponse,
+  submitSchedule,
+} from "@/utilities/forms";
 import { createContext, useContext, useRef } from "react";
 import {
   Form,
@@ -23,7 +27,7 @@ import {
   ScheduleDetailProps,
   ScheduleCreateContext,
   ModeType,
-  SelectOptionValue,
+  ScheduleFormProps,
 } from "@/types";
 import { X } from "lucide-react";
 import {
@@ -43,10 +47,16 @@ import {
   DEVICE_ID_NOT_FOUND,
   SCHEDULE_ASSIGNED,
   SCHEDULE_CREATED,
+  SCHEDULE_EDITED,
   UNKNOWN_ERR,
 } from "@/constants/alert";
 import { addSchedules } from "@/store/slice/schedules";
 import assignScheduleSchema, { AssignSchedule } from "@/schema/assignSchedule";
+import {
+  useInitialValue,
+  useScheduleListOptionValues,
+  useSyncStateAndFormValues,
+} from "@/hooks/form";
 
 const ScheduleCreateFormContext = createContext<ScheduleCreateContext>({
   index: 0,
@@ -54,81 +64,62 @@ const ScheduleCreateFormContext = createContext<ScheduleCreateContext>({
   props: null,
 });
 
-export function ScheduleCreateForm() {
+export function ScheduleForm({
+  onClose,
+  edit,
+  scheduleName,
+}: ScheduleFormProps) {
   const alert = useAlert();
   const dispatch = useDispatch();
   const arrayHelpersRef = useRef<FieldArrayRenderProps>();
-  const initialValues: Schedule = {
-    scheduleName: "",
-    schedules: [
-      {
-        start: "",
-        end: "",
-        type: "session",
-        includeEndTime: true,
-        interval: NaN,
-        mode: {
-          type: "",
-          gap: NaN,
-          ringCount: NaN,
-          duration: NaN,
-        },
-      },
-    ],
-  };
+  const initialValues = useInitialValue(scheduleName);
+  useSyncStateAndFormValues(initialValues);
 
   return (
     <Formik
+      enableReinitialize={true}
       initialValues={initialValues}
       validationSchema={createScheduleSchema}
       onSubmit={async (values, actions) => {
         values = createScheduleSchema.cast(values);
-        const res = await submitSchedule(values);
+        const res = await submitSchedule(values, edit);
         if (res.ok) {
-          alert(SCHEDULE_CREATED);
+          alert(edit ? SCHEDULE_EDITED : SCHEDULE_CREATED);
           dispatch(
             addSchedules({
               schedules: [values],
             }),
           );
         } else {
-          if (res.error === "DEVICE_ERR") {
-            alert({
-              ...COULDNT_CONNNECT_TO_DEVICE,
-              title: "Couldn't create schedule.",
-            });
-          } else if (res.error === "UNKNOWN_ERR") {
-            alert({
-              ...UNKNOWN_ERR,
-              title: "Couldn't create schedule.",
-            });
-          } else if (res.error === "DEVICE_ID_NOT_FOUND") {
-            alert(DEVICE_ID_NOT_FOUND);
-          }
+          handleErrorResponse(res.error, edit);
         }
         actions.setSubmitting(false);
       }}
-      component={(props) => (
-        <Form {...props}>
+      component={(props: FormikProps<Schedule>) => (
+        <Form onClose={onClose} edit={edit} {...props}>
           <FormSection>
             <button
-              className="w-full text-right text-hoki-500"
+              className="mb-2 w-full text-right text-hoki-500"
               onClick={props.handleReset}
               type="button"
             >
               Reset
             </button>
           </FormSection>
-          <FormSection>
-            <Field
-              as={FormTextInput}
-              className="placeholder-hoki-500 placeholder:italic"
-              label="Schedule Name"
-              placeholder="Enter schedule name"
-              name="scheduleName"
-            />
-          </FormSection>
-          <HorizontalLine />
+          {!edit && (
+            <>
+              <FormSection>
+                <Field
+                  as={FormTextInput}
+                  className="placeholder-hoki-500 placeholder:italic"
+                  label="Schedule Name"
+                  placeholder="Enter schedule name"
+                  name="scheduleName"
+                />
+              </FormSection>
+              <HorizontalLine />
+            </>
+          )}
           <FieldArray
             name="schedules"
             render={(arrayHelpers) => {
@@ -457,14 +448,7 @@ function Session() {
 
 export function AssignScheduleForm() {
   const alert = useAlert();
-  const scheduels = useSelector((store: AppStore) => store.schedules.schedules);
-  const scheduleListOptionValues: SelectOptionValue[] = [];
-  Object.keys(scheduels).forEach((scheduel) => {
-    scheduleListOptionValues.push({
-      value: scheduel,
-      label: scheduel,
-    });
-  });
+  const scheduleListOptionValues = useScheduleListOptionValues();
   const initialValues: AssignSchedule = {
     schedule: "",
     selected: ["weekly"],
@@ -523,7 +507,7 @@ export function AssignScheduleForm() {
               label="Schedule"
               options={scheduleListOptionValues}
               value={values.schedule}
-              placeholder="Select a mode"
+              placeholder="Select a schedule"
               onValueChange={(value: string) => {
                 setFieldTouched("schedule", true);
                 setFieldValue("schedule", value);

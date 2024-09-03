@@ -175,6 +175,8 @@ export interface CreateScheduleFormStatePayload {
 }
 
 export interface FormProps extends ReactNodes {
+  edit?: boolean;
+  onClose?: () => void;
   handleSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
 }
 
@@ -191,7 +193,12 @@ export type ScheduleMode = Pick<
 >;
 
 export interface ExpandedSchedule {
-  [Key: string]: string;
+  [Key: string]: {
+    type: string;
+    duration: string;
+    gap: string;
+    ringCount: number;
+  };
 }
 
 export interface PageHeaderProps {
@@ -231,6 +238,10 @@ export type ScheduleStateAddPayload = {
   schedules: Schedule[];
 };
 
+export type ScheduleStateDeletePayload = {
+  schedules: string[];
+};
+
 export type Schedules = {
   [key: string]: Schedule["schedules"];
 };
@@ -239,3 +250,36 @@ export type SelectOptionValue = {
   value: string;
   label: string;
 };
+
+export type ScheduleFormProps =
+  | {
+      onClose: () => void;
+      edit: true;
+      scheduleName: string | null | undefined;
+    }
+  | {
+      edit: false;
+      onClose?: undefined;
+      scheduleName?: undefined;
+    };
+
+export type AlertDialogProps = {
+  title: string;
+  label: string;
+  className?: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+};
+
+export type OverlayProps = {
+  onClick?: React.MouseEventHandler<HTMLDivElement> | undefined;
+  children: ReactNode;
+};
+
+export type DeleteConfirmationProps = {
+  scheduleName: string;
+  isVisible: string[];
+  setIsVisible: React.Dispatch<React.SetStateAction<string[]>>;
+};
+
+export type EditScheduleFormProps = DeleteConfirmationProps;

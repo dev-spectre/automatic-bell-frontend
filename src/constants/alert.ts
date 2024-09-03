@@ -73,3 +73,15 @@ export const SCHEDULE_ASSIGNED: RawToast = {
   description: "Schedule has been assigned and the schedule is active.",
   type: "info",
 };
+
+export const SCHEDULE_EDITED: RawToast = {
+  title: "Schedule edited",
+  description: "Schedule has been updated on device.",
+  type: "info",
+};
+
+export const SCHEDULE_DELETED: RawToast = {
+  title: "Schedule deleted.",
+  description: "Schedule has been deleted on device.",
+  type: "info",
+};

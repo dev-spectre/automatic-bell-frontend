@@ -6,10 +6,11 @@ import {
   CollapsibleSectionProps,
   FormProps,
   PageHeaderProps,
+  OverlayProps,
 } from "@/types";
 import { EmergencyButton, ManualButton, MenuButton } from "./Buttons";
 import { useState } from "react";
-import { Bell, ChevronDown } from "lucide-react";
+import { Bell, ChevronDown, X } from "lucide-react";
 
 export function AccountRegisterFormContainer({ children }: ReactNodes) {
   return (
@@ -19,12 +20,19 @@ export function AccountRegisterFormContainer({ children }: ReactNodes) {
   );
 }
 
-export function Form({ children, handleSubmit }: FormProps) {
+export function Form({ onClose, edit, children, handleSubmit }: FormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-md bg-eclipse-elixir-500 pb-12 pt-4"
+      className="min-w-72 rounded-md bg-eclipse-elixir-500 pb-12 pt-4"
     >
+      {edit && (
+        <div className="flex justify-end px-2 text-hoki-500">
+          <button onClick={onClose}>
+            <X />
+          </button>
+        </div>
+      )}
       {children}
     </form>
   );
@@ -111,5 +119,18 @@ export function PageHeader({ label }: PageHeaderProps) {
       </div>
       <ManualControl />
     </header>
+  );
+}
+
+export function Overlay({ onClick, children, ...props }: OverlayProps) {
+  return (
+    <div
+      id="overlay"
+      className="fixed inset-0 z-30 flex items-start justify-center overflow-scroll bg-black/50 p-10"
+      {...props}
+      onClick={onClick}
+    >
+      {children}
+    </div>
   );
 }

@@ -82,8 +82,8 @@ const scheduleSchema = Yup.object({
       }),
     }),
   )
-    .min(1, "Schedule details are required")
-    .required("Schedule details are required"),
+    .min(1, "Schedule details is required")
+    .required("Schedule details is required"),
 });
 
 export type Schedule = Yup.InferType<typeof scheduleSchema>;
