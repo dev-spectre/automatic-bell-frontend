@@ -6,6 +6,7 @@ import {
   ExpandedSchedule,
   FormDataObject,
   Result,
+  Schedules,
 } from "@/types";
 import { getDeviceId, getDeviceIp } from "./device";
 import req from "@/api/requests";
@@ -76,6 +77,19 @@ export function expandSchedule(schedule: Schedule) {
     }
   });
   return expandedSchedule;
+}
+
+export function expandActiveSchedule(active: string[], schedules: Schedules) {
+  const expandedActiveSchedule: ExpandedSchedule = {};
+  active.forEach((scheduleName) => {
+    if (!schedules.hasOwnProperty(scheduleName)) return;
+    const expandedSchedule = expandSchedule({
+      scheduleName,
+      schedules: schedules[scheduleName],
+    });
+    Object.assign(expandedActiveSchedule, expandedSchedule);
+  });
+  return expandedActiveSchedule;
 }
 
 export async function submitSchedule(

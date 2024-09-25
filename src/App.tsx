@@ -13,12 +13,17 @@ import Toast from "./components/Toast";
 import { CreateSchedule } from "./pages/createSchedule";
 import { EditSchedule } from "./pages/EditSchedule";
 import { AssignSchedule } from "./pages/AssignSchedule";
+import { Dashboard } from "./pages/Dashboard";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Root />,
     children: [
+      {
+        index: true,
+        element: <Dashboard />
+      },
       {
         path: "schedule/create",
         element: <CreateSchedule />,

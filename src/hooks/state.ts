@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useAlert } from "./alert";
 import { COULDNT_CONNNECT_TO_DEVICE } from "@/constants/alert";
 import { getDeviceId, getDeviceIp } from "@/utilities/device";
-import { addSchedules } from "@/store/slice/schedules";
+import { addActiveSchedules, addSchedules } from "@/store/slice/schedules";
 import { Schedule } from "@/schema/createSchedule";
 import { useDispatch } from "react-redux";
 
@@ -15,8 +15,11 @@ async function storeScheduleToState() {
     throw new Error("NO_DATA");
   }
   const data = res.data;
+  const active: string[] = data.active;
   const schedules: Schedule[] = [];
-  for (const [key, value] of Object.entries<Schedule["schedules"]>(data.schedules)) {
+  for (const [key, value] of Object.entries<Schedule["schedules"]>(
+    data.schedules,
+  )) {
     if (value.at(0)?.type) {
       schedules.push({
         scheduleName: key,
@@ -24,7 +27,11 @@ async function storeScheduleToState() {
       });
     }
   }
-  return schedules;
+
+  return {
+    schedules,
+    active,
+  };
 }
 
 export function useStoreScheduleToState() {
@@ -33,8 +40,15 @@ export function useStoreScheduleToState() {
 
   useEffect(() => {
     storeScheduleToState()
-      .then((schedules) => dispatch(addSchedules({ schedules })))
+      .then((schedule) => {
+        dispatch(
+          addSchedules({
+            schedules: schedule.schedules,
+          }),
+        );
+        dispatch(addActiveSchedules(schedule.active));
+      })
       .catch((err) => +console.log(err) || alert(COULDNT_CONNNECT_TO_DEVICE));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 }
