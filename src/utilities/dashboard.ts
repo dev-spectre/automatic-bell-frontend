@@ -1,4 +1,4 @@
-import { ExpandedSchedule } from "@/types";
+import { ExpandedSchedule, Schedules } from "@/types";
 
 export function formatTime(date: Date): string {
   let hours: number = date.getHours();
@@ -65,4 +65,12 @@ export function getNextRing(expandedSchedule: ExpandedSchedule) {
   });
 
   return nextRing ? formatTime(nextRing) : null;
+}
+
+
+export function sortSchedules(schedules: Schedules): string[] {
+  const scheduleNames = Object.keys(schedules);
+
+  const sortedSchedules = scheduleNames.sort((a, b) => a.localeCompare(b));
+  return sortedSchedules;
 }

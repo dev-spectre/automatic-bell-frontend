@@ -1,12 +1,13 @@
-import { RunningScheduleOverview } from "@/components/RunningScheduleOverview";
+import { RunningScheduleOverview, ScheduleList } from "@/components/Dashboard";
 import { PageHeader } from "@/components/Utilities";
 
 export function Dashboard() {
   return (
     <>
       <PageHeader label="Dashboard" />
-      <div className="bg row-auto grid gap-5 md:grid-cols-2">
-        <RunningScheduleOverview />
+      <RunningScheduleOverview />
+      <div className="mt-9">
+        <ScheduleList />
       </div>
     </>
   );

@@ -36,12 +36,17 @@ const scheduleSlice = createSlice({
     },
 
     removeActiveSchedules: (state, action: PayloadAction<string[]>) => {
-      state.active = state.active.filter((value) =>
-        action.payload.includes(value),
+      state.active = state.active.filter(
+        (value) => !action.payload.includes(value),
       );
     },
   },
 });
 
-export const { addSchedules, removeSchedules, addActiveSchedules, removeActiveSchedules } = scheduleSlice.actions;
+export const {
+  addSchedules,
+  removeSchedules,
+  addActiveSchedules,
+  removeActiveSchedules,
+} = scheduleSlice.actions;
 export default scheduleSlice.reducer;
