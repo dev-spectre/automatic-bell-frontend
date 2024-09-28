@@ -28,6 +28,8 @@ import {
   ScheduleCreateContext,
   ModeType,
   ScheduleFormProps,
+  StringArrObject,
+  MonthlySchedule,
 } from "@/types";
 import { X } from "lucide-react";
 import {
@@ -50,7 +52,7 @@ import {
   SCHEDULE_EDITED,
   UNKNOWN_ERR,
 } from "@/constants/alert";
-import { addSchedules } from "@/store/slice/schedules";
+import { addSchedules, assignSchedules } from "@/store/slice/schedules";
 import assignScheduleSchema, { AssignSchedule } from "@/schema/assignSchedule";
 import {
   useInitialValue,
@@ -174,7 +176,7 @@ export function ScheduleForm({
                       mode: {
                         type: "",
                         gap: NaN,
-                        ringCount: NaN,
+                        ringCount: null,
                         duration: NaN,
                       },
                     });
@@ -448,6 +450,7 @@ function Session() {
 
 export function AssignScheduleForm() {
   const alert = useAlert();
+  const dispatch = useDispatch();
   const scheduleListOptionValues = useScheduleListOptionValues();
   const initialValues: AssignSchedule = {
     schedule: "",
@@ -466,6 +469,23 @@ export function AssignScheduleForm() {
         const data = await assignSchedule(values);
         if (data.ok) {
           alert(SCHEDULE_ASSIGNED);
+
+          const schedule = [values.schedule];
+          const weekly: StringArrObject = {};
+          const once: StringArrObject = {};
+          const monthly: MonthlySchedule = {};
+          values.weekly.forEach((value) => (weekly[value] = schedule));
+          values.once.forEach((value) => (once[value] = schedule));
+          values.monthly.forEach(
+            (value) => (monthly[parseInt(value)] = schedule),
+          );
+          dispatch(
+            assignSchedules({
+              monthly,
+              weekly,
+              once,
+            }),
+          );
         } else {
           if (data.error === "DEVICE_ERR") {
             alert({

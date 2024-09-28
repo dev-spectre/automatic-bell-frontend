@@ -3,9 +3,14 @@ import { useEffect } from "react";
 import { useAlert } from "./alert";
 import { COULDNT_CONNNECT_TO_DEVICE } from "@/constants/alert";
 import { getDeviceId, getDeviceIp } from "@/utilities/device";
-import { addActiveSchedules, addSchedules } from "@/store/slice/schedules";
+import {
+  addActiveSchedules,
+  addSchedules,
+  assignSchedules,
+} from "@/store/slice/schedules";
 import { Schedule } from "@/schema/createSchedule";
 import { useDispatch } from "react-redux";
+import { StringArrObject } from "@/types";
 
 async function storeScheduleToState() {
   const deviceId = getDeviceId() ?? NaN;
@@ -17,6 +22,11 @@ async function storeScheduleToState() {
   const data = res.data;
   const active: string[] = data.active;
   const schedules: Schedule[] = [];
+  const monthly: StringArrObject = data.monthly;
+  const skip: StringArrObject = data.skip;
+  const once: StringArrObject = data.once;
+  const weekly: string[][] = data.weekly;
+
   for (const [key, value] of Object.entries<Schedule["schedules"]>(
     data.schedules,
   )) {
@@ -31,6 +41,10 @@ async function storeScheduleToState() {
   return {
     schedules,
     active,
+    weekly,
+    monthly,
+    once,
+    skip,
   };
 }
 
@@ -47,6 +61,16 @@ export function useStoreScheduleToState() {
           }),
         );
         dispatch(addActiveSchedules(schedule.active));
+
+        const { skip, once, monthly, weekly } = schedule;
+        dispatch(
+          assignSchedules({
+            skip,
+            once,
+            monthly,
+            weekly,
+          }),
+        );
       })
       .catch((err) => +console.log(err) || alert(COULDNT_CONNNECT_TO_DEVICE));
     // eslint-disable-next-line react-hooks/exhaustive-deps

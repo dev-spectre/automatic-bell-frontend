@@ -4,6 +4,10 @@ import { CheckedState } from "@radix-ui/react-checkbox";
 import { FieldArrayRenderProps } from "formik";
 import { Schedule } from "./schema/createSchedule";
 
+export type StringArrObject = {
+  [key: string]: string[];
+}
+
 export interface ReactNodes {
   children: ReactNode;
 }
@@ -283,3 +287,14 @@ export type DeleteConfirmationProps = {
 };
 
 export type EditScheduleFormProps = DeleteConfirmationProps;
+
+export type MonthlySchedule = {
+  [key: number]: string[];
+}
+
+export interface AssignSchedulePayload {
+  skip?: StringArrObject;
+  once?: StringArrObject;
+  monthly?: MonthlySchedule;
+  weekly?: string[][] | StringArrObject; // 2D array for weekly schedule (7 days)
+}

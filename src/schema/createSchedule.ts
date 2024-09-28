@@ -8,16 +8,16 @@ const scheduleSchema = Yup.object({
 
   schedules: Yup.array(
     Yup.object({
-      type: Yup.string().matches(
-        /(session|additional)/,
-        "Invalid schedule type",
-      ),
+      type: Yup.string()
+        .matches(/(session|additional)/, "Invalid schedule type")
+        .required("Schedule type not passed"),
 
       start: Yup.string()
         .matches(/\d{2}:\d{2}/, "Start time must be in the format HH:MM")
         .required("Start time is required"),
 
       end: Yup.string()
+        .nullable()
         .matches(/\d{2}:\d{2}/, "End time must be in the format HH:MM")
         .when("type", {
           is: (type: string) => type === "session",
@@ -25,22 +25,27 @@ const scheduleSchema = Yup.object({
           otherwise: (end) => end.notRequired(),
         }),
 
-      includeEndTime: Yup.bool().when("type", {
-        is: (type: string) => type === "session",
-        then: (includeEndTime) =>
-          includeEndTime.required("Include end time is required"),
-      }),
+      includeEndTime: Yup.bool()
+        .nullable()
+        .when("type", {
+          is: (type: string) => type === "session",
+          then: (includeEndTime) =>
+            includeEndTime.required("Include end time is required"),
+          otherwise: (includeEndTime) => includeEndTime.nullable(),
+        }),
 
-      interval: Yup.number().when("type", {
-        is: (type: string) => type === "session",
-        then: (interval) =>
-          interval
-            .transform((value) => (isNaN(value) ? null : value))
-            .positive("Invterval must be a positive number")
-            .required("Interval is required")
-            .typeError("Interval must be a number"),
-        otherwise: (interval) => interval.notRequired(),
-      }),
+      interval: Yup.number()
+        .nullable()
+        .when("type", {
+          is: (type: string) => type === "session",
+          then: (interval) =>
+            interval
+              .transform((value) => (isNaN(value) ? null : value))
+              .positive("Invterval must be a positive number")
+              .required("Interval is required")
+              .typeError("Interval must be a number"),
+          otherwise: (interval) => interval.notRequired(),
+        }),
 
       mode: Yup.object({
         type: Yup.string()
@@ -51,12 +56,14 @@ const scheduleSchema = Yup.object({
           .required("Mode is required"),
 
         duration: Yup.number()
+          .nullable()
           .transform((value) => (isNaN(value) ? null : value))
           .positive("Duration must be a positive number")
           .required("Duration is required")
           .typeError("Duration must be a number"),
 
         gap: Yup.number()
+          .nullable()
           .transform((value) => (isNaN(value) ? null : value))
           .typeError("Gap must be a number")
           .when("type", {
@@ -69,6 +76,7 @@ const scheduleSchema = Yup.object({
           }),
 
         ringCount: Yup.number()
+          .nullable()
           .transform((value) => (isNaN(value) ? null : value))
           .typeError("Number of rings must be a number")
           .when("type", {

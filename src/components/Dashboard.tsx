@@ -121,11 +121,12 @@ export function ScheduleList() {
                 <td className="hidden @md:table-cell">{timings.length}</td>
                 <td>
                   <Switch
+                    id={scheduleName}
                     className="data-[state=checked]:bg-orange-450 data-[state=unchecked]:bg-eclipse-elixir-400"
                     defaultChecked={active.includes(scheduleName)}
                     onCheckedChange={async (checked) => {
                       const deviceId = getDeviceId() ?? NaN;
-                      const deviceIp = getDeviceIp(deviceId);
+                      const deviceIp = await getDeviceIp(deviceId);
                       const res = await req.put(
                         `http://${deviceIp}/schedule/active`,
                         {
@@ -139,6 +140,14 @@ export function ScheduleList() {
                           dispatch(removeActiveSchedules([scheduleName]));
                         }
                       } else {
+                        const toggleSwitch = document.getElementById(
+                          scheduleName,
+                        ) as HTMLButtonElement;
+                        if (!toggleSwitch) return;
+                        toggleSwitch.setAttribute("checked", `${!checked}`);
+                        toggleSwitch.dataset.state = checked
+                          ? "unchecked"
+                          : "checked";
                         dispatch(
                           addToast({
                             ...COULDNT_CONNNECT_TO_DEVICE,

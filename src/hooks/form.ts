@@ -27,7 +27,7 @@ export function useInitialValue(
           mode: {
             type: "",
             gap: NaN,
-            ringCount: NaN,
+            ringCount: null,
             duration: NaN,
           },
         },
