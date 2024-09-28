@@ -8,7 +8,7 @@ import {
 import bgImg from "@/assets/logo.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { AppStore } from "@/store";
-import { useSyncTime } from "@/hooks/dashboard";
+import { useCalendarMonthCount, useSyncTime } from "@/hooks/dashboard";
 import { expandActiveSchedule, expandSchedule } from "@/utilities/forms";
 import { PencilLine, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -21,6 +21,8 @@ import req from "@/api/requests";
 import { getDeviceId, getDeviceIp } from "@/utilities/device";
 import { addToast } from "@/store/slice/toasts";
 import { COULDNT_CONNNECT_TO_DEVICE } from "@/constants/alert";
+import { Calendar } from "./ui/calendar";
+import { useRef } from "react";
 
 export function RunningScheduleOverview() {
   const currentDate = getCurrentDate();
@@ -163,6 +165,42 @@ export function ScheduleList() {
           })}
         </tbody>
       </table>
+    </div>
+  );
+}
+
+export function ScheduleCalendar() {
+  const calendarContainer = useRef<HTMLDivElement | null>(null);
+  const numberOfMonths = useCalendarMonthCount(calendarContainer);
+  const active = useSelector((state: AppStore) => state.schedules.active);
+
+  return (
+    <div
+      ref={calendarContainer}
+      className="max-xs:text-center xs:flex xs:divide-x gap-2 rounded bg-eclipse-elixir-500 px-5 py-4 @container md:px-7 md:py-6"
+    >
+      <Calendar
+        id="calendar"
+        mode="multiple"
+        className="max-xs:mb-5 inline-block p-0"
+        classNames={{
+          day_selected: "bg-orange-450 text-black",
+          day_today:
+            "bg-eclipse-elixir-600 outline outline-1 outline-orange-450",
+          cell: "h-8 w-8 md:h-10 md:w-10 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-eclipse-elixir-500/50 [&:has([aria-selected])]:bg-eclipse-elixir-500 first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+        }}
+        numberOfMonths={numberOfMonths}
+      />
+      <div className="border-hoki-600 pl-4 text-left">
+        <p className="xs:text-lg mb-2">Active Schedules</p>
+        {active.map((schedule) => (
+          <div>
+            <p className="inline-block" key={schedule}>
+              {schedule}
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
