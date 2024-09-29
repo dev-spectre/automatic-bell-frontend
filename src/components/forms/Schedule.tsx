@@ -451,6 +451,7 @@ function Session() {
 export function AssignScheduleForm() {
   const alert = useAlert();
   const dispatch = useDispatch();
+  const active = useSelector((state: AppStore) => state.schedules.active);
   const scheduleListOptionValues = useScheduleListOptionValues();
   const initialValues: AssignSchedule = {
     schedule: "",
@@ -466,7 +467,7 @@ export function AssignScheduleForm() {
       validationSchema={assignScheduleSchema}
       onSubmit={async (values, actions) => {
         console.log(values);
-        const data = await assignSchedule(values);
+        const data = await assignSchedule(values, active);
         if (data.ok) {
           alert(SCHEDULE_ASSIGNED);
 
@@ -481,6 +482,7 @@ export function AssignScheduleForm() {
           );
           dispatch(
             assignSchedules({
+              schedules: schedule,
               monthly,
               weekly,
               once,

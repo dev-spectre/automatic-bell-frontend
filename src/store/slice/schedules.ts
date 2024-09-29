@@ -50,6 +50,10 @@ const scheduleSlice = createSlice({
       state.active = state.active.filter(
         (value) => !action.payload.schedules.includes(value),
       );
+      _removeSchedulesFromState(state, {
+        payload: action.payload.schedules,
+        type: "removeScheduleAssignment",
+      });
     },
 
     addActiveSchedules: (state, action: PayloadAction<string[]>) => {
@@ -63,7 +67,14 @@ const scheduleSlice = createSlice({
     },
 
     assignSchedules: (state, action: PayloadAction<AssignSchedulePayload>) => {
-      const { skip, once, monthly, weekly } = action.payload;
+      const { skip, once, monthly, weekly, schedules } = action.payload;
+
+      if (schedules) {
+        _removeSchedulesFromState(state, {
+          payload: schedules,
+          type: "removeScheduleAssignment",
+        });
+      }
 
       if (skip) {
         Object.keys(skip).forEach((date) => {
@@ -121,9 +132,11 @@ const scheduleSlice = createSlice({
       action: PayloadAction<AssignSchedulePayload>,
     ) => {
       const { skip, once, monthly, weekly } = action.payload;
+      console.log(weekly);
 
       if (skip) {
         Object.keys(skip).forEach((date) => {
+          if (!state.skip.hasOwnProperty(date)) return;
           state.skip[date] = state.skip[date].filter(
             (schedule) => !skip[date].includes(schedule),
           );
@@ -132,6 +145,7 @@ const scheduleSlice = createSlice({
 
       if (once) {
         Object.keys(once).forEach((date) => {
+          if (!state.once.hasOwnProperty(date)) return;
           state.once[date] = state.once[date].filter(
             (schedule) => !once[date].includes(schedule),
           );
@@ -157,10 +171,69 @@ const scheduleSlice = createSlice({
             (schedule) => !daySchedule.includes(schedule),
           );
         });
+      } else if (weekly && !Array.isArray(weekly)) {
+        Object.keys(weekly).forEach((day) => {
+          if (!days.includes(day)) return;
+          state.weekly[day] = state.weekly[day].filter(
+            (schedule) => !weekly[day].includes(schedule),
+          );
+        });
       }
+    },
+
+    removeSchedulesFromState: (state, action: PayloadAction<string[]>) => {
+      _removeSchedulesFromState(state, action);
     },
   },
 });
+
+function _removeSchedulesFromState(
+  state: {
+    skip: StringArrObject;
+    once: StringArrObject;
+    weekly: StringArrObject;
+    monthly: MonthlySchedule;
+  },
+  action: PayloadAction<string[]>,
+) {
+  const schedulesToRemove = action.payload;
+
+  Object.keys(state.skip).forEach((date) => {
+    state.skip[date] = state.skip[date].filter(
+      (schedule) => !schedulesToRemove.includes(schedule),
+    );
+    if (state.skip[date].length === 0) {
+      delete state.skip[date];
+    }
+  });
+
+  Object.keys(state.once).forEach((date) => {
+    state.once[date] = state.once[date].filter(
+      (schedule) => !schedulesToRemove.includes(schedule),
+    );
+    if (state.once[date].length === 0) {
+      delete state.once[date];
+    }
+  });
+
+  Object.keys(state.monthly).forEach((day) => {
+    const dayNum = parseInt(day);
+    if (dayNum >= 1 && dayNum <= 31 && state.monthly[dayNum]) {
+      state.monthly[dayNum] = state.monthly[dayNum].filter(
+        (schedule) => !schedulesToRemove.includes(schedule),
+      );
+    }
+  });
+
+  const days = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
+  days.forEach((day) => {
+    if (state.weekly[day]) {
+      state.weekly[day] = state.weekly[day].filter(
+        (schedule) => !schedulesToRemove.includes(schedule),
+      );
+    }
+  });
+}
 
 export const {
   addSchedules,

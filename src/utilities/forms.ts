@@ -135,6 +135,7 @@ export async function submitSchedule(
 
 export async function assignSchedule(
   formData: AssignSchedule,
+  active: string[],
 ): Promise<Result<ApiResponse, ErrorString>> {
   try {
     const id = getDeviceId();
@@ -181,7 +182,7 @@ export async function assignSchedule(
     });
     if (res.success) {
       const activeRes = await req.put(`http://${deviceIp}/schedule/active`, {
-        active: [formData.schedule],
+        active: [...active, formData.schedule],
       });
 
       if (activeRes.success)

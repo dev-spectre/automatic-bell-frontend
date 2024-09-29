@@ -13,6 +13,7 @@ function addAuthToken(headers: RequestHeaders | undefined) {
 async function get(url: string, headers?: RequestHeaders) {
   headers = addAuthToken(headers);
   const res = await fetch(url, {
+    mode: "cors",
     method: "GET",
     headers: headers as HeadersInit,
   });
@@ -27,6 +28,7 @@ async function post(
 ) {
   headers = addAuthToken(headers);
   const res = await fetch(url, {
+    mode: "cors",
     method: "POST",
     body: JSON.stringify(body),
     headers: headers as HeadersInit,
@@ -42,6 +44,7 @@ async function put(
 ) {
   headers = addAuthToken(headers);
   const res = await fetch(url, {
+    mode: "cors",
     method: "PUT",
     body: JSON.stringify(body),
     headers: headers as HeadersInit,
@@ -57,6 +60,7 @@ async function _delete(
 ) {
   headers = addAuthToken(headers);
   const res = await fetch(url, {
+    mode: "cors",
     method: "DELETE",
     body: JSON.stringify(body),
     headers: headers as HeadersInit,

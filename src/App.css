@@ -591,6 +591,14 @@ body {
   --tw-contain-style:  ;
 }
 
+.\!container {
+  width: 100% !important;
+  margin-right: auto !important;
+  margin-left: auto !important;
+  padding-right: 2rem !important;
+  padding-left: 2rem !important;
+}
+
 .container {
   width: 100%;
   margin-right: auto;
@@ -600,6 +608,10 @@ body {
 }
 
 @media (min-width: 1400px) {
+  .\!container {
+    max-width: 1400px !important;
+  }
+
   .container {
     max-width: 1400px;
   }
@@ -811,10 +823,6 @@ body {
   margin-top: 1.75rem;
 }
 
-.mt-9 {
-  margin-top: 2.25rem;
-}
-
 .block {
   display: block;
 }
@@ -837,10 +845,6 @@ body {
 
 .table {
   display: table;
-}
-
-.grid {
-  display: grid;
 }
 
 .hidden {
@@ -931,8 +935,8 @@ body {
   min-height: 33.4rem;
 }
 
-.min-h-8 {
-  min-height: 2rem;
+.w-1 {
+  width: 0.25rem;
 }
 
 .w-10 {
@@ -973,10 +977,6 @@ body {
 
 .w-full {
   width: 100%;
-}
-
-.w-9 {
-  width: 2.25rem;
 }
 
 .min-w-24 {
@@ -1125,10 +1125,6 @@ body {
   gap: 1rem;
 }
 
-.gap-5 {
-  gap: 1.25rem;
-}
-
 .gap-7 {
   gap: 1.75rem;
 }
@@ -1149,6 +1145,12 @@ body {
   --tw-space-y-reverse: 0;
   margin-top: calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(0.25rem * var(--tw-space-y-reverse));
+}
+
+.space-y-2 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
 }
 
 .space-y-4 > :not([hidden]) ~ :not([hidden]) {
@@ -1483,8 +1485,8 @@ body {
   padding-bottom: 0.5rem;
 }
 
-.pl-2 {
-  padding-left: 0.5rem;
+.pl-4 {
+  padding-left: 1rem;
 }
 
 .pl-8 {
@@ -1505,14 +1507,6 @@ body {
 
 .pt-4 {
   padding-top: 1rem;
-}
-
-.pl-3 {
-  padding-left: 0.75rem;
-}
-
-.pl-4 {
-  padding-left: 1rem;
 }
 
 .text-left {
@@ -1843,8 +1837,17 @@ body {
   color: hsl(var(--accent-foreground));
 }
 
+.hover\:text-background:hover {
+  color: hsl(var(--background));
+}
+
 .hover\:text-primary-foreground:hover {
   color: hsl(var(--primary-foreground));
+}
+
+.hover\:text-eclipse-elixir-500:hover {
+  --tw-text-opacity: 1;
+  color: rgb(30 33 55 / var(--tw-text-opacity));
 }
 
 .hover\:underline:hover {
@@ -1874,6 +1877,11 @@ body {
 
 .focus\:text-primary-foreground:focus {
   color: hsl(var(--primary-foreground));
+}
+
+.focus\:text-eclipse-elixir-500:focus {
+  --tw-text-opacity: 1;
+  color: rgb(30 33 55 / var(--tw-text-opacity));
 }
 
 .focus\:outline:focus {
@@ -2365,16 +2373,8 @@ body {
 }
 
 @media (min-width: 1024px) {
-  .lg\:grid {
-    display: grid;
-  }
-
   .lg\:hidden {
     display: none;
-  }
-
-  .lg\:grid-cols-2 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .lg\:gap-2 {
@@ -2403,10 +2403,6 @@ body {
 }
 
 @media (min-width: 1280px) {
-  .xl\:grid-cols-2 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .xl\:px-28 {
     padding-left: 7rem;
     padding-right: 7rem;

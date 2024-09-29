@@ -1,5 +1,5 @@
 import { getCurrentTime } from "@/utilities/dashboard";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function useSyncTime() {
   const currentTime = getCurrentTime();
@@ -35,54 +35,36 @@ export function useCalendarMonthCount(
   calendarContainer: React.MutableRefObject<HTMLDivElement | null>,
 ) {
   const [numberOfMonths, setNumberOfMonths] = useState(1);
+  const numberOfMonthsRef = useRef(numberOfMonths);
 
   useEffect(() => {
-    const handleResize = () => {
-      if (!calendarContainer.current) return;
-      const containerComputedStyle = getComputedStyle(
-        calendarContainer.current,
-      );
-      const containerPadding =
-        parseFloat(containerComputedStyle.paddingLeft) +
-        parseFloat(containerComputedStyle.paddingRight);
-      const containerWidth =
-        calendarContainer.current.clientWidth - containerPadding;
+    numberOfMonthsRef.current = numberOfMonths;
+  });
 
-      const calendar = calendarContainer.current.firstElementChild;
-      if (!calendar) return;
-      const calendarMonth = calendar.firstElementChild?.lastElementChild;
-      if (!calendarMonth) return;
-      const calendarMonthStyle = getComputedStyle(calendarMonth);
-      const widthOfLastMonth =
-        calendarMonth?.clientWidth +
-        parseFloat(calendarMonthStyle.marginLeft) -
-        2;
+  const handleResize = () => {
+    const container = calendarContainer.current;
+    if (!container) return;
 
-      const activeSchedules = calendarContainer.current.lastElementChild;
-      if (!activeSchedules) return;
-      const activeSchedulesComputedStyle = getComputedStyle(activeSchedules);
-      const activeSchedulesPadding =
-        parseFloat(activeSchedulesComputedStyle.paddingLeft) +
-        parseFloat(activeSchedulesComputedStyle.paddingRight);
-      const border = parseFloat(activeSchedulesComputedStyle.borderRight);
-      const activeSchedulesWidth = Math.max(
-        activeSchedules.clientWidth - activeSchedulesPadding - border,
-        170,
-      );
+    let numberOfMonths = 1;
+    const width = container.offsetWidth;
+    if (width >= 1460) {
+      numberOfMonths = 4;
+    } else if (width >= 1200) {
+      numberOfMonths = 3;
+    } else if (width >= 1120) {
+      numberOfMonths = 3;
+    } else if (width >= 810) {
+      numberOfMonths = 2;
+    } else if (width >= 720) {
+      numberOfMonths = 1;
+    }
 
-      const freeSpace = containerWidth - activeSchedulesWidth;
-      const calculatedNumberOfMonths = Math.max(
-        Math.round(freeSpace / widthOfLastMonth) - 1,
-        1,
-      );
-      if (
-        Math.round(numberOfMonths) === 1 ||
-        calculatedNumberOfMonths != Math.round(numberOfMonths)
-      ) {
-        setNumberOfMonths(calculatedNumberOfMonths);
-      }
-    };
+    if (numberOfMonths !== numberOfMonthsRef.current) {
+      setNumberOfMonths(numberOfMonths);
+    }
+  };
 
+  useEffect(() => {
     handleResize();
     window.addEventListener("resize", handleResize);
 

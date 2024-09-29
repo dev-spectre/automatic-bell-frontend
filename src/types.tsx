@@ -293,6 +293,7 @@ export type MonthlySchedule = {
 }
 
 export interface AssignSchedulePayload {
+  schedules?: string[];
   skip?: StringArrObject;
   once?: StringArrObject;
   monthly?: MonthlySchedule;
