@@ -9,7 +9,6 @@ import dashboard from "@/assets/dashboard.png";
 import emergency from "@/assets/emergency.png";
 import manual from "@/assets/manual.png";
 import instructions from "@/assets/instructions.png";
-import details from "@/assets/details.png";
 import logout from "@/assets/logout.png";
 import schedule from "@/assets/schedule.png";
 import settings from "@/assets/settings.png";
@@ -147,7 +146,6 @@ export function SideBar() {
                 icon={""}
               />
             </NavCollapsible>
-            <NavLink label={"Details"} link={"/details"} icon={details} />
             <NavLink label={"Manual"} link={"/manual"} icon={manual} />
             <NavLink label={"Emergency"} link={"/emergency"} icon={emergency} />
             <NavLink
