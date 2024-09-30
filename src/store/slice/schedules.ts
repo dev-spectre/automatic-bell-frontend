@@ -132,7 +132,6 @@ const scheduleSlice = createSlice({
       action: PayloadAction<AssignSchedulePayload>,
     ) => {
       const { skip, once, monthly, weekly } = action.payload;
-      console.log(weekly);
 
       if (skip) {
         Object.keys(skip).forEach((date) => {

@@ -130,6 +130,14 @@ export function dateToString(date: Date): string {
   return `${day}/${month}/${year}`;
 }
 
+export function hexColourToCssClass(text: string) {
+  let className = text.slice(1);
+  if (/[0-9]/.test(className)) {
+    className = "_" + className;
+  }
+  return className;
+}
+
 export function getActiveScheduleDates(
   schedules: {
     weekly: StringArrObject;
@@ -143,26 +151,21 @@ export function getActiveScheduleDates(
 ) {
   const { skip, once, weekly, monthly, active } = schedules;
   const result: { [scheduleName: string]: Set<string> } = {};
-  const usedDates: Set<string> = new Set();
 
   const addDates = (scheduleName: string, date: string) => {
     if (!result[scheduleName]) {
       result[scheduleName] = new Set();
     }
-    if (!usedDates.has(date)) {
-      result[scheduleName].add(date);
-      usedDates.add(date);
-    }
+    result[scheduleName].add(date);
   };
 
   let currentDate = new Date(startDate);
   while (currentDate <= endDate) {
     const date = dateToString(currentDate);
     for (let i = active.length - 1; i >= 0; i--) {
-      if (skip.hasOwnProperty(date) && skip[date].includes(active[i])) break;
+      if (skip.hasOwnProperty(date) && skip[date].includes(active[i])) continue;
       if (once.hasOwnProperty(date) && once[date].includes(active[i])) {
         addDates(active[i], date);
-        break;
       }
 
       const dayOfMonth = currentDate.getDate();
@@ -171,7 +174,6 @@ export function getActiveScheduleDates(
         monthly[dayOfMonth].includes(active[i])
       ) {
         addDates(active[i], date);
-        break;
       }
 
       const dayOfWeek = currentDate
@@ -179,7 +181,6 @@ export function getActiveScheduleDates(
         .toLowerCase();
       if (weekly[dayOfWeek].includes(active[i])) {
         addDates(active[i], date);
-        break;
       }
     }
 
@@ -197,12 +198,13 @@ export function getActiveScheduleDates(
 }
 
 export function assignColor(active: string[]) {
+  const style = document.getElementById("dynamic-styles");
+  if (!style) return;
+  let styleText = "";
   active.forEach((schedule) => {
-    const nodes: NodeListOf<HTMLDivElement> = document.querySelectorAll(
-      `.${schedule}`,
-    );
-    nodes.forEach((node: HTMLDivElement) => {
-      node.style.color = generateUniqueColour(schedule);
-    });
+    const hexColour = generateUniqueColour(schedule);
+    const className = `.${hexColourToCssClass(hexColour)}`;
+    styleText += `#calendar ${className} { color: ${hexColour} !important; } `;
   });
+  style.innerHTML = styleText;
 }

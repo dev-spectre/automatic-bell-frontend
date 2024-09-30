@@ -466,7 +466,6 @@ export function AssignScheduleForm() {
       initialValues={initialValues}
       validationSchema={assignScheduleSchema}
       onSubmit={async (values, actions) => {
-        console.log(values);
         const data = await assignSchedule(values, active);
         if (data.ok) {
           alert(SCHEDULE_ASSIGNED);
@@ -610,7 +609,6 @@ export function AssignScheduleForm() {
                   value={values.weekly}
                   touched={props.touched.weekly ?? false}
                   onChange={(values) => {
-                    console.log(props);
                     setFieldTouched("weekly", true);
                     setFieldValue("weekly", values);
                   }}

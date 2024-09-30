@@ -6,7 +6,7 @@ import { Schedule } from "./schema/createSchedule";
 
 export type StringArrObject = {
   [key: string]: string[];
-}
+};
 
 export interface ReactNodes {
   children: ReactNode;
@@ -290,7 +290,7 @@ export type EditScheduleFormProps = DeleteConfirmationProps;
 
 export type MonthlySchedule = {
   [key: number]: string[];
-}
+};
 
 export interface AssignSchedulePayload {
   schedules?: string[];
@@ -299,3 +299,11 @@ export interface AssignSchedulePayload {
   monthly?: MonthlySchedule;
   weekly?: string[][] | StringArrObject; // 2D array for weekly schedule (7 days)
 }
+
+export type SkipScheduleModalProps = {
+  date: Date;
+  skipSchedules: { [key: string]: boolean };
+  setSkipSchedules: React.Dispatch<
+    React.SetStateAction<{ [key: string]: boolean }>
+  >;
+};

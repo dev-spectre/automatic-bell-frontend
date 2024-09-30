@@ -7,10 +7,29 @@ import {
   FormProps,
   PageHeaderProps,
   OverlayProps,
+  SkipScheduleModalProps,
 } from "@/types";
-import { EmergencyButton, ManualButton, MenuButton } from "./Buttons";
+import {
+  EmergencyButton,
+  ManualButton,
+  MenuButton,
+  OutlineButton,
+  SolidButton,
+} from "./Buttons";
 import { useState } from "react";
 import { Bell, ChevronDown, X } from "lucide-react";
+import { FormCheckBox } from "./Input";
+import { Formik, FormikProps } from "formik";
+import req from "@/api/requests";
+import { dateToString } from "@/utilities/dashboard";
+import { getDeviceId, getDeviceIp } from "@/utilities/device";
+import { useDispatch } from "react-redux";
+import { assignSchedules, unassignSchedules } from "@/store/slice/schedules";
+import { addToast } from "@/store/slice/toasts";
+import {
+  COULDNT_CONNNECT_TO_DEVICE,
+  SCHEDULE_ASSIGNMENT_UPDATED,
+} from "@/constants/alert";
 
 export function AccountRegisterFormContainer({ children }: ReactNodes) {
   return (
@@ -77,7 +96,7 @@ export function ManualControl() {
         <Bell />
       </button>
       <div
-        className={`right-0 top-12 flex flex-wrap max-lg:absolute max-lg:flex-col lg:gap-2 ${isCollapsed && "max-lg:hidden"}`}
+        className={`right-0 top-12 z-10 flex flex-wrap max-lg:absolute max-lg:flex-col lg:gap-2 ${isCollapsed && "max-lg:hidden"}`}
       >
         <ManualButton />
         <EmergencyButton />
@@ -126,11 +145,113 @@ export function Overlay({ onClick, children, ...props }: OverlayProps) {
   return (
     <div
       id="overlay"
-      className="fixed inset-0 z-30 flex items-start justify-center overflow-scroll bg-black/50 p-10"
+      className="fixed inset-0 z-30 flex items-start justify-center overflow-scroll border-none bg-black/50 p-10"
       {...props}
       onClick={onClick}
     >
       {children}
     </div>
+  );
+}
+
+export function SkipScheduleModal({
+  date,
+  skipSchedules,
+  setSkipSchedules,
+}: SkipScheduleModalProps) {
+  const dispatch = useDispatch();
+
+  return Object.keys(skipSchedules).length ? (
+    <Overlay
+      onClick={(e) => {
+        const target = e.target as HTMLDivElement;
+        if (target.id === "overlay") setSkipSchedules({});
+      }}
+    >
+      <Formik
+        enableReinitialize={true}
+        onSubmit={async (values, actions) => {
+          const skipSchedules: string[] = Object.keys(values).reduce(
+            (skip, schedule) => (values[schedule] ? [schedule, ...skip] : skip),
+            [] as string[],
+          );
+          const deviceId = getDeviceId() ?? NaN;
+          const deviceIp = await getDeviceIp(deviceId);
+          const dateString = dateToString(date);
+          const payload = {
+            skip: {
+              [dateString]: skipSchedules,
+            },
+          };
+          const res = await req.put(
+            `http://${deviceIp}/schedule/skip`,
+            payload,
+          );
+          if (res.success) {
+            const unassignSkipSchedules = Object.keys(values).filter(
+              (value) => !skipSchedules.includes(value),
+            );
+            dispatch(assignSchedules(payload));
+            dispatch(
+              unassignSchedules({
+                skip: {
+                  [dateString]: unassignSkipSchedules,
+                },
+              }),
+            );
+            dispatch(addToast(SCHEDULE_ASSIGNMENT_UPDATED));
+          } else {
+            dispatch(addToast(COULDNT_CONNNECT_TO_DEVICE));
+          }
+          actions.setSubmitting(false);
+          setSkipSchedules({});
+        }}
+        initialValues={skipSchedules}
+        component={({
+          values,
+          ...props
+        }: FormikProps<typeof skipSchedules>) => (
+          <div className="flex h-full items-center justify-center">
+            <div className="min-w-56 rounded bg-eclipse-elixir-500 px-5 py-7">
+              <p className="mb-3">Select schedules to skip</p>
+              <ul>
+                {Object.keys(values).map((schedule) => (
+                  <li key={schedule}>
+                    <div>
+                      <FormCheckBox
+                        name={schedule}
+                        defaultChecked={values[schedule]}
+                        label={schedule}
+                        onCheckedChange={() => {
+                          props.setFieldValue(schedule, !values[schedule]);
+                        }}
+                      />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              <div className="flex gap-2">
+                <OutlineButton
+                  className="w-28 min-w-fit"
+                  label="Cancel"
+                  onClick={() => setSkipSchedules({})}
+                />
+                <SolidButton
+                  className="w-28 min-w-fit"
+                  label="Submit"
+                  onClick={(e) => {
+                    const event =
+                      e as unknown as React.FormEvent<HTMLFormElement>;
+                    props.handleSubmit(event);
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+      />
+    </Overlay>
+  ) : (
+    <></>
   );
 }

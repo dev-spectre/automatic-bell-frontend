@@ -1,10 +1,12 @@
 import {
   assignColor,
+  dateToString,
   formatTime,
   generateUniqueColour,
   getActiveScheduleDates,
   getCurrentDate,
   getNextRing,
+  hexColourToCssClass,
   sortSchedules,
   timeToDate,
 } from "@/utilities/dashboard";
@@ -27,6 +29,7 @@ import { COULDNT_CONNNECT_TO_DEVICE } from "@/constants/alert";
 import { Calendar } from "./ui/calendar";
 import { useEffect, useRef, useState } from "react";
 import { WEEK_COUNT, DAY_COUNT, ONE_MONTH_IN_MS } from "@/constants/dashboard";
+import { SkipScheduleModal } from "./Utilities";
 
 export function RunningScheduleOverview() {
   const currentDate = getCurrentDate();
@@ -188,6 +191,10 @@ export function ScheduleCalendar() {
       WEEK_COUNT * DAY_COUNT - new Date(year, month, 1).getDay(),
     ),
   );
+  const [skipSchedules, setSkipSchedules] = useState<{
+    [key: string]: boolean;
+  }>({});
+  const date = useRef(new Date());
 
   useEffect(() => {
     const endDate = new Date(
@@ -199,27 +206,20 @@ export function ScheduleCalendar() {
     setEndtDate(endDate);
   }, [numberOfMonths, startDate]);
 
-  const schedules = useSelector((state: AppStore) => {
-    return {
-      active: state.schedules.active,
-      weekly: state.schedules.weekly,
-      monthly: state.schedules.monthly,
-      once: state.schedules.once,
-      skip: state.schedules.skip,
-    };
-  });
+  const schedules = useSelector((state: AppStore) => state.schedules);
 
   const activeScheduleDates = getActiveScheduleDates(
     schedules,
     startDate,
     endDate,
   );
+  console.log(activeScheduleDates);
   assignColor(schedules.active);
 
   return (
     <div
       ref={calendarContainer}
-      className="flex-wrap gap-2 rounded bg-eclipse-elixir-500 px-5 py-4 @container max-xs:text-center xs:flex xs:divide-x md:px-7 md:py-6"
+      className="flex-wrap gap-2 rounded bg-eclipse-elixir-500 px-5 py-4 max-xs:text-center xs:flex xs:divide-x md:px-7 md:py-6"
     >
       <Calendar
         onMonthChange={(month) => {
@@ -264,7 +264,9 @@ export function ScheduleCalendar() {
         modifiers={activeScheduleDates}
         modifiersClassNames={schedules.active.reduce(
           (classNames: { [key: string]: string }, schedule) => {
-            classNames[schedule] = schedule;
+            classNames[schedule] = hexColourToCssClass(
+              generateUniqueColour(schedule),
+            );
             return classNames;
           },
           {},
@@ -273,6 +275,36 @@ export function ScheduleCalendar() {
         disabled={{
           before: new Date(),
         }}
+        onDayClick={(selectedDate) => {
+          date.current = new Date(selectedDate.toDateString());
+          const dateString = dateToString(selectedDate);
+          const weekDay = selectedDate
+            .toLocaleString("en-IN", { weekday: "short" })
+            .toLowerCase();
+          const monthDate = selectedDate.getDate();
+          const skipSchedules: { [key: string]: boolean } = {};
+          schedules.active.forEach((schedule) => {
+            if (
+              schedules.weekly[weekDay].includes(schedule) ||
+              schedules.monthly[monthDate].includes(schedule) ||
+              schedules.once[dateString]?.includes(schedule)
+            ) {
+              skipSchedules[schedule] = false;
+            }
+          });
+
+          if (schedules.skip.hasOwnProperty(dateString)) {
+            schedules.skip[dateString].forEach((schedule) => {
+              skipSchedules[schedule] = true;
+            });
+          }
+          setSkipSchedules(skipSchedules);
+        }}
+      />
+      <SkipScheduleModal
+        date={date.current}
+        skipSchedules={skipSchedules}
+        setSkipSchedules={setSkipSchedules}
       />
       <div className="border-hoki-600 pl-4 text-left">
         <p className="mb-2 xs:text-lg">Active Schedules</p>

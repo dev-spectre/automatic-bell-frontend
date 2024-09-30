@@ -16,8 +16,7 @@ export function useAuthorizeSession() {
           throw Error("Session expired");
         }
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((_) => {
         alert({
           title: "Session expired",
           description: "Session expired, login to continue",
