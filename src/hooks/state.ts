@@ -11,6 +11,7 @@ import {
 import { Schedule } from "@/schema/createSchedule";
 import { useDispatch } from "react-redux";
 import { StringArrObject } from "@/types";
+import { updateSettingsUnsafe } from "@/store/slice/settings";
 
 async function storeScheduleToState() {
   const deviceId = getDeviceId() ?? NaN;
@@ -48,6 +49,31 @@ async function storeScheduleToState() {
   };
 }
 
+async function storeSettingsToState() {
+  const deviceId = getDeviceId() ?? NaN;
+  const deviceIp = await getDeviceIp(deviceId);
+  const res = await req.get(`http://${deviceIp}/config`);
+  if (!res || !res.success) {
+    throw new Error("NO_DATA");
+  }
+  const data = res.data;
+  if (!data) return;
+
+  return {
+    network: {
+      wlanCredentials: data["wlan_credentials"],
+      connectionAttempts: data["max_attempts"],
+    },
+    time: {
+      offset: data["time_fetch_offset"],
+    },
+    schedule: {
+      minGapBetweenRings: data["gap"],
+      maxWaitForMissedschedule: data["max_wait"],
+    },
+  };
+}
+
 export function useStoreScheduleToState() {
   const alert = useAlert();
   const dispatch = useDispatch();
@@ -71,6 +97,13 @@ export function useStoreScheduleToState() {
             weekly,
           }),
         );
+      })
+      .catch((err) => +console.log(err) || alert(COULDNT_CONNNECT_TO_DEVICE));
+
+      storeSettingsToState()
+      .then((config) => {
+        if (!config) return;
+        dispatch(updateSettingsUnsafe(config))
       })
       .catch((err) => +console.log(err) || alert(COULDNT_CONNNECT_TO_DEVICE));
     // eslint-disable-next-line react-hooks/exhaustive-deps

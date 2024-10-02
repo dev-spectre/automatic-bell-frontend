@@ -213,7 +213,6 @@ export function ScheduleCalendar() {
     startDate,
     endDate,
   );
-  console.log(activeScheduleDates);
   assignColor(schedules.active);
 
   return (

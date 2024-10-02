@@ -14,6 +14,7 @@ import { CreateSchedule } from "./pages/createSchedule";
 import { EditSchedule } from "./pages/EditSchedule";
 import { AssignSchedule } from "./pages/AssignSchedule";
 import { Dashboard } from "./pages/Dashboard";
+import { Settings } from "./pages/Settings";
 
 const router = createBrowserRouter([
   {
@@ -22,7 +23,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Dashboard />
+        element: <Dashboard />,
       },
       {
         path: "schedule/create",
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
       {
         path: "schedule/edit",
         element: <EditSchedule />,
+      },
+      {
+        path: "settings",
+        element: <Settings />,
       },
     ],
   },

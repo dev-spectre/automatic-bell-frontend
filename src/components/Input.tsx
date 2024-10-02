@@ -299,7 +299,17 @@ export function FormNumberInput({
   ...props
 }: NumberInputProps) {
   const inputId = id || label.toLowerCase().replace(/\s/g, "-");
-  const value = isNaN(parseFloat(props.value ?? "")) ? "" : props.value;
+  if (!props.value) props.value = "";
+
+  const regex = props.allowNegative ? /-?\d+\.?\d*|^-/ : /\d+\.?\d*|^-/;
+
+  let value =
+    !isNaN(parseFloat(props.value)) ||
+    (props.value === "-" &&
+    props.allowNegative)
+      ? props.value
+      : "";
+
   return (
     <div className="max-w-md flex-grow">
       <label htmlFor={inputId} className="mb-1 block">
@@ -327,7 +337,7 @@ export function FormNumberInput({
           }}
           onChange={(e) => {
             const parsedString: string =
-              e.target.value.match(/(\d+\.\d+)|(\d+\.$)|(\d+)/)?.at(0) ?? "";
+              e.target.value.match(regex)?.at(0) ?? "";
             const parsed = parseFloat(parsedString);
             if (isNaN(parsed) && !parsedString) {
               e.target.value = "";
@@ -343,13 +353,15 @@ export function FormNumberInput({
           </div>
         )}
       </div>
-      <div className="min-h-6">
-        <ErrorMessage
-          component={"div"}
-          className="text-red-500"
-          name={name ?? inputId}
-        />
-      </div>
+      {!props.hideError && (
+        <div className="min-h-6">
+          <ErrorMessage
+            component={"div"}
+            className="text-red-500"
+            name={name ?? inputId}
+          />
+        </div>
+      )}
     </div>
   );
 }

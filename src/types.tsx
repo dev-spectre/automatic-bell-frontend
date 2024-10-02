@@ -19,8 +19,11 @@ export interface TextInputProps {
   name?: string;
   id?: string;
   value?: string;
+  hideError?: boolean;
+  disabled?: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onChange?: (e: React.ChangeEvent<any>) => void;
+  onClick?: (e: React.MouseEvent<HTMLInputElement, MouseEvent>) => void;
 }
 
 export type DateInputProps = {
@@ -37,6 +40,7 @@ export interface PasswordInputProps extends TextInputProps {}
 export type TimeInputProps = Omit<TextInputProps, "placeholder">;
 
 export interface NumberInputProps extends TextInputProps {
+  allowNegative?: boolean;
   unit?: string;
 }
 
@@ -306,4 +310,11 @@ export type SkipScheduleModalProps = {
   setSkipSchedules: React.Dispatch<
     React.SetStateAction<{ [key: string]: boolean }>
   >;
+};
+
+export type WlanCredential = { ssid: string; password: string };
+
+export type UpdateSettingPayload = {
+  path: string;
+  value: any;
 };
