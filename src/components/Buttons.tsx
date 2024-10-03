@@ -1,8 +1,7 @@
-import { SITE_UNDER_CONSTRUCTION } from "@/constants/alert";
-import { useAlert } from "@/hooks/alert";
 import { ButtonProps } from "@/types";
 import { openSideBar } from "@/utilities/sideBar";
 import { Menu } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export function RegisterButton({ label, onClick }: ButtonProps) {
   return (
@@ -37,28 +36,14 @@ export function Button({ label, onClick, className, type }: ButtonProps) {
 }
 
 export function ManualButton() {
-  const alert = useAlert();
+  const navigate = useNavigate();
 
   return (
     <Button
       label="Manual"
-      className="max-lg:hover:bg-hoki-800 outline-1 outline-hoki-600 max-lg:min-w-min max-lg:rounded-none max-lg:bg-eclipse-elixir-400 max-lg:outline max-lg:active:bg-orange-450 max-lg:active:text-black lg:bg-sky-600"
+      className="outline-1 outline-hoki-600 max-lg:min-w-min max-lg:rounded-none max-lg:bg-eclipse-elixir-400 max-lg:outline max-lg:hover:bg-hoki-800 max-lg:active:bg-orange-450 max-lg:active:text-black lg:bg-sky-600"
       onClick={() => {
-        alert(SITE_UNDER_CONSTRUCTION);
-      }}
-    />
-  );
-}
-
-export function EmergencyButton() {
-  const alert = useAlert();
-
-  return (
-    <Button
-      label="Emergency"
-      className="max-lg:hover:bg-hoki-800 outline-1 outline-hoki-600 max-lg:min-w-min max-lg:rounded-none max-lg:bg-eclipse-elixir-400 max-lg:outline max-lg:active:bg-orange-450 max-lg:active:text-black lg:bg-red-600"
-      onClick={() => {
-        alert(SITE_UNDER_CONSTRUCTION);
+        navigate("manual");
       }}
     />
   );

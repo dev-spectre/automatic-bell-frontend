@@ -24,5 +24,5 @@ export function useAuthorizeSession() {
         });
         navigate("/auth/login");
       });
-  }, [navigate, alert]);
+  }, []);
 }

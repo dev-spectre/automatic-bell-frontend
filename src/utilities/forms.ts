@@ -16,6 +16,7 @@ import {
   UNKNOWN_ERR,
   DEVICE_ID_NOT_FOUND,
 } from "@/constants/alert";
+import { Config } from "@/store/slice/settings";
 
 export function getFormData(form: HTMLFormElement) {
   const data: FormDataObject = {};
@@ -226,4 +227,41 @@ export function handleErrorResponse(err: ErrorString, edit: boolean) {
   } else if (err === "DEVICE_ID_NOT_FOUND") {
     alert(DEVICE_ID_NOT_FOUND);
   }
+}
+
+export async function submitConfig(values: Config) {
+  const keyMap = {
+    network: {
+      wlanCredentials: "wlan_credentials",
+      connectionAttempts: "max_attempts",
+    },
+    time: {
+      offset: "time_fetch_offset",
+    },
+    schedule: {
+      minGapBetweenRings: "gap",
+      maxWaitForMissedschedule: "max_wait",
+    },
+  };
+
+  const body: { [key: string]: any } = {};
+  for (const categoryString in values) {
+    const category = categoryString as keyof Config;
+    for (const keyString in values[category]) {
+      const key = keyString as keyof Config[keyof Config];
+      const value: any = values[category][key];
+      if (
+        value == null ||
+        (typeof value === "number" && isNaN(value)) ||
+        (Array.isArray(value) && !value.length)
+      )
+        continue;
+      body[keyMap[category][key]] = value;
+    }
+  }
+
+  const deviceIp = await getDeviceIp();
+  const res = await req.put(`http://${deviceIp}/config`, body);
+
+  return res;
 }

@@ -6,7 +6,6 @@ import {
   NavCollapsibleProps,
 } from "@/types";
 import dashboard from "@/assets/dashboard.png";
-import emergency from "@/assets/emergency.png";
 import manual from "@/assets/manual.png";
 import instructions from "@/assets/instructions.png";
 import logout from "@/assets/logout.png";
@@ -147,7 +146,6 @@ export function SideBar() {
               />
             </NavCollapsible>
             <NavLink label={"Manual"} link={"/manual"} icon={manual} />
-            <NavLink label={"Emergency"} link={"/emergency"} icon={emergency} />
             <NavLink
               label={"Instructions"}
               link={"/instructions"}

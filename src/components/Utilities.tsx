@@ -10,7 +10,6 @@ import {
   SkipScheduleModalProps,
 } from "@/types";
 import {
-  EmergencyButton,
   ManualButton,
   MenuButton,
   OutlineButton,
@@ -99,7 +98,6 @@ export function ManualControl() {
         className={`right-0 top-12 z-10 flex flex-wrap max-lg:absolute max-lg:flex-col lg:gap-2 ${isCollapsed && "max-lg:hidden"}`}
       >
         <ManualButton />
-        <EmergencyButton />
       </div>
     </div>
   );

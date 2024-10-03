@@ -1,33 +1,34 @@
-import { FieldArray, Formik, FormikProps } from "formik";
+import { ErrorMessage, FieldArray, Formik, FormikProps } from "formik";
 import { OutlineButton, SolidButton } from "../Buttons";
-import {
-  FormNumberInput,
-  PasswordInput,
-  TextInput,
-} from "../Input";
+import { FormNumberInput, PasswordInput, TextInput } from "../Input";
 import { Form, FormSection, HorizontalLine } from "../Utilities";
 import { useEffect, useRef } from "react";
 import { useAlert } from "@/hooks/alert";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AppStore } from "@/store";
+import { submitConfig } from "@/utilities/forms";
+import { COULDNT_CONNNECT_TO_DEVICE } from "@/constants/alert";
+import settingsSchema from "@/schema/settings";
+import { updateSettingsUnsafe } from "@/store/slice/settings";
 
 export function SettingsForm() {
+  const dispatch = useDispatch();
   const initialValues = useSelector((state: AppStore) => state.settings);
 
   const isSaved = useRef(false);
-  const configValues = useRef<{ [key: string]: any }>({});
+  const isDirty = useRef(false);
   const alert = useAlert();
 
   useEffect(() => {
     return () => {
-      if (!isSaved.current && Object.keys(configValues.current).length) {
+      if (!isSaved.current && isDirty.current) {
         alert({
           title: "Settings not saved",
           description:
             "Settings have to be manually saved after being changed.",
           type: "info",
         });
-        configValues.current = {};
+        isDirty.current = false;
       }
     };
   }, []);
@@ -36,16 +37,43 @@ export function SettingsForm() {
     <Formik
       enableReinitialize={true}
       initialValues={initialValues}
-      onSubmit={(values, actions) => {
-        console.log(values);
-        actions.setSubmitting(false);
-        isSaved.current = true;
+      validationSchema={settingsSchema}
+      onSubmit={async (values, actions) => {
+        const res = await submitConfig(values);
+        if (res.success) {
+          alert({
+            title: "Settings saved",
+            description: "Settings saved on device successfully.",
+            type: "info",
+          });
+          dispatch(updateSettingsUnsafe(values));
+          actions.setSubmitting(false);
+          isSaved.current = true;
+        } else if (res.success == false) {
+          alert({
+            title: "Settings not saved",
+            description: "Couldn't save settings due to invalid values",
+            type: "error",
+          });
+        } else {
+          alert(COULDNT_CONNNECT_TO_DEVICE);
+        }
       }}
       component={({ values, ...props }: FormikProps<typeof initialValues>) => (
         <Form>
+          {(isDirty.current = props.dirty)}
+          <FormSection>
+            <button
+              className="w-full text-right text-hoki-500"
+              onClick={props.handleReset}
+              type="button"
+            >
+              Reset
+            </button>
+          </FormSection>
           <FormSection>
             <h2 className="mb-5 text-lg font-semibold">Network</h2>
-            <div className="mb-3 max-w-96">
+            <div className="max-w-96">
               <FormNumberInput
                 hideError={true}
                 placeholder="Enter max connection attempts"
@@ -57,6 +85,13 @@ export function SettingsForm() {
               <p className="text-sm italic text-hoki-500">
                 Device will restart after maximum no. of connection attempts.
               </p>
+              <div className="min-h-6">
+                <ErrorMessage
+                  component={"div"}
+                  className="text-red-500"
+                  name="network.connectionAttempts"
+                />
+              </div>
             </div>
             <p className="mb-3">Wi-Fi Settings</p>
             <FieldArray
@@ -90,20 +125,29 @@ export function SettingsForm() {
                       </div>
                     </div>
                   ))}
-                  <div className="mb-7 mt-5 flex gap-2">
+                  <div className="mt-5 flex gap-2">
                     <SolidButton
                       type="button"
-                      onClick={() =>
-                        arrayHelpers.push({ ssid: "", password: "" })
-                      }
+                      onClick={() => {
+                        arrayHelpers.push({ ssid: "", password: "" });
+                      }}
                       label="Add"
                       className="min-w-20"
                     />
                     <OutlineButton
                       type="button"
-                      onClick={() => arrayHelpers.remove(-1)}
+                      onClick={() => {
+                        arrayHelpers.remove(-1);
+                      }}
                       label="Remove"
                       className="min-w-20"
+                    />
+                  </div>
+                  <div className="min-h-6">
+                    <ErrorMessage
+                      component={"div"}
+                      className="text-red-500"
+                      name="network.wlanCredentials"
                     />
                   </div>
                 </>
@@ -146,17 +190,22 @@ export function SettingsForm() {
               onChange={props.handleChange}
             />
           </FormSection>
-          <HorizontalLine />
-          <FormSection>
-            <SolidButton
-              onClick={(e) => {
-                const event = e as unknown as React.FormEvent<HTMLFormElement>;
-                props.handleSubmit(event);
-              }}
-              type="submit"
-              label="Save"
-            />
-          </FormSection>
+          {props.dirty && (
+            <>
+              <HorizontalLine />
+              <FormSection>
+                <SolidButton
+                  onClick={(e) => {
+                    const event =
+                      e as unknown as React.FormEvent<HTMLFormElement>;
+                    props.handleSubmit(event);
+                  }}
+                  type="submit"
+                  label="Save"
+                />
+              </FormSection>
+            </>
+          )}
         </Form>
       )}
     />

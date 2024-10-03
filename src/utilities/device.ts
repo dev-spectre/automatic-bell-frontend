@@ -27,10 +27,11 @@ export function getDeviceId() {
     localStorage.setItem("deviceId", deviceId);
     return parseInt(deviceId);
   }
-  return null;
+  return NaN;
 }
 
-export async function getDeviceIp(id: number): Promise<string> {
+export async function getDeviceIp(id?: number): Promise<string> {
+  if (!id) id = getDeviceId();
   const deviceIpFromSessionStorage = sessionStorage.getItem("deviceIp") ?? "";
   const checkedSession = sessionStorage.getItem("checkedSessionIp");
   const requestCheckForSession: Promise<string> = new Promise(
