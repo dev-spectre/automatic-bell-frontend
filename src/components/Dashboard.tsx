@@ -30,6 +30,7 @@ import { Calendar } from "./ui/calendar";
 import { useEffect, useRef, useState } from "react";
 import { WEEK_COUNT, DAY_COUNT, ONE_MONTH_IN_MS } from "@/constants/dashboard";
 import { SkipScheduleModal } from "./Utilities";
+import { ScheduleState } from "@/types";
 
 export function RunningScheduleOverview() {
   const currentDate = getCurrentDate();
@@ -82,7 +83,7 @@ export function ScheduleList() {
 
   const sortedScheduleNames = sortSchedules(schedules);
   return (
-    <div className="rounded bg-eclipse-elixir-500 px-5 py-4 @container md:px-7 md:py-6">
+    <div className="overflow-scroll rounded bg-eclipse-elixir-500 px-5 py-4 @container md:px-7 md:py-6">
       <div className="mb-3 flex justify-between">
         <p className="text-xl">Schedule List</p>
         <div className="flex gap-2">
@@ -94,7 +95,7 @@ export function ScheduleList() {
           </button>
         </div>
       </div>
-      <table className="w-full text-left">
+      <table className="w-full min-w-72 overflow-scroll text-left text-xs sm:text-sm md:text-base">
         <thead className="border-b-4 border-b-transparent text-hoki-500">
           <tr>
             <th>Schedule Name</th>
@@ -279,7 +280,7 @@ export function ScheduleCalendar() {
           const dateString = dateToString(selectedDate);
           const weekDay = selectedDate
             .toLocaleString("en-IN", { weekday: "short" })
-            .toLowerCase();
+            .toLowerCase() as keyof ScheduleState["weekly"];
           const monthDate = selectedDate.getDate();
           const skipSchedules: { [key: string]: boolean } = {};
           schedules.active.forEach((schedule) => {
