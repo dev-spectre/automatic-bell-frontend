@@ -318,3 +318,22 @@ export type UpdateSettingPayload = {
   path: string;
   value: any;
 };
+
+export type ScheduleState = {
+  skip: StringArrObject;
+  once: StringArrObject;
+  weekly: {
+    sun: string[];
+    mon: string[];
+    tue: string[];
+    wed: string[];
+    thu: string[];
+    fri: string[];
+    sat: string[];
+  };
+  monthly: {
+    [day: number]: string[];
+  };
+  schedules: Schedules;
+  active: string[];
+};

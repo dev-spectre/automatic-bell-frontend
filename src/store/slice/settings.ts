@@ -1,9 +1,11 @@
-import { UpdateSettingPayload, WlanCredential } from "@/types";
+import { settings } from "@/schema/settings";
+import { UpdateSettingPayload } from "@/types";
+import { getCache } from "@/utilities/cache";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-const initialState = {
+const initialState: settings = getCache("settingsSlice") ?? {
   network: {
-    wlanCredentials: [] as WlanCredential[],
+    wlanCredentials: [],
     connectionAttempts: NaN,
   },
   time: {
@@ -23,14 +25,14 @@ const settingsSlice = createSlice({
       const { path, value } = action.payload;
       const keys = path.split(".");
       let current: any = state;
-      
+
       keys.slice(0, -1).forEach((key) => {
         current = current[key];
       });
-      
+
       current[keys[keys.length - 1]] = value;
     },
-    
+
     updateSettingsUnsafe: (
       state,
       action: PayloadAction<typeof initialState>,

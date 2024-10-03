@@ -1,37 +1,41 @@
 import {
   AssignSchedulePayload,
   MonthlySchedule,
+  ScheduleState,
   ScheduleStateAddPayload,
   ScheduleStateDeletePayload,
   Schedules,
   StringArrObject,
 } from "@/types";
+import { getCache } from "@/utilities/cache";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+const initialState: ScheduleState = getCache("scheduleSlice") ?? {
+  skip: {} satisfies StringArrObject as StringArrObject,
+  once: {} satisfies StringArrObject as StringArrObject,
+  weekly: {
+    sun: [],
+    mon: [],
+    tue: [],
+    wed: [],
+    thu: [],
+    fri: [],
+    sat: [],
+  } satisfies StringArrObject as StringArrObject,
+  monthly: (() => {
+    const monthly: MonthlySchedule = {};
+    for (let i = 1; i <= 31; i++) {
+      monthly[i] = [];
+    }
+    return monthly;
+  })(),
+  schedules: {} satisfies Schedules as Schedules,
+  active: [] satisfies string[] as string[],
+};
 
 const scheduleSlice = createSlice({
   name: "scheduleSlice",
-  initialState: {
-    skip: {} satisfies StringArrObject as StringArrObject,
-    once: {} satisfies StringArrObject as StringArrObject,
-    weekly: {
-      sun: [],
-      mon: [],
-      tue: [],
-      wed: [],
-      thu: [],
-      fri: [],
-      sat: [],
-    } satisfies StringArrObject as StringArrObject,
-    monthly: (() => {
-      const monthly: MonthlySchedule = {};
-      for (let i = 1; i <= 31; i++) {
-        monthly[i] = [];
-      }
-      return monthly;
-    })(),
-    schedules: {} satisfies Schedules as Schedules,
-    active: [] satisfies string[] as string[],
-  },
+  initialState,
   reducers: {
     addSchedules: (state, action: PayloadAction<ScheduleStateAddPayload>) => {
       action.payload.schedules.forEach(
@@ -111,7 +115,7 @@ const scheduleSlice = createSlice({
       if (weekly && Array.isArray(weekly)) {
         weekly.forEach((daySchedule, index) => {
           if (index > 6) return;
-          const day = days[index];
+          const day = days[index] as keyof ScheduleState["weekly"];
           if (!state.weekly[day]) {
             state.weekly[day] = [];
           }
@@ -120,7 +124,8 @@ const scheduleSlice = createSlice({
           ];
         });
       } else if (weekly && !Array.isArray(weekly)) {
-        Object.keys(weekly).forEach((day) => {
+        Object.keys(weekly).forEach((dayString) => {
+          const day = dayString as keyof ScheduleState["weekly"];
           if (!days.includes(day)) return;
           state.weekly[day] = weekly[day];
         });
@@ -165,14 +170,15 @@ const scheduleSlice = createSlice({
       if (weekly && Array.isArray(weekly)) {
         weekly.forEach((daySchedule, index) => {
           if (index > 6) return;
-          const day = days[index];
+          const day = days[index] as keyof ScheduleState["weekly"];
           state.weekly[day] = state.weekly[day].filter(
             (schedule) => !daySchedule.includes(schedule),
           );
         });
       } else if (weekly && !Array.isArray(weekly)) {
-        Object.keys(weekly).forEach((day) => {
-          if (!days.includes(day)) return;
+        Object.keys(weekly).forEach((dayString) => {
+          if (!days.includes(dayString)) return;
+          const day = dayString as keyof ScheduleState["weekly"];
           state.weekly[day] = state.weekly[day].filter(
             (schedule) => !weekly[day].includes(schedule),
           );
