@@ -4,6 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "nvmrc": "node -v > .nvmrc",
+    "postinstall": "nvmrc",
+    "predev": "npm run nvmrc",
     "tauri": "tauri",
     "tailwind": "npx tailwindcss -i ./src/input.css -o ./src/App.css --watch",
     "dev": "vite",
@@ -18,6 +21,7 @@
     "@radix-ui/react-switch": "^1.1.0",
     "@reduxjs/toolkit": "^2.2.6",
     "@tailwindcss/container-queries": "^0.1.1",
+    "@tauri-apps/plugin-updater": "^2.0.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",

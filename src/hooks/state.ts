@@ -1,5 +1,5 @@
 import req from "@/api/requests";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useAlert } from "./alert";
 import { COULDNT_CONNNECT_TO_DEVICE } from "@/constants/alert";
 import { getDeviceId, getDeviceIp } from "@/utilities/device";
@@ -77,6 +77,7 @@ async function storeSettingsToState() {
 export function useStoreScheduleToState() {
   const alert = useAlert();
   const dispatch = useDispatch();
+  const isAlertShown = useRef(false);
 
   useEffect(() => {
     storeScheduleToState()
@@ -98,14 +99,22 @@ export function useStoreScheduleToState() {
           }),
         );
       })
-      .catch((err) => +console.log(err) || alert(COULDNT_CONNNECT_TO_DEVICE));
+      .catch(() => {
+        if (isAlertShown.current) return;
+        alert(COULDNT_CONNNECT_TO_DEVICE);
+        isAlertShown.current = true;
+      });
 
-      storeSettingsToState()
+    storeSettingsToState()
       .then((config) => {
         if (!config) return;
-        dispatch(updateSettingsUnsafe(config))
+        dispatch(updateSettingsUnsafe(config));
       })
-      .catch((err) => +console.log(err) || alert(COULDNT_CONNNECT_TO_DEVICE));
+      .catch(() => {
+        if (isAlertShown.current) return;
+        alert(COULDNT_CONNNECT_TO_DEVICE);
+        isAlertShown.current = true;
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 }
