@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "nvmrc": "node -v > .nvmrc",
-    "postinstall": "nvmrc",
+    "postinstall": "npm run nvmrc",
     "predev": "npm run nvmrc",
     "tauri": "tauri",
     "tailwind": "npx tailwindcss -i ./src/input.css -o ./src/App.css --watch",
