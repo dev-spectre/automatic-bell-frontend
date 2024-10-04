@@ -37,7 +37,7 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^1.6.2",
+    "@tauri-apps/cli": "^2.0.0-rc.18",
     "@tauri-apps/tauricon": "^1.0.3",
     "@types/node": "^20.14.10",
     "@types/react": "^18.3.3",
