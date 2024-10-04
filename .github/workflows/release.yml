@@ -81,7 +81,6 @@ jobs:
         uses: actions/setup-node@v4
         # NOTE: enterprise developers may hard code a version
         with:
-          node-version: 'lts/*'
           cache: pnpm
           node-version-file: '.nvmrc'
 
