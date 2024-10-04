@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  APP_NAME: "Sample Desktop App"
+  APP_NAME: "Bell Scheduler"
 
 jobs:
   changelog:
@@ -53,8 +53,8 @@ jobs:
           sudo apt install libwebkit2gtk-4.0-dev:arm64 -y
           sudo apt install libssl-dev:arm64 -y
           export PKG_CONFIG_SYSROOT_DIR=/usr/aarch64-linux-gnu/
-          pnpm install
-          pnpm rls --target aarch64-unknown-linux-gnu
+          npm install
+          npm run rls --target aarch64-unknown-linux-gnu
     - name: Upload deb bundle
       uses: actions/upload-artifact@v4
       with:
@@ -71,17 +71,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # build the changelog based on the commit messages between the versioned tags
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         # NOTE: enterprise developers may hard code a version
         with:
-          cache: pnpm
           node-version-file: '.nvmrc'
 
       - name: Setup Rust
@@ -101,12 +94,12 @@ jobs:
 
       - name: Install frontend
         run: |
-          pnpm install
+          npm install
 
       - name: CI Build
         if: ${{ github.ref_type == 'branch' }}
         run: |
-          pnpm rls
+          npm run rls
 
       - name: CI Upload Windows
         if: ${{ github.ref_type == 'branch' && matrix.platform == 'windows-latest' }}
