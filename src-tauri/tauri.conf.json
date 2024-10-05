@@ -43,11 +43,11 @@
   },
   "productName": "Bell Scheduler",
   "mainBinaryName": "BellScheduler",
-  "version": "0.1.2",
+  "version": "0.1.0",
   "identifier": "com.bellscheduler.alpha",
   "plugins": {
     "updater": {
-      "dialog": true,
+      "dialog": false,
       "endpoints": [
         "https://github.com/dev-spectre/automatic-bell-frontend/releases/latest/download/latest.json"
       ],

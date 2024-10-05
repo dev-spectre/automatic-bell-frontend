@@ -1,4 +1,9 @@
 import { RequestHeaders, RequestBody } from "@/types";
+import { fetch as tauriFetch } from "@tauri-apps/plugin-http";
+
+const fetch = window.hasOwnProperty("__TAURI_INTERNALS__")
+  ? tauriFetch
+  : window.fetch;
 
 function addAuthToken(headers: RequestHeaders | undefined) {
   headers = {

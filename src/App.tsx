@@ -16,6 +16,7 @@ import { AssignSchedule } from "./pages/AssignSchedule";
 import { Dashboard } from "./pages/Dashboard";
 import { Settings } from "./pages/Settings";
 import { Manual } from "./pages/Manual";
+import { Update } from "./components/Update";
 
 const router = createBrowserRouter([
   {
@@ -80,6 +81,7 @@ function App() {
   return (
     <Provider store={store}>
       <Toast />
+      <Update />
       <RouterProvider router={router} />
     </Provider>
   );
