@@ -47,6 +47,10 @@
   "identifier": "com.bellscheduler.alpha",
   "plugins": {
     "updater": {
+      "dialog": true,
+      "endpoints": [
+        "https://github.com/dev-spectre/automatic-bell-frontend/releases/latest/download/latest.json"
+      ],
       "windows": {
         "installMode": "passive"
       },

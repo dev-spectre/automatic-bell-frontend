@@ -7,7 +7,6 @@ import {
 } from "@/types";
 import dashboard from "@/assets/dashboard.png";
 import manual from "@/assets/manual.png";
-import instructions from "@/assets/instructions.png";
 import logout from "@/assets/logout.png";
 import schedule from "@/assets/schedule.png";
 import settings from "@/assets/settings.png";
@@ -146,11 +145,6 @@ export function SideBar() {
               />
             </NavCollapsible>
             <NavLink label={"Manual"} link={"/manual"} icon={manual} />
-            <NavLink
-              label={"Instructions"}
-              link={"/instructions"}
-              icon={instructions}
-            />
             <NavLink label={"Settings"} link={"/settings"} icon={settings} />
             <NavLogout />
           </NavList>
