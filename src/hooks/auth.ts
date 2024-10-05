@@ -7,8 +7,14 @@ import { useAlert } from "./alert";
 export function useAuthorizeSession() {
   const navigate = useNavigate();
   const alert = useAlert();
+  const jwt = localStorage.getItem("jwt");
 
   useEffect(() => {
+    if (!jwt) {
+      navigate("/auth/login");
+      return;
+    }
+
     req
       .get(VERIFY_SESSION_URL)
       .then((data) => {
