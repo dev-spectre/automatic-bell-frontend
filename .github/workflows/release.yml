@@ -2,8 +2,8 @@ name: Publish Release
 on:
   push:
     tags:
-      - 'v*'
-    branches: '*'
+      - "v*"
+    branches: "*"
   workflow_dispatch:
 
 env:
@@ -29,10 +29,10 @@ jobs:
   build-arm:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-    - name: Setup ARM build environment
-      run: |
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup ARM build environment
+        run: |
           rustup target add aarch64-unknown-linux-gnu
           sudo apt install gcc-aarch64-linux-gnu
           sudo dpkg --add-architecture arm64
@@ -55,11 +55,11 @@ jobs:
           export PKG_CONFIG_SYSROOT_DIR=/usr/aarch64-linux-gnu/
           npm install
           npm run tauri build --target aarch64-unknown-linux-gnu
-    - name: Upload deb bundle
-      uses: actions/upload-artifact@v4
-      with:
-        name: ARM Debian File
-        path: src-tauri/target/release/bundle/deb/*arm64.deb
+      - name: Upload deb bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARM Debian File
+          path: src-tauri/target/release/bundle/deb/*arm64.deb
   release:
     strategy:
       fail-fast: false
@@ -75,7 +75,7 @@ jobs:
         uses: actions/setup-node@v4
         # NOTE: enterprise developers may hard code a version
         with:
-          node-version-file: '.nvmrc'
+          node-version-file: ".nvmrc"
 
       - name: Setup Rust
         run: |
@@ -84,7 +84,7 @@ jobs:
       - name: Rust cache
         uses: swatinem/rust-cache@v2
         with:
-          workspaces: './src-tauri -> target'
+          workspaces: "./src-tauri -> target"
 
       - name: Install Ubuntu dependencies
         if: matrix.platform == 'ubuntu-latest'
@@ -98,6 +98,11 @@ jobs:
 
       - name: CI Build
         if: ${{ github.ref_type == 'branch' }}
+        env:
+          CI: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         run: |
           npm run tauri build
 
@@ -105,7 +110,7 @@ jobs:
         if: ${{ github.ref_type == 'branch' && matrix.platform == 'windows-latest' }}
         uses: actions/upload-artifact@v4
         with:
-          name: 'Windows Installers'
+          name: "Windows Installers"
           path: |
             src-tauri/release/bundle/msi/*.msi
             src-tauri/release/bundle/nsis/*.exe
@@ -114,7 +119,7 @@ jobs:
         if: ${{ github.ref_type == 'branch' && matrix.platform == 'macos-latest' }}
         uses: actions/upload-artifact@v4
         with:
-          name: 'macOS Installer'
+          name: "macOS Installer"
           path: |
             src-tauri/release/bundle/dmg/*.dmg
 
@@ -122,7 +127,7 @@ jobs:
         if: ${{ github.ref_type == 'branch' && matrix.platform == 'ubuntu-latest' }}
         uses: actions/upload-artifact@v4
         with:
-          name: 'Linux Distributions'
+          name: "Linux Distributions"
           path: |
             src-tauri/target/release/bundle/deb/*.deb
             src-tauri/target/release/bundle/AppImage/*.AppImage
@@ -136,8 +141,8 @@ jobs:
         env:
           CI: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
-          TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
           # tauri-action replaces \_\_VERSION\_\_ with the app version
           tagName: ${{ github.ref_name }}
