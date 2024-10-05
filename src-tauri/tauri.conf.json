@@ -39,7 +39,7 @@
         "depends": []
       }
     },
-    "createUpdaterArtifacts": "v1Compatible"
+    "createUpdaterArtifacts": true
   },
   "productName": "Bell Scheduler",
   "mainBinaryName": "BellScheduler",
