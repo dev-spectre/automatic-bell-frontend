@@ -83,10 +83,10 @@ export function useStoreScheduleToState() {
   useEffect(() => {
     storeScheduleToState()
       .then((schedule) => {
-        const schedules = [];
-        for (const scheduleName in schedule.schedules) {
-          schedules.push(scheduleName);
-        }
+        const schedules: string[] = [];
+        schedule.schedules.forEach((schedule) => {
+          schedules.push(schedule.scheduleName);
+        });
 
         dispatch(
           removeSchedules({
