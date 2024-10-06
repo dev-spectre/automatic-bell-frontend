@@ -140,8 +140,9 @@ export function DeleteConfirmation({
             const deviceIp = await getDeviceIp(deviceId);
             const res = await req.delete(`http://${deviceIp}/schedule`, {
               keys: [scheduleName],
+              force: true,
             });
-            if (res.success) {
+            if (res.success && res.data.hasOwnProperty(scheduleName)) {
               alert(SCHEDULE_DELETED);
               dispatch(
                 removeSchedules({

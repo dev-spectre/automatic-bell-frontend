@@ -296,17 +296,19 @@ export function FormNumberInput({
   placeholder,
   name,
   unit,
+  allowNegative,
+  hideError,
   ...props
 }: NumberInputProps) {
   const inputId = id || label.toLowerCase().replace(/\s/g, "-");
   if (!props.value) props.value = "";
 
-  const regex = props.allowNegative ? /-?\d+\.?\d*|^-/ : /\d+\.?\d*|^-/;
+  const regex = allowNegative ? /-?\d+\.?\d*|^-/ : /\d+\.?\d*|^-/;
 
   let value =
     !isNaN(parseFloat(props.value)) ||
     (props.value === "-" &&
-    props.allowNegative)
+    allowNegative)
       ? props.value
       : "";
 
@@ -353,7 +355,7 @@ export function FormNumberInput({
           </div>
         )}
       </div>
-      {!props.hideError && (
+      {!hideError && (
         <div className="min-h-6">
           <ErrorMessage
             component={"div"}

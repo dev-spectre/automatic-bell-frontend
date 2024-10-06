@@ -4,6 +4,7 @@ import { VERIFY_SESSION_URL } from "@/constants/api";
 import { useNavigate } from "react-router-dom";
 import { useAlert } from "./alert";
 import { getDeviceIp } from "@/utilities/device";
+import { COULDNT_CONNNECT_TO_DEVICE } from "@/constants/alert";
 
 export function useAuthorizeSession() {
   const navigate = useNavigate();
@@ -36,8 +37,10 @@ export function useAuthorizeSession() {
       req
         .get(`http://${deviceIp}/verify`)
         .then((data) => {
-          if (!data.success) {
+          if (data.success === false) {
             throw Error("Session expired");
+          } else if (!data.success) {
+            alert(COULDNT_CONNNECT_TO_DEVICE);
           }
         })
         .catch((_) => {

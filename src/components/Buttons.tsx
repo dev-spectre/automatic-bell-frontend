@@ -6,9 +6,14 @@ import { useNavigate } from "react-router-dom";
 export function RegisterButton({ label, onClick }: ButtonProps) {
   return (
     <button
-      className="mt-2 rounded bg-orange-450 py-2 font-poppins font-medium text-black"
+      className="mt-2 rounded bg-orange-450 py-2 font-poppins font-medium text-black disabled:cursor-wait disabled:border-orange-450/55 disabled:bg-orange-450/55 disabled:text-black/60"
       type="button"
-      onClick={onClick}
+      onClick={async (e) => {
+        const button = e.target as HTMLButtonElement;
+        button.disabled = true;
+        onClick && (await onClick(e));
+        button.disabled = false;
+      }}
     >
       {label}
     </button>
@@ -26,8 +31,13 @@ export function MenuButton() {
 export function Button({ label, onClick, className, type }: ButtonProps) {
   return (
     <button
-      className={`min-w-44 rounded bg-orange-450 px-4 py-2 ${className}`}
-      onClick={onClick}
+      className={`min-w-44 rounded bg-orange-450 px-4 py-2 disabled:cursor-wait disabled:bg-orange-450/55 disabled:text-black/60 ${className}`}
+      onClick={async (e) => {
+        const button = e.target as HTMLButtonElement;
+        button.disabled = true;
+        onClick && (await onClick(e));
+        button.disabled = false;
+      }}
       type={type || "button"}
     >
       {label}
@@ -57,7 +67,7 @@ export function OutlineButton({
 }: ButtonProps) {
   return (
     <Button
-      className={`border border-white !bg-inherit text-sm ${className}`}
+      className={`border border-white !bg-inherit text-sm disabled:border-white/55 disabled:!text-white/55 ${className}`}
       label={label}
       type={type || "button"}
       onClick={onClick}
@@ -68,7 +78,7 @@ export function OutlineButton({
 export function SolidButton({ label, onClick, className, type }: ButtonProps) {
   return (
     <Button
-      className={`border border-orange-450 text-sm font-medium text-black ${className}`}
+      className={`border border-orange-450 text-sm font-medium text-black disabled:border-orange-450/55 ${className}`}
       label={label}
       type={type || "button"}
       onClick={onClick}

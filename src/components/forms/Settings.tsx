@@ -101,7 +101,7 @@ export function SettingsForm() {
                   {values.network.wlanCredentials.map((cred, index) => (
                     <div
                       key={index}
-                      className="mb-3 inline-flex min-w-fit flex-wrap gap-2"
+                      className="mb-3 flex min-w-fit flex-wrap gap-2"
                     >
                       <div className="max-w-72">
                         <TextInput

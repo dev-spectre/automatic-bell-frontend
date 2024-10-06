@@ -69,7 +69,7 @@ export default function Toast() {
   const toasts = useSelector((store: ReduxStore) => store.toast.toast);
 
   return (
-    <div className="fixed right-1/2 top-5 z-30 flex max-h-[100dvh] w-full max-w-80 translate-x-1/2 flex-col gap-2 overflow-hidden sm:right-5 sm:w-72 sm:-translate-x-0">
+    <div className="fixed right-1/2 top-5 z-50 flex max-h-[100dvh] w-full max-w-80 translate-x-1/2 flex-col gap-2 overflow-hidden sm:right-5 sm:w-72 sm:-translate-x-0">
       {toasts.map((toast) => {
         if (toast.type === "error") {
           return (
