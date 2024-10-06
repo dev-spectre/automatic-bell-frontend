@@ -61,7 +61,9 @@ const scheduleSlice = createSlice({
     },
 
     addActiveSchedules: (state, action: PayloadAction<string[]>) => {
-      state.active = [...new Set([...state.active, ...action.payload])];
+      state.active = [
+        ...new Set([...state.active, ...action.payload].reverse()),
+      ].reverse();
     },
 
     removeActiveSchedules: (state, action: PayloadAction<string[]>) => {

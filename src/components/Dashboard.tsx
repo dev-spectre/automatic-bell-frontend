@@ -68,7 +68,7 @@ export function RunningScheduleOverview() {
       </div>
       <div className="absolute bottom-0 right-5 top-1/2 z-0 hidden aspect-square h-[150%] -translate-y-1/2 @md:block">
         <img className="opacity-55" src={bgImg} alt="" />
-        <div className="absolute inset-0 h-full bg-gradient-to-b from-transparent to-eclipse-elixir-500 to-60% opacity-60"></div>
+        <div className="absolute inset-0 h-full bg-gradient-to-b from-[#1E213700] to-eclipse-elixir-500 to-60% opacity-60"></div>
       </div>
     </div>
   );
@@ -137,12 +137,15 @@ export function ScheduleList() {
                     className="data-[state=checked]:bg-orange-450 data-[state=unchecked]:bg-eclipse-elixir-400"
                     defaultChecked={active.includes(scheduleName)}
                     onCheckedChange={async (checked) => {
+                      const activeSchedules = checked
+                        ? [...active, scheduleName]
+                        : active.filter((value) => value !== scheduleName);
                       const deviceId = getDeviceId() ?? NaN;
                       const deviceIp = await getDeviceIp(deviceId);
                       const res = await req.put(
                         `http://${deviceIp}/schedule/active`,
                         {
-                          active: [...active, scheduleName],
+                          active: activeSchedules,
                         },
                       );
                       if (res.success) {

@@ -7,6 +7,7 @@ import {
   addActiveSchedules,
   addSchedules,
   assignSchedules,
+  removeSchedules,
 } from "@/store/slice/schedules";
 import { Schedule } from "@/schema/createSchedule";
 import { useDispatch } from "react-redux";
@@ -82,6 +83,17 @@ export function useStoreScheduleToState() {
   useEffect(() => {
     storeScheduleToState()
       .then((schedule) => {
+        const schedules = [];
+        for (const scheduleName in schedule.schedules) {
+          schedules.push(scheduleName);
+        }
+
+        dispatch(
+          removeSchedules({
+            schedules,
+          }),
+        );
+
         dispatch(
           addSchedules({
             schedules: schedule.schedules,
