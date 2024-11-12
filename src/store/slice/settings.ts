@@ -40,6 +40,11 @@ const settingsSlice = createSlice({
       state.network = action.payload.network;
       state.schedule = action.payload.schedule;
       state.time = action.payload.time;
+      //* convert to minute
+      state.schedule.maxWaitForMissedschedule =
+        Math.floor(
+          (action.payload.schedule.maxWaitForMissedschedule * 100) / 60,
+        ) / 100;
     },
   },
 });

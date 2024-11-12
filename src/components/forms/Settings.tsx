@@ -39,6 +39,8 @@ export function SettingsForm() {
       initialValues={initialValues}
       validationSchema={settingsSchema}
       onSubmit={async (values, actions) => {
+        // * convert to seconds.
+        values.schedule.maxWaitForMissedschedule *= 60;
         const res = await submitConfig(values);
         if (res.success) {
           alert({
@@ -177,7 +179,7 @@ export function SettingsForm() {
               name="schedule.minGapBetweenRings"
               id="schedule.minGapBetweenRings"
               value={values.schedule.minGapBetweenRings.toString()}
-              unit="min"
+              unit="secs"
               onChange={props.handleChange}
             />
             <FormNumberInput
