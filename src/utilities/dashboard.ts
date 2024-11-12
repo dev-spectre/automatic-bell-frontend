@@ -1,4 +1,9 @@
-import { ExpandedSchedule, Schedules, StringArrObject } from "@/types";
+import {
+  ExpandedSchedule,
+  Schedules,
+  ScheduleState,
+  StringArrObject,
+} from "@/types";
 
 export function formatTime(date: Date): string {
   let hours: number = date.getHours();
@@ -207,4 +212,25 @@ export function assignColor(active: string[]) {
     styleText += `#calendar ${className} { color: ${hexColour} !important; } `;
   });
   style.innerHTML = styleText;
+}
+
+export function getActiveScheduleOnDate(date: Date, schedules: ScheduleState) {
+  const dateString = dateToString(date);
+  const weekDay = date
+    .toLocaleString("en-IN", { weekday: "short" })
+    .toLowerCase() as keyof ScheduleState["weekly"];
+  const monthDate = date.getDate();
+  const activeSchedules: string[] = [];
+  schedules.active.forEach((schedule) => {
+    if (
+      !schedules.skip[dateString]?.includes(schedule) &&
+      (schedules.weekly[weekDay].includes(schedule) ||
+        schedules.monthly[monthDate].includes(schedule) ||
+        schedules.once[dateString]?.includes(schedule))
+    ) {
+      activeSchedules.push(schedule);
+    }
+  });
+
+  return activeSchedules;
 }

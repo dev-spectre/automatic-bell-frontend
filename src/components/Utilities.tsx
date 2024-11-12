@@ -156,6 +156,8 @@ export function SkipScheduleModal({
   date,
   skipSchedules,
   setSkipSchedules,
+  schedules,
+  setActiveSchedules,
 }: SkipScheduleModalProps) {
   const dispatch = useDispatch();
 
@@ -189,6 +191,10 @@ export function SkipScheduleModal({
             const unassignSkipSchedules = Object.keys(values).filter(
               (value) => !skipSchedules.includes(value),
             );
+            const activeSchedules = schedules.active.filter((schedule) =>
+              unassignSkipSchedules.includes(schedule),
+            );
+            setActiveSchedules(activeSchedules);
             dispatch(assignSchedules(payload));
             dispatch(
               unassignSchedules({

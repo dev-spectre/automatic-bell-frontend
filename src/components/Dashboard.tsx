@@ -13,7 +13,11 @@ import {
 import bgImg from "@/assets/logo.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { AppStore } from "@/store";
-import { useCalendarMonthCount, useSyncTime } from "@/hooks/dashboard";
+import {
+  useActiveScheduleOnDate,
+  useCalendarMonthCount,
+  useSyncTime,
+} from "@/hooks/dashboard";
 import { expandActiveSchedule, expandSchedule } from "@/utilities/forms";
 import { PencilLine, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -208,6 +212,8 @@ export function ScheduleCalendar() {
   }, [numberOfMonths, startDate]);
 
   const schedules = useSelector((state: AppStore) => state.schedules);
+  const [activeSchedules, setActiveSchedules] =
+    useActiveScheduleOnDate(schedules);
 
   const activeScheduleDates = getActiveScheduleDates(
     schedules,
@@ -276,6 +282,7 @@ export function ScheduleCalendar() {
           before: new Date(),
         }}
         onDayClick={(selectedDate) => {
+          const prevDate = date.current;
           date.current = new Date(selectedDate.toDateString());
           const dateString = dateToString(selectedDate);
           const weekDay = selectedDate
@@ -283,13 +290,16 @@ export function ScheduleCalendar() {
             .toLowerCase() as keyof ScheduleState["weekly"];
           const monthDate = selectedDate.getDate();
           const skipSchedules: { [key: string]: boolean } = {};
+          const activeSchedules: string[] = [];
           schedules.active.forEach((schedule) => {
             if (
-              schedules.weekly[weekDay].includes(schedule) ||
-              schedules.monthly[monthDate].includes(schedule) ||
-              schedules.once[dateString]?.includes(schedule)
+              !schedules.skip[dateString]?.includes(schedule) &&
+              (schedules.weekly[weekDay].includes(schedule) ||
+                schedules.monthly[monthDate].includes(schedule) ||
+                schedules.once[dateString]?.includes(schedule))
             ) {
               skipSchedules[schedule] = false;
+              activeSchedules.push(schedule);
             }
           });
 
@@ -298,6 +308,10 @@ export function ScheduleCalendar() {
               skipSchedules[schedule] = true;
             });
           }
+
+          setActiveSchedules(activeSchedules);
+
+          if (prevDate.toDateString() != selectedDate.toDateString()) return;
           setSkipSchedules(skipSchedules);
         }}
       />
@@ -305,11 +319,13 @@ export function ScheduleCalendar() {
         date={date.current}
         skipSchedules={skipSchedules}
         setSkipSchedules={setSkipSchedules}
+        schedules={schedules}
+        setActiveSchedules={setActiveSchedules}
       />
       <div className="border-hoki-600 pl-4 text-left">
         <p className="mb-2 xs:text-lg">Active Schedules</p>
         <div className="space-y-2">
-          {schedules.active.map((schedule) => (
+          {activeSchedules.map((schedule) => (
             <div key={schedule} className="flex gap-2">
               <span
                 style={{

@@ -306,6 +306,8 @@ export interface AssignSchedulePayload {
 
 export type SkipScheduleModalProps = {
   date: Date;
+  schedules: ScheduleState;
+  setActiveSchedules: React.Dispatch<React.SetStateAction<string[]>>;
   skipSchedules: { [key: string]: boolean };
   setSkipSchedules: React.Dispatch<
     React.SetStateAction<{ [key: string]: boolean }>

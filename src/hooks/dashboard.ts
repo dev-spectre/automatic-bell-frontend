@@ -1,4 +1,5 @@
-import { getCurrentTime } from "@/utilities/dashboard";
+import { ScheduleState } from "@/types";
+import { getActiveScheduleOnDate, getCurrentTime } from "@/utilities/dashboard";
 import { useEffect, useRef, useState } from "react";
 
 export function useSyncTime() {
@@ -74,4 +75,10 @@ export function useCalendarMonthCount(
   }, []);
 
   return numberOfMonths;
+}
+
+export function useActiveScheduleOnDate(schedules: ScheduleState) {
+  const date = new Date();
+  const activeSchedules = getActiveScheduleOnDate(date, schedules);
+  return useState(activeSchedules);
 }
