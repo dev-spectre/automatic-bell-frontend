@@ -43,7 +43,7 @@
   },
   "productName": "Bell Scheduler",
   "mainBinaryName": "BellScheduler",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "identifier": "com.bellscheduler.alpha",
   "plugins": {
     "updater": {
