@@ -53,7 +53,7 @@ export function ManualButton() {
       label="Manual"
       className="outline-1 outline-hoki-600 max-lg:min-w-min max-lg:rounded-none max-lg:bg-eclipse-elixir-400 max-lg:outline max-lg:hover:bg-hoki-800 max-lg:active:bg-orange-450 max-lg:active:text-black lg:bg-sky-600"
       onClick={() => {
-        navigate("manual");
+        navigate("/manual");
       }}
     />
   );
