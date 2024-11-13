@@ -24,9 +24,7 @@ export function getCurrentTime(): string {
   return formatTime(date);
 }
 
-export function getCurrentDate(): string {
-  const date = new Date();
-
+export function getCurrentDate(date: Date = new Date()): string {
   const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const dayName = daysOfWeek[date.getDay()];
 

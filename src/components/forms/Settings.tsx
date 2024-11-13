@@ -84,9 +84,6 @@ export function SettingsForm() {
                 value={values.network.connectionAttempts.toString()}
                 onChange={props.handleChange}
               />
-              <p className="text-sm italic text-hoki-500">
-                Device will restart after maximum no. of connection attempts.
-              </p>
               <div className="min-h-6">
                 <ErrorMessage
                   component={"div"}

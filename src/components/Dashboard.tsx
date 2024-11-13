@@ -322,8 +322,11 @@ export function ScheduleCalendar() {
         schedules={schedules}
         setActiveSchedules={setActiveSchedules}
       />
-      <div className="border-hoki-600 pl-4 text-left">
-        <p className="mb-2 xs:text-lg">Active Schedules</p>
+      <div className="flex-grow border-hoki-600 pl-4 text-left">
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-2">
+          <p className="mb-1 xs:text-lg">Active Schedules</p>
+          <p className="text-sm text-hoki-500">{`${getCurrentDate(date.current).split(", ")[1]}`}</p>
+        </div>
         <div className="space-y-2">
           {activeSchedules.map((schedule) => (
             <div key={schedule} className="flex gap-2">
